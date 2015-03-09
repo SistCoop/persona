@@ -9,10 +9,6 @@ import org.keycloak.representations.idm.PersonaJuridicaRepresentation;
 import org.keycloak.representations.idm.PersonaNaturalRepresentation;
 import org.keycloak.representations.idm.TipoDocumentoRepresentation;
 
-/**
- * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
- * @version $Revision: 1 $
- */
 public class ModelToRepresentation {
 
 	public static TipoDocumentoRepresentation toRepresentation(TipoDocumentoModel model) {

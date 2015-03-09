@@ -4,18 +4,18 @@ import java.math.BigDecimal;
 
 public interface AccionistaModel extends Model {
 
-	public Long getId();
+	Long getId();
 
-	public PersonaNaturalModel getPersonaNatural();
+	PersonaNaturalModel getPersonaNatural();
 
-	public void setPersonaNatural(PersonaNaturalModel personaNatural);
+	void setPersonaNatural(PersonaNaturalModel personaNatural);
 
-	public PersonaJuridicaModel getPersonaJuridica();
+	PersonaJuridicaModel getPersonaJuridica();
 
-	public void setPersonaJuridica(PersonaJuridicaModel personaJuridica);
+	void setPersonaJuridica(PersonaJuridicaModel personaJuridica);
 
-	public BigDecimal getPorcentajeParticipacion();
+	BigDecimal getPorcentajeParticipacion();
 
-	public void setPorcentajeParticipacion(BigDecimal porcentajeParticipacion);
+	void setPorcentajeParticipacion(BigDecimal porcentajeParticipacion);
 
 }
