@@ -26,16 +26,7 @@ public interface PersonaJuridicaResource {
 	@Path("/buscar")
 	@Produces({ "application/xml", "application/json" })
 	public PersonaJuridicaRepresentation findByTipoNumeroDocumento(@QueryParam("tipoDocumento") String tipoDocumento, @QueryParam("numeroDocumento") String numeroDocumento);
-
-	@GET
-	@Produces({ "application/xml", "application/json" })
-	public List<PersonaJuridicaRepresentation> findAll(@QueryParam("filterText") String filterText, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit);
-
-	@GET
-	@Path("/count")
-	@Produces({ "application/xml", "application/json" })
-	public Response countAll();
-
+	
 	@POST
 	@Produces({ "application/xml", "application/json" })
 	public Response create(PersonaJuridicaRepresentation personaJuridicaRepresentation);
