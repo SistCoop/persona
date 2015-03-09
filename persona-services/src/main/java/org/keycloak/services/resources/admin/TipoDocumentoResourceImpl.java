@@ -16,12 +16,6 @@ public class TipoDocumentoResourceImpl implements TipoDocumentoResource {
 	}
 
 	@Override
-	public List<TipoDocumentoRepresentation> findAll(String tipoPersona) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Response create(TipoDocumentoRepresentation tipoDocumentoRepresentation) {
 		// TODO Auto-generated method stub
 		return null;
