@@ -1,7 +1,5 @@
 package org.keycloak.services.resources.admin;
 
-import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import org.keycloak.admin.client.resource.TipoDocumentoResource;
