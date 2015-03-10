@@ -4,18 +4,21 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToOne;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
+@Audited
 @MappedSuperclass
 public abstract class PersonaEntity implements Serializable {
 
@@ -49,7 +52,7 @@ public abstract class PersonaEntity implements Serializable {
 	}
 
 	@NotNull
-	@OneToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TIPO_DOCUMENTO", foreignKey = @ForeignKey)
 	public TipoDocumentoEntity getTipoDocumento() {
 		return tipoDocumento;

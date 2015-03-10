@@ -129,7 +129,7 @@ public class JpaPersonaNaturalProviderTest {
 		log.info("SUCCESS");
 	}
 	
-	@Test
+	/*@Test
 	public void addPersonaNaturalUniqueTest() throws Exception {		
 		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
@@ -311,6 +311,6 @@ public class JpaPersonaNaturalProviderTest {
 		}	
 		
 		log.info("SUCCESS");
-	}
+	}*/
 	
 }
