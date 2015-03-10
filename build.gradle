@@ -1,13 +1,38 @@
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'eclipse'
 
+description = 'persona sub project' 
+
+ext.jbossHome = hasProperty('jbossHome') ? jbossHome : "C:/Users/Huertas/wildfly-8.1.0.Final"
+
+subprojects {        
+    
+    apply plugin: 'java'
+    apply plugin: 'eclipse' 
+	  
+	sourceCompatibility = 1.7  
+	targetCompatibility = 1.7			
+	
     repositories {
-       mavenCentral()
+   	 	maven { url 'https://repository.jboss.org/nexus/content/groups/public-jboss' }  
+	    maven { url 'https://repository.jboss.org/nexus/content/repositories' }  
+	    maven { url 'https://repository.jboss.org/nexus/content/repositories/thirdparty-releases' } 
+       	mavenCentral()
     }
 
     dependencies {
         testCompile 'junit:junit:4.8.2'
+        
+        compile 'org.wildfly:wildfly-spec-api:8.1.0.Final'  
+	    compile 'org.slf4j:slf4j-simple:1.7.10'  	  
+	  
+	    testCompile 'org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-depchain:2.1.1'  	    
+	    testCompile 'org.jboss.arquillian:arquillian-bom:1.1.6.Final-wildfly-1'
+	    testCompile 'org.jboss.arquillian.junit:arquillian-junit-container:1.1.6.Final-wildfly-1'  
+	  
+	    testRuntime 'org.jboss.logging:jboss-logging:3.2.1.Final'  
+	    /** 
+	     * Embedded means it runs in the same JVM, it still needs the full installation 
+	     */  
+	    testRuntime 'org.wildfly:wildfly-arquillian-container-embedded:8.1.0.Final' 	    
     }
 
     version = '1.0'
@@ -15,4 +40,19 @@ subprojects {
     jar {
         manifest.attributes provider: 'my cool company'
     }
+        
+	test {  
+	    jvmArgs '-XX:MaxPermSize=256m'  
+	  
+	    /** 
+	     * Installation of JBOSS to use for testing, this can be set here 
+	     * or in the arquillian.xml. 
+	     */  
+	    environment 'JBOSS_HOME', rootProject.jbossHome  
+	    /** 
+	     * WildFly embedded default logging 
+	     */  
+	    systemProperty 'java.util.logging.manager', 'org.jboss.logmanager.LogManager'  
+	}  
+
 }
