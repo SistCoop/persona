@@ -29,7 +29,7 @@ public interface PersonaNaturalProvider extends Provider {
 
 	List<PersonaNaturalModel> getPersonasNaturales();
 
-	int getPersonasNaturalesCount();
+	long getPersonasNaturalesCount();
 
 	List<PersonaNaturalModel> getPersonasNaturales(int firstResult, int maxResults);
 

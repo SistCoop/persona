@@ -73,7 +73,7 @@ public abstract class PersonaEntity implements Serializable {
 	}
 
 	@NotNull
-	@Size(min = 1, max = 3)
+	@Size(min = 3, max = 3)
 	@NotEmpty
 	@NotBlank
 	@Column(name = "CODIGO_PAIS")

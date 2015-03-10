@@ -84,9 +84,9 @@ public class JpaPersonaNaturalProvider implements PersonaNaturalProvider {
 	}
 
 	@Override
-	public int getPersonasNaturalesCount() {
-		Object count = em.createNamedQuery(PersonaNaturalEntity.count).getSingleResult();
-		return ((Number) count).intValue();
+	public long getPersonasNaturalesCount() {
+		Object count = em.createNamedQuery(PersonaNaturalEntity.count).getSingleResult();		
+		return (Long) count;
 	}
 
 	@Override
