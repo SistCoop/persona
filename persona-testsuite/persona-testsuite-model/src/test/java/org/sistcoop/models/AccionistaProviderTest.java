@@ -131,13 +131,14 @@ public class AccionistaProviderTest {
 		for (AccionistaModel accionistaModel : accionistasModels) {
 			accionistaProvider.removeAccionista(accionistaModel);
 		}
-		/*
+		
 		//remove all PersonaNaturalModel
 		List<PersonaNaturalModel> personaNaturalModels = personaNaturalProvider.getPersonasNaturales();
 		for (PersonaNaturalModel personaNaturalModel : personaNaturalModels) {
 			personaNaturalProvider.removePersonaNatural(personaNaturalModel);
 		}
 
+		/*
 		//remove all PersonaJuridicaModel
 		List<PersonaJuridicaModel> personaJuridicaModels = personaJuridicaProvider.getPersonasJuridicas();
 		for (PersonaJuridicaModel personaJuridicaModel : personaJuridicaModels) {
