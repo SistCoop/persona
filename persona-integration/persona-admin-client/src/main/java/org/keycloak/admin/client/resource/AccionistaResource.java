@@ -1,9 +1,12 @@
 package org.keycloak.admin.client.resource;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -15,10 +18,15 @@ public interface AccionistaResource {
 
 	@GET
 	@Path("/{id}")
-	public AccionistaRepresentation findById(Long id);
+	public AccionistaRepresentation findById(
+			@PathParam("id") 
+			@NotNull 
+			@Min(value = 1) Long id);
 
 	@DELETE
 	@Path("/{id}")
-	public void remove(Long id);
+	public void remove(@PathParam("id") 
+	@NotNull 
+	@Min(value = 1) Long id);
 
 }
