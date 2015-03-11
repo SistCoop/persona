@@ -5,12 +5,10 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.core.AnyOf.anyOf;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -165,7 +163,7 @@ public class JpaPersonaNaturalProviderTest {
 		assertThat(model2, is(nullValue()));
 	}
 	
-	@SuppressWarnings("unchecked")
+	/*@SuppressWarnings("unchecked")
 	@Test
 	public void addPersonaNaturalNotnullAttibutesTest()  {		
 		Object[] fields = new Object[8];
@@ -197,8 +195,7 @@ public class JpaPersonaNaturalProviderTest {
 			
 			assertThat(model, is(nullValue()));
 		}			
-	}
-	
+	}*/	
 
 	@Test
 	public void getPersonaNaturalById()  {

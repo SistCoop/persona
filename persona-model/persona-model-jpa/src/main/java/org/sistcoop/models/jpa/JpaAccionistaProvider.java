@@ -58,7 +58,6 @@ public class JpaAccionistaProvider implements AccionistaProvider {
 	@Override
 	public void close() {
 		// TODO Auto-generated method stub
-
 	}
 
 }

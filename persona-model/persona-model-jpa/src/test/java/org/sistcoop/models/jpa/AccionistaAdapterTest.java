@@ -130,8 +130,7 @@ public class AccionistaAdapterTest {
 				representanteLegalModel, "PER", tipoDocumentoModel2, "10467793549", 
 				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);
 				
-		accionistaModel = accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);
-		
+		accionistaModel = accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);		
     }
 	
 	@After

@@ -8,6 +8,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
 
@@ -34,6 +35,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.sistcoop.models.AccionistaModel;
+import org.sistcoop.models.AccionistaProvider;
 import org.sistcoop.models.PersonaJuridicaModel;
 import org.sistcoop.models.PersonaJuridicaProvider;
 import org.sistcoop.models.PersonaNaturalModel;
@@ -43,6 +46,7 @@ import org.sistcoop.models.TipoDocumentoProvider;
 import org.sistcoop.models.enums.Sexo;
 import org.sistcoop.models.enums.TipoEmpresa;
 import org.sistcoop.models.enums.TipoPersona;
+import org.sistcoop.models.jpa.entities.AccionistaEntity;
 import org.sistcoop.models.jpa.entities.PersonaEntity;
 import org.sistcoop.models.jpa.entities.PersonaJuridicaEntity;
 import org.sistcoop.models.jpa.entities.PersonaNaturalEntity;
@@ -52,9 +56,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RunWith(Arquillian.class)
-public class JpaPersonaJuridicaProviderTest {
+public class JpaAccionistaProviderTest {
 
-	Logger log = LoggerFactory.getLogger(JpaPersonaJuridicaProviderTest.class);
+	Logger log = LoggerFactory.getLogger(JpaAccionistaProviderTest.class);
 
 	@PersistenceContext
 	private EntityManager em;
@@ -71,7 +75,10 @@ public class JpaPersonaJuridicaProviderTest {
 	@Inject
 	private PersonaJuridicaProvider personaJuridicaProvider;		
 	
-	private TipoDocumentoModel tipoDocumentoModel;
+	@Inject
+	private AccionistaProvider accionistaProvider;
+	
+	private PersonaJuridicaModel personaJuridicaModel;	
 	private PersonaNaturalModel representanteLegalModel;
 	
 	@Deployment
@@ -86,6 +93,7 @@ public class JpaPersonaJuridicaProviderTest {
 				.addClass(TipoDocumentoProvider.class)
 				.addClass(PersonaJuridicaProvider.class)
 				.addClass(PersonaNaturalProvider.class)
+				.addClass(AccionistaProvider.class)
 				
 				.addPackage(TipoDocumentoModel.class.getPackage())
 				.addPackage(TipoPersona.class.getPackage())								
@@ -100,6 +108,9 @@ public class JpaPersonaJuridicaProviderTest {
 				.addClass(JpaPersonaJuridicaProvider.class)
 				.addClass(PersonaJuridicaAdapter.class)						
 				
+				.addClass(JpaAccionistaProvider.class)
+				.addClass(AccionistaAdapter.class)	
+				
 				.addPackage(PersonaEntity.class.getPackage())
 				
 				.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
@@ -113,11 +124,16 @@ public class JpaPersonaJuridicaProviderTest {
 
 	@Before
     public void executedBeforeEach()  {    
-		tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);
-		
+		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
+				
 		representanteLegalModel = personaNaturalProvider.addPersonaNatural(
-				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				Calendar.getInstance().getTime(), Sexo.MASCULINO);					
+				"PER", tipoDocumentoModel1, "12345678", "Flores", "Huertas", "Jhon wilber", 
+				Calendar.getInstance().getTime(), Sexo.MASCULINO);
+		
+		personaJuridicaModel = personaJuridicaProvider.addPersonaJuridica(
+				representanteLegalModel, "PER", tipoDocumentoModel2, "10467793549", 
+				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);								
     }
 	
 	@After
@@ -126,7 +142,17 @@ public class JpaPersonaJuridicaProviderTest {
     RollbackException, HeuristicMixedException, HeuristicRollbackException {      
 		
 		utx.begin();
-	       
+	     
+		//remove all AccionistaEntity
+		List<Object> listAccionista = null;
+		CriteriaQuery<Object> cqAccionista = this.em.getCriteriaBuilder().createQuery();
+		cqAccionista.select(cqAccionista.from(AccionistaEntity.class));
+		listAccionista = this.em.createQuery(cqAccionista).getResultList();
+			
+		for (Object object : listAccionista) {
+			this.em.remove(object);
+		}
+				
 		//remove all PersonaJuridicaEntity
 		List<Object> listPersonaJuridica = null;
 		CriteriaQuery<Object> cqPersonaJuridica = this.em.getCriteriaBuilder().createQuery();
@@ -160,118 +186,47 @@ public class JpaPersonaJuridicaProviderTest {
     }
 	   
 	@Test
-	public void addPersonaJuridica()  {				
-		PersonaJuridicaModel model = personaJuridicaProvider.addPersonaJuridica(
-				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
-				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);
+	public void addAccionista() {
+		AccionistaModel model = accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);
 		
-		assertThat(model, is(notNullValue()));	
+		assertThat(model, is(notNullValue()));
 	}
 	
-	@Test
-	public void addPersonaJuridicaUniqueTest()  {		
-		PersonaJuridicaModel model1 = personaJuridicaProvider.addPersonaJuridica(
-				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
-				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);
-				
-		PersonaJuridicaModel model2 = null;
+	public void addAccionistaUniqueTest()  {		
+		AccionistaModel model1 = accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);
+		
+		AccionistaModel model2 = null;
 		try {
-			model2 = personaJuridicaProvider.addPersonaJuridica(
-					representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
-					"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);
+			model2 = accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);
 		} catch (Exception e) {		
 			assertThat(e, instanceOf(EJBException.class));						
-		}		
+		}	
 		
 		assertThat(model1, is(notNullValue()));
 		assertThat(model2, is(nullValue()));
 	}
 	
-	/*@SuppressWarnings("unchecked")
 	@Test
-	public void addPersonaJuridicaNotnullAttibutesTest()  {		
-		Object[] fields = new Object[8];
-		fields[0] = representanteLegalModel;
-		fields[1] = "PER";
-		fields[2] = tipoDocumentoModel;
-		fields[3] = "10467793549";
-		fields[4] = "Softgreen S.A.C.";
-		fields[5] = Calendar.getInstance().getTime();
-		fields[6] = TipoEmpresa.PRIVADA;
-		fields[7] = true;		
+	public void getAccionistaById()  {		
+		AccionistaModel model1 =  accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);
 		
-		Object aux = null;
-		
-		for (int i = 0; i < fields.length; i++) {			
-			if(i > 0)
-				fields[i - 1] = aux;
-			aux = fields[i];
-			fields[i] = null;			
-								
-			PersonaJuridicaModel model = null;
-			try {				
-				model = personaJuridicaProvider.addPersonaJuridica(
-						(PersonaNaturalModel) fields[0], (String) fields[1], (TipoDocumentoModel) fields[2], (String) fields[3], 
-						(String) fields[4], (Date) fields[5], (TipoEmpresa) fields[6], (Boolean) fields[7]);
-			} catch (Exception e) {						
-				assertThat(e, anyOf(instanceOf(NullPointerException.class), instanceOf(EJBException.class)));						
-			}	
-			
-			assertThat(model, is(nullValue()));
-		}	
-	}*/
-	
-	@Test
-	public void getPersonaJuridicaById()  {
-		PersonaJuridicaModel model1 = personaJuridicaProvider.addPersonaJuridica(
-				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
-				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);
-			
 		Long id = model1.getId();		
-		PersonaJuridicaModel model2 = personaJuridicaProvider.getPersonaJuridicaById(id);
+		AccionistaModel model2 = accionistaProvider.getAccionistaById(id);
 		
 		assertThat(model1, is(equalTo(model2)));
 	}
 	
 	@Test
-	public void getPersonaJuridicaByTipoNumeroDoc()  {							
-		PersonaJuridicaModel model1 = personaJuridicaProvider.addPersonaJuridica(
-				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
-				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);			
-		
-		TipoDocumentoModel tipoDocumento = model1.getTipoDocumento();
-		String numeroDocumento = model1.getNumeroDocumento();		
-		PersonaJuridicaModel model2 = personaJuridicaProvider.getPersonaJuridicaByTipoNumeroDoc(tipoDocumento, numeroDocumento);
-		
-		assertThat(model1, is(equalTo(model2)));
-	}
-	
-	@Test
-	public void getPersonasJuridicasCount()  {	
-		Long count1 = personaJuridicaProvider.getPersonasJuridicasCount();
-		
-		CriteriaQuery<Object> cq = this.em.getCriteriaBuilder().createQuery();
-        javax.persistence.criteria.Root<PersonaJuridicaEntity> rt = cq.from(PersonaJuridicaEntity.class);
-        cq.select(this.em.getCriteriaBuilder().count(rt));
-        javax.persistence.Query q = this.em.createQuery(cq);
-        Long count2 = (Long) q.getSingleResult();
-        
-        assertThat(count1, is(equalTo(count2))); 
-	}
-	
-	@Test
-	public void removePersonaJuridica()  {	
-		PersonaJuridicaModel model1 = personaJuridicaProvider.addPersonaJuridica(
-				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
-				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);								
+	public void removeAccionista()  {	
+		AccionistaModel model1 =  accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);		
 		
 		Long id = model1.getId();		
-		boolean result = personaJuridicaProvider.removePersonaJuridica(model1);		
-				
-		PersonaJuridicaModel model2 = personaJuridicaProvider.getPersonaJuridicaById(id);
+		boolean result = accionistaProvider.removeAccionista(model1);
+		
+		AccionistaModel model2 = accionistaProvider.getAccionistaById(id);
 		
 		assertThat(result, is(true));
-		assertThat(model2, is(nullValue()));
+		assertThat(model2, is(nullValue()));				
 	}
 	
 }
