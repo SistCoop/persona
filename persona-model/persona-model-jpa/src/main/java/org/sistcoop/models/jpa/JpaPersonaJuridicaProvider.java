@@ -87,9 +87,9 @@ public class JpaPersonaJuridicaProvider implements PersonaJuridicaProvider {
 	}
 
 	@Override
-	public int getPersonasJuridicasCount() {
+	public long getPersonasJuridicasCount() {
 		Object count = em.createNamedQuery(PersonaJuridicaEntity.count).getSingleResult();
-		return ((Number) count).intValue();
+		return (Long) count;
 	}
 
 	@Override

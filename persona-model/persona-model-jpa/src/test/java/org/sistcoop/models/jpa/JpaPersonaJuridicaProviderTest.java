@@ -23,13 +23,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.sistcoop.models.PersonaJuridicaModel;
+import org.sistcoop.models.PersonaJuridicaProvider;
 import org.sistcoop.models.PersonaNaturalModel;
 import org.sistcoop.models.PersonaNaturalProvider;
 import org.sistcoop.models.TipoDocumentoModel;
 import org.sistcoop.models.TipoDocumentoProvider;
 import org.sistcoop.models.enums.Sexo;
+import org.sistcoop.models.enums.TipoEmpresa;
 import org.sistcoop.models.enums.TipoPersona;
 import org.sistcoop.models.jpa.entities.PersonaEntity;
+import org.sistcoop.models.jpa.entities.PersonaJuridicaEntity;
 import org.sistcoop.models.jpa.entities.PersonaNaturalEntity;
 import org.sistcoop.models.jpa.entities.TipoDocumentoEntity;
 import org.sistcoop.provider.Provider;
@@ -37,9 +41,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RunWith(Arquillian.class)
-public class JpaPersonaNaturalProviderTest {
+public class JpaPersonaJuridicaProviderTest {
 
-	Logger log = LoggerFactory.getLogger(JpaPersonaNaturalProviderTest.class);
+	Logger log = LoggerFactory.getLogger(JpaPersonaJuridicaProviderTest.class);
 
 	@PersistenceContext
 	private EntityManager em;
@@ -48,12 +52,16 @@ public class JpaPersonaNaturalProviderTest {
 	private UserTransaction utx; 
 	
 	@Inject
-	private PersonaNaturalProvider personaNaturalProvider;		
+	private TipoDocumentoProvider tipoDocumentoProvider;
 	
 	@Inject
-	private TipoDocumentoProvider tipoDocumentoProvider;	
+	private PersonaNaturalProvider personaNaturalProvider;
+	
+	@Inject
+	private PersonaJuridicaProvider personaJuridicaProvider;		
 	
 	private TipoDocumentoModel tipoDocumentoModel;
+	private PersonaNaturalModel representanteLegalModel;
 	
 	@Deployment
 	public static WebArchive createDeployment() {
@@ -64,18 +72,22 @@ public class JpaPersonaNaturalProviderTest {
 		WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
 				/**persona-model-api**/
 				.addClass(Provider.class)										
-				.addClass(PersonaNaturalProvider.class)
 				.addClass(TipoDocumentoProvider.class)
+				.addClass(PersonaJuridicaProvider.class)
+				.addClass(PersonaNaturalProvider.class)
 				
-				.addPackage(PersonaNaturalModel.class.getPackage())
-				.addPackage(TipoPersona.class.getPackage())
-												
+				.addPackage(TipoDocumentoModel.class.getPackage())
+				.addPackage(TipoPersona.class.getPackage())								
+				
 				/**persona-model-jpa**/
-				.addClass(JpaPersonaNaturalProvider.class)
-				.addClass(PersonaNaturalAdapter.class)											
-				
 				.addClass(JpaTipoDocumentoProvider.class)
-				.addClass(TipoDocumentoAdapter.class)					
+				.addClass(TipoDocumentoAdapter.class)		
+						
+				.addClass(JpaPersonaNaturalProvider.class)
+				.addClass(PersonaNaturalAdapter.class)	
+				
+				.addClass(JpaPersonaJuridicaProvider.class)
+				.addClass(PersonaJuridicaAdapter.class)						
 				
 				.addPackage(PersonaEntity.class.getPackage())
 				
@@ -90,13 +102,27 @@ public class JpaPersonaNaturalProviderTest {
 
 	@Before
     public void executedBeforeEach() throws Exception {    
-		tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);
+		
+		representanteLegalModel = personaNaturalProvider.addPersonaNatural(
+				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
+				Calendar.getInstance().getTime(), Sexo.MASCULINO);					
     }
 	
 	@After
     public void executedAfterEach() throws Exception {      
-		 utx.begin();
-       
+		utx.begin();
+	       
+		//remove all PersonaJuridicaEntity
+		List<Object> listPersonaJuridica = null;
+		CriteriaQuery<Object> cqPersonaJuridica = this.em.getCriteriaBuilder().createQuery();
+		cqPersonaJuridica.select(cqPersonaJuridica.from(PersonaJuridicaEntity.class));
+		listPersonaJuridica = this.em.createQuery(cqPersonaJuridica).getResultList();
+			
+		for (Object object : listPersonaJuridica) {
+			this.em.remove(object);
+		}
+				
 		//remove all PersonaNaturalEntity
 		List<Object> listPersonaNatural = null;
 		CriteriaQuery<Object> cqPersonaNatural = this.em.getCriteriaBuilder().createQuery();
@@ -105,11 +131,9 @@ public class JpaPersonaNaturalProviderTest {
 			
 		for (Object object : listPersonaNatural) {
 			this.em.remove(object);
-		}
-			
-		//remove all TipoDocumentoEntity
-		tipoDocumentoModel = null;
-		
+		}					
+				
+		//remove all TipoDocumentoEntity				
 		List<Object> listTipoDocumento = null;
 		CriteriaQuery<Object> cqTipoDocumento = this.em.getCriteriaBuilder().createQuery();
 		cqTipoDocumento.select(cqTipoDocumento.from(TipoDocumentoEntity.class));
@@ -122,26 +146,26 @@ public class JpaPersonaNaturalProviderTest {
     }
 	   
 	@Test
-	public void addPersonaNatural() throws Exception {
-		PersonaNaturalModel model = personaNaturalProvider.addPersonaNatural(
-				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				Calendar.getInstance().getTime(), Sexo.MASCULINO);
+	public void addPersonaJuridica() throws Exception {				
+		PersonaJuridicaModel model = personaJuridicaProvider.addPersonaJuridica(
+				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
+				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);
 		
 		log.info("Objeto " + model.toString() + " creado");
 		log.info("SUCCESS");
 	}
 	
 	@Test
-	public void addPersonaNaturalUniqueTest() throws Exception {		
-		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
-				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				Calendar.getInstance().getTime(), Sexo.MASCULINO);
-		
-		PersonaNaturalModel model2 = null;
+	public void addPersonaJuridicaUniqueTest() throws Exception {		
+		PersonaJuridicaModel model1 = personaJuridicaProvider.addPersonaJuridica(
+				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
+				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);
+				
+		PersonaJuridicaModel model2 = null;
 		try {
-			model2 = personaNaturalProvider.addPersonaNatural(
-					"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-					Calendar.getInstance().getTime(), Sexo.MASCULINO);
+			model2 = personaJuridicaProvider.addPersonaJuridica(
+					representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
+					"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);
 		} catch (EJBTransactionRolledbackException e) {
 			log.info("Objeto " + model1.toString() + "creado");
 			log.info("Segundo Objeto no creado por tener el mismo TipoDocumento y NumeroDocumento");				
@@ -159,24 +183,30 @@ public class JpaPersonaNaturalProviderTest {
 	}
 	
 	@Test
-	public void addPersonaNaturalNotnullAttibutesTest() throws Exception {		
+	public void addPersonaJuridicaNotnullAttibutesTest() throws Exception {		
 		Object[] fields = new Object[8];
-		fields[0] = "PER";
-		fields[1] = tipoDocumentoModel;
-		fields[2] = "12345678";
-		fields[3] = "Flores";
-		fields[4] = "Huertas";
-		fields[5] = "Jhon wilber";
-		fields[6] = Calendar.getInstance().getTime();
-		fields[7] = Sexo.MASCULINO;
-				
+		fields[0] = representanteLegalModel;
+		fields[1] = "PER";
+		fields[2] = tipoDocumentoModel;
+		fields[3] = "10467793549";
+		fields[4] = "Softgreen S.A.C.";
+		fields[5] = Calendar.getInstance().getTime();
+		fields[6] = TipoEmpresa.PRIVADA;
+		fields[7] = true;		
+		
+		Object aux = null;
+		
 		for (int i = 0; i < fields.length; i++) {
+			aux = fields[i];
 			fields[i] = null;
-			PersonaNaturalModel model = null;
+			if(i > 0)
+				fields[i - 1] = aux;
+			
+			PersonaJuridicaModel model = null;
 			try {
-				model = personaNaturalProvider.addPersonaNatural(
-						(String) fields[0], (TipoDocumentoModel) fields[1], (String) fields[2], (String) fields[3], 
-						(String) fields[4], (String) fields[5], (Date) fields[6], (Sexo) fields[7]);
+				model = personaJuridicaProvider.addPersonaJuridica(
+						(PersonaNaturalModel) fields[0], (String) fields[1], (TipoDocumentoModel) fields[2], (String) fields[3], 
+						(String) fields[4], (Date) fields[5], (TipoEmpresa) fields[6], (Boolean) fields[7]);
 			} catch (EJBTransactionRolledbackException e) {
 				log.info(e.getMessage());				
 			} catch (Exception e) {
@@ -192,16 +222,15 @@ public class JpaPersonaNaturalProviderTest {
 		log.info("SUCCESS");
 	}
 	
-
 	@Test
-	public void getPersonaNaturalById() throws Exception {
-		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
-				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				Calendar.getInstance().getTime(), Sexo.MASCULINO);		
-		
+	public void getPersonaJuridicaById() throws Exception {
+		PersonaJuridicaModel model1 = personaJuridicaProvider.addPersonaJuridica(
+				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
+				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);
+			
 		Long id = model1.getId();
 		
-		PersonaNaturalModel model2 = personaNaturalProvider.getPersonaNaturalById(id);
+		PersonaJuridicaModel model2 = personaJuridicaProvider.getPersonaJuridicaById(id);
 		if(model1.equals(model2)) {
 			log.info("Objeto:" + model1.toString() + " encontrado");				
 		} else {
@@ -213,15 +242,15 @@ public class JpaPersonaNaturalProviderTest {
 	}
 	
 	@Test
-	public void getPersonaNaturalByTipoNumeroDoc() throws Exception {							
-		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
-				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				Calendar.getInstance().getTime(), Sexo.MASCULINO);	
+	public void getPersonaJuridicaByTipoNumeroDoc() throws Exception {							
+		PersonaJuridicaModel model1 = personaJuridicaProvider.addPersonaJuridica(
+				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
+				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);			
 		
 		TipoDocumentoModel tipoDocumento = model1.getTipoDocumento();
 		String numeroDocumento = model1.getNumeroDocumento();
 		
-		PersonaNaturalModel model2 = personaNaturalProvider.getPersonaNaturalByTipoNumeroDoc(tipoDocumento, numeroDocumento);
+		PersonaJuridicaModel model2 = personaJuridicaProvider.getPersonaJuridicaByTipoNumeroDoc(tipoDocumento, numeroDocumento);
 		if(model1.equals(model2)) {
 			log.info("Objeto:" + model1.toString() + " encontrado");				
 		} else {
@@ -233,51 +262,11 @@ public class JpaPersonaNaturalProviderTest {
 	}
 	
 	@Test
-	public void getPersonasNaturales() throws Exception {										
-		List<PersonaNaturalModel> models = personaNaturalProvider.getPersonasNaturales();
-		for (PersonaNaturalModel personaNaturalModel : models) {
-			log.info("Objeto:" + personaNaturalModel.toString() + " encontrado");	
-		}
-		
-		log.info("SUCCESS");
-	}
-	
-	@Test
-	public void getPersonasNaturalesFirstResulAndLimit() throws Exception {										
-		List<PersonaNaturalModel> models = personaNaturalProvider.getPersonasNaturales(0, 10);
-		for (PersonaNaturalModel personaNaturalModel : models) {
-			log.info("Objeto:" + personaNaturalModel.toString() + " encontrado");	
-		}
-		
-		log.info("SUCCESS");
-	}
-	
-	@Test
-	public void searchForFilterText() throws Exception {										
-		List<PersonaNaturalModel> models = personaNaturalProvider.searchForFilterText("f");
-		for (PersonaNaturalModel personaNaturalModel : models) {
-			log.info("Objeto:" + personaNaturalModel.toString() + " encontrado");	
-		}
-		
-		log.info("SUCCESS");
-	}
-	
-	@Test
-	public void searchForFilterTextFirstResulAndLimit() throws Exception {										
-		List<PersonaNaturalModel> models = personaNaturalProvider.searchForFilterText("f", 0, 10);
-		for (PersonaNaturalModel personaNaturalModel : models) {
-			log.info("Objeto:" + personaNaturalModel.toString() + " encontrado");	
-		}
-		
-		log.info("SUCCESS");
-	}
-	
-	@Test
-	public void getPersonasNaturalesCount() throws Exception {	
-		Long count1 = personaNaturalProvider.getPersonasNaturalesCount();
+	public void getPersonasJuridicasCount() throws Exception {	
+		Long count1 = personaJuridicaProvider.getPersonasJuridicasCount();
 		
 		CriteriaQuery<Object> cq = this.em.getCriteriaBuilder().createQuery();
-        javax.persistence.criteria.Root<PersonaNaturalEntity> rt = cq.from(PersonaNaturalEntity.class);
+        javax.persistence.criteria.Root<PersonaJuridicaEntity> rt = cq.from(PersonaJuridicaEntity.class);
         cq.select(this.em.getCriteriaBuilder().count(rt));
         javax.persistence.Query q = this.em.createQuery(cq);
         Long count2 = (Long) q.getSingleResult();
@@ -291,14 +280,14 @@ public class JpaPersonaNaturalProviderTest {
 	}
 	
 	@Test
-	public void removePersonaNatural() throws Exception {	
-		PersonaNaturalModel model = personaNaturalProvider.addPersonaNatural(
-				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				Calendar.getInstance().getTime(), Sexo.MASCULINO);				
+	public void removePersonaJuridica() throws Exception {	
+		PersonaJuridicaModel model = personaJuridicaProvider.addPersonaJuridica(
+				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
+				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);								
 		
 		Long id = model.getId();
 		
-		boolean result = personaNaturalProvider.removePersonaNatural(model);
+		boolean result = personaJuridicaProvider.removePersonaJuridica(model);
 		if(result) {
 			log.info("Resultado de eliminacion:" + result);
 		} else {
@@ -306,7 +295,7 @@ public class JpaPersonaNaturalProviderTest {
 			throw new Exception("Resultado de eliminacion:" + result);
 		}
 				
-		model = personaNaturalProvider.getPersonaNaturalById(id);
+		model = personaJuridicaProvider.getPersonaJuridicaById(id);
 		if(model == null) {
 			log.info("Objeto no encontrado");			
 		} else {

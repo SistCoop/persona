@@ -28,7 +28,7 @@ public interface PersonaJuridicaProvider extends Provider {
 
 	List<PersonaJuridicaModel> getPersonasJuridicas();
 
-	int getPersonasJuridicasCount();
+	long getPersonasJuridicasCount();
 
 	List<PersonaJuridicaModel> getPersonasJuridicas(int firstResult,int maxResults);
 
