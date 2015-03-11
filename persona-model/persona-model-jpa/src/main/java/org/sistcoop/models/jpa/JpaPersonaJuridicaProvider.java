@@ -155,7 +155,6 @@ public class JpaPersonaJuridicaProvider implements PersonaJuridicaProvider {
 	@Override
 	public void close() {
 		// TODO Auto-generated method stub
-
 	}
 
 }

@@ -131,7 +131,7 @@ public class AccionistaProviderTest {
 		List<AccionistaModel> accionistasModels = personaJuridicaModel.getAccionistas();
 		for (AccionistaModel accionistaModel : accionistasModels) {
 			accionistaProvider.removeAccionista(accionistaModel);
-		}				
+		}
 		
 		//remove all PersonaNaturalModel
 		List<PersonaNaturalModel> personaNaturalModels = personaNaturalProvider.getPersonasNaturales();
@@ -160,6 +160,7 @@ public class AccionistaProviderTest {
 		assertThat(model, is(notNullValue()));
 	}
 	
+	@Test
 	public void addAccionistaUniqueTest()  {		
 		AccionistaModel model1 = accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);
 		
