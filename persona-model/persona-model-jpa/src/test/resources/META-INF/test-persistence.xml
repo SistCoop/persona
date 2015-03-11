@@ -5,6 +5,11 @@
 	http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 	<persistence-unit name="personaTestPU">
 		<jta-data-source>java:jboss/datasources/personaTestDS</jta-data-source>
+		<class>org.sistcoop.models.jpa.entities.TipoDocumentoEntity</class>
+		<class>org.sistcoop.models.jpa.entities.PersonaNaturalEntity</class>
+		<class>org.sistcoop.models.jpa.entities.PersonaJuridicaEntity</class>
+		<class>org.sistcoop.models.jpa.entities.PersonaEntity</class>
+		<class>org.sistcoop.models.jpa.entities.AccionistaEntity</class>
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
 			<property name="hibernate.show_sql" value="false" />

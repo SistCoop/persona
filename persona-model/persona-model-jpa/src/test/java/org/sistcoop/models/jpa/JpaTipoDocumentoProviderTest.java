@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.sistcoop.models.TipoDocumentoModel;
 import org.sistcoop.models.TipoDocumentoProvider;
 import org.sistcoop.models.enums.TipoPersona;
+import org.sistcoop.models.jpa.entities.PersonaEntity;
 import org.sistcoop.models.jpa.entities.TipoDocumentoEntity;
 import org.sistcoop.provider.Provider;
 import org.slf4j.Logger;
@@ -53,13 +54,15 @@ public class JpaTipoDocumentoProviderTest {
 				/**persona-model-api**/
 				.addClass(Provider.class)										
 				.addClass(TipoDocumentoProvider.class)
+				
 				.addPackage(TipoDocumentoModel.class.getPackage())
 				.addPackage(TipoPersona.class.getPackage())
 				
 				/**persona-model-jpa**/
 				.addClass(JpaTipoDocumentoProvider.class)
 				.addClass(TipoDocumentoAdapter.class)
-				.addClass(TipoDocumentoEntity.class)
+
+				.addPackage(PersonaEntity.class.getPackage())
 				
 				.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")

@@ -42,7 +42,7 @@ subprojects {
     }
         
 	test {  
-	    jvmArgs '-XX:MaxPermSize=256m'  
+	    //jvmArgs '-XX:MaxPermSize=256m'  
 	  
 	    /** 
 	     * Installation of JBOSS to use for testing, this can be set here 

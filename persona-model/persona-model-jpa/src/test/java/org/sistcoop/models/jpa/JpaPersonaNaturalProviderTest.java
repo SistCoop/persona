@@ -66,17 +66,18 @@ public class JpaPersonaNaturalProviderTest {
 				.addClass(Provider.class)										
 				.addClass(PersonaNaturalProvider.class)
 				.addClass(TipoDocumentoProvider.class)
+				
 				.addPackage(PersonaNaturalModel.class.getPackage())
 				.addPackage(TipoPersona.class.getPackage())
 												
 				/**persona-model-jpa**/
 				.addClass(JpaPersonaNaturalProvider.class)
-				.addClass(PersonaNaturalAdapter.class)
-				.addClass(PersonaNaturalEntity.class)
-				.addPackage(PersonaEntity.class.getPackage())
+				.addClass(PersonaNaturalAdapter.class)											
 				
 				.addClass(JpaTipoDocumentoProvider.class)
 				.addClass(TipoDocumentoAdapter.class)					
+				
+				.addPackage(PersonaEntity.class.getPackage())
 				
 				.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
@@ -95,7 +96,17 @@ public class JpaPersonaNaturalProviderTest {
 	@After
     public void executedAfterEach() throws Exception {      
 		 utx.begin();
-         
+       
+		//remove all PersonaNaturalEntity
+		List<Object> listPersonaNatural = null;
+		CriteriaQuery<Object> cqPersonaNatural = this.em.getCriteriaBuilder().createQuery();
+		cqPersonaNatural.select(cqPersonaNatural.from(PersonaNaturalEntity.class));
+		listPersonaNatural = this.em.createQuery(cqPersonaNatural).getResultList();
+			
+		for (Object object : listPersonaNatural) {
+			this.em.remove(object);
+		}
+			
 		//remove all TipoDocumentoEntity
 		tipoDocumentoModel = null;
 		
@@ -106,17 +117,7 @@ public class JpaPersonaNaturalProviderTest {
 		for (Object object : listTipoDocumento) {
 			this.em.remove(object);
 		}
-		
-		//remove all PersonaNaturalEntity
-		List<Object> listPersonaNatural = null;
-		CriteriaQuery<Object> cqPersonaNatural = this.em.getCriteriaBuilder().createQuery();
-		cqPersonaNatural.select(cqPersonaNatural.from(PersonaNaturalEntity.class));
-		listPersonaNatural = this.em.createQuery(cqPersonaNatural).getResultList();
-		
-		for (Object object : listPersonaNatural) {
-			this.em.remove(object);
-		}
-		
+						
 		utx.commit();
     }
 	   
@@ -130,7 +131,7 @@ public class JpaPersonaNaturalProviderTest {
 		log.info("SUCCESS");
 	}
 	
-	/*@Test
+	@Test
 	public void addPersonaNaturalUniqueTest() throws Exception {		
 		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
@@ -210,10 +211,10 @@ public class JpaPersonaNaturalProviderTest {
 	}
 	
 	@Test
-	public void getPersonaNaturalByTipoNumeroDoc() throws Exception {		
+	public void getPersonaNaturalByTipoNumeroDoc() throws Exception {							
 		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				Calendar.getInstance().getTime(), Sexo.MASCULINO);				
+				Calendar.getInstance().getTime(), Sexo.MASCULINO);	
 		
 		TipoDocumentoModel tipoDocumento = model1.getTipoDocumento();
 		String numeroDocumento = model1.getNumeroDocumento();
@@ -312,6 +313,6 @@ public class JpaPersonaNaturalProviderTest {
 		}	
 		
 		log.info("SUCCESS");
-	}*/
+	}
 	
 }

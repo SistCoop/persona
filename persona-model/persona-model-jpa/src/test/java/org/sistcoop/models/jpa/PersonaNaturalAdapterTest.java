@@ -1,6 +1,7 @@
 package org.sistcoop.models.jpa;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -20,19 +21,23 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.sistcoop.models.PersonaNaturalModel;
+import org.sistcoop.models.PersonaNaturalProvider;
 import org.sistcoop.models.TipoDocumentoModel;
 import org.sistcoop.models.TipoDocumentoProvider;
+import org.sistcoop.models.enums.Sexo;
 import org.sistcoop.models.enums.TipoPersona;
 import org.sistcoop.models.jpa.entities.PersonaEntity;
+import org.sistcoop.models.jpa.entities.PersonaNaturalEntity;
 import org.sistcoop.models.jpa.entities.TipoDocumentoEntity;
 import org.sistcoop.provider.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RunWith(Arquillian.class)
-public class TipoDocumentoAdapterTest {
+public class PersonaNaturalAdapterTest {
 
-	Logger log = LoggerFactory.getLogger(TipoDocumentoAdapterTest.class);
+	Logger log = LoggerFactory.getLogger(PersonaNaturalAdapterTest.class);
 
 	@PersistenceContext
 	private EntityManager em;
@@ -41,9 +46,12 @@ public class TipoDocumentoAdapterTest {
 	private UserTransaction utx; 
 	
 	@Inject
-	private TipoDocumentoProvider tipoDocumentoProvider;	
+	private TipoDocumentoProvider tipoDocumentoProvider;
 	
-	private TipoDocumentoModel tipoDocumentoModel;
+	@Inject
+	private PersonaNaturalProvider personaNaturalProvider;	
+	
+	private PersonaNaturalModel personaNaturalModel;
 	
 	@Deployment
 	public static WebArchive createDeployment() {
@@ -55,13 +63,17 @@ public class TipoDocumentoAdapterTest {
 				/**persona-model-api**/
 				.addClass(Provider.class)										
 				.addClass(TipoDocumentoProvider.class)
+				.addClass(PersonaNaturalProvider.class)
 				
 				.addPackage(TipoDocumentoModel.class.getPackage())
-				.addPackage(TipoPersona.class.getPackage())
+				.addPackage(TipoPersona.class.getPackage())								
 				
 				/**persona-model-jpa**/
 				.addClass(JpaTipoDocumentoProvider.class)
-				.addClass(TipoDocumentoAdapter.class)
+				.addClass(TipoDocumentoAdapter.class)		
+								
+				.addClass(JpaPersonaNaturalProvider.class)
+				.addClass(PersonaNaturalAdapter.class)						
 				
 				.addPackage(PersonaEntity.class.getPackage())
 				
@@ -76,32 +88,44 @@ public class TipoDocumentoAdapterTest {
 
 	@Before
     public void executedBeforeEach() throws Exception {    
-		tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		
+		personaNaturalModel = personaNaturalProvider.addPersonaNatural(
+				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
+				Calendar.getInstance().getTime(), Sexo.MASCULINO);
     }
 	
 	@After
     public void executedAfterEach() throws Exception {      
-		 utx.begin();
-         
-		//remove all TipoDocumentoEntity
-		tipoDocumentoModel = null;
-		
+		utx.begin();
+	       
+		//remove all PersonaNaturalEntity
+		List<Object> listPersonaNatural = null;
+		CriteriaQuery<Object> cqPersonaNatural = this.em.getCriteriaBuilder().createQuery();
+		cqPersonaNatural.select(cqPersonaNatural.from(PersonaNaturalEntity.class));
+		listPersonaNatural = this.em.createQuery(cqPersonaNatural).getResultList();
+			
+		for (Object object : listPersonaNatural) {
+			this.em.remove(object);
+		}
+			
+		//remove all TipoDocumentoEntity				
 		List<Object> listTipoDocumento = null;
 		CriteriaQuery<Object> cqTipoDocumento = this.em.getCriteriaBuilder().createQuery();
 		cqTipoDocumento.select(cqTipoDocumento.from(TipoDocumentoEntity.class));
 		listTipoDocumento = this.em.createQuery(cqTipoDocumento).getResultList();		
 		for (Object object : listTipoDocumento) {
 			this.em.remove(object);
-		}		
-		
+		}
+						
 		utx.commit();
     }
 	   
 	@Test
-	public void toTipoDocumentoEntity() throws Exception {
-		TipoDocumentoEntity tipoDocumentoEntity = TipoDocumentoAdapter.toTipoDocumentoEntity(tipoDocumentoModel, em);
-		if(tipoDocumentoEntity != null) {
-			log.info("Entity:" + tipoDocumentoEntity.toString());
+	public void addTipoDocumento() throws Exception {
+		PersonaNaturalEntity personaNaturalEntity = PersonaNaturalAdapter.toPersonaNaturalEntity(personaNaturalModel, em);		
+		if(personaNaturalEntity != null) {
+			log.info("Entity:" + personaNaturalEntity.toString());
 		} else {
 			log.error("Entity es NULL");
 			throw new Exception("Entity es NULL");
