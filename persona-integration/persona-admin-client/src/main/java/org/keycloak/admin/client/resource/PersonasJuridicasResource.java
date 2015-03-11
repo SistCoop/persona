@@ -2,26 +2,32 @@ package org.keycloak.admin.client.resource;
 
 import java.util.List;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.MediaType;
 
 import org.keycloak.representations.idm.PersonaJuridicaRepresentation;
 
+@Produces(MediaType.APPLICATION_JSON)
 public interface PersonasJuridicasResource {
 	
-	@GET
-	@Produces({ "application/xml", "application/json" })
+	@GET	
 	public List<PersonaJuridicaRepresentation> findAll(
-			@QueryParam("filterText") String filterText, 
-			@QueryParam("offset") Integer offset,
-			@QueryParam("limit") Integer limit);
+			@QueryParam("filterText")
+			@Size(min = 1, max = 100) String filterText, 
+			
+			@QueryParam("firstResult") 
+			@Min(value = 0) Integer firstResult, 
+			
+			@QueryParam("maxResults") 
+			@Min(value = 1) Integer maxResults);
 
 	@GET
-	@Path("/count")
-	@Produces({ "application/xml", "application/json" })
-	public Response countAll();	
+	@Path("/count")	
+	public long countAll();	
 	
 }
