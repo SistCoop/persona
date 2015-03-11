@@ -160,7 +160,7 @@ public class AccionistaProviderTest {
 		assertThat(model, is(notNullValue()));
 	}
 	
-	@Test
+	/*@Test
 	public void addAccionistaUniqueTest()  {		
 		AccionistaModel model1 = accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);
 		
@@ -196,6 +196,6 @@ public class AccionistaProviderTest {
 		
 		assertThat(result, is(true));
 		assertThat(model2, is(nullValue()));				
-	}
+	}*/
 	
 }
