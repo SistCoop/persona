@@ -125,14 +125,13 @@ public class AccionistaProviderTest {
     }
 	
 	@After
-    public void executedAfterEach() {      
-		
+    public void executedAfterEach() {      		
 		//remove all AccionistaModel
 		List<AccionistaModel> accionistasModels = personaJuridicaModel.getAccionistas();
 		for (AccionistaModel accionistaModel : accionistasModels) {
 			accionistaProvider.removeAccionista(accionistaModel);
 		}
-		
+		/*
 		//remove all PersonaNaturalModel
 		List<PersonaNaturalModel> personaNaturalModels = personaNaturalProvider.getPersonasNaturales();
 		for (PersonaNaturalModel personaNaturalModel : personaNaturalModels) {
@@ -149,7 +148,7 @@ public class AccionistaProviderTest {
 		List<TipoDocumentoModel> tipoDocumentoModels = tipoDocumentoProvider.getTiposDocumento();
 		for (TipoDocumentoModel tipoDocumentoModel : tipoDocumentoModels) {
 			tipoDocumentoProvider.removeTipoDocumento(tipoDocumentoModel);
-		}
+		}*/
 
     }
 	   
