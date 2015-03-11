@@ -1,5 +1,10 @@
 dependencies {
 	compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+	
+	compile group: 'org.jboss.resteasy', name: 'jaxrs-api', version: '3.0.10.Final'
 	compile group: 'org.jboss.resteasy', name: 'resteasy-jaxrs', version: '3.0.10.Final'
-	'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.5.1'	
+	compile group: 'org.jboss.resteasy', name: 'resteasy-validator-provider-11', version: '3.0.10.Final'
+	
+	compile group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.5.1'			
+	
 }

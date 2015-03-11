@@ -1,13 +1,13 @@
 package org.sistcoop.models.utils;
 
-import org.keycloak.representations.idm.AccionistaRepresentation;
-import org.keycloak.representations.idm.PersonaJuridicaRepresentation;
-import org.keycloak.representations.idm.PersonaNaturalRepresentation;
-import org.keycloak.representations.idm.TipoDocumentoRepresentation;
 import org.sistcoop.models.AccionistaModel;
 import org.sistcoop.models.PersonaJuridicaModel;
 import org.sistcoop.models.PersonaNaturalModel;
 import org.sistcoop.models.TipoDocumentoModel;
+import org.sistcoop.representations.idm.AccionistaRepresentation;
+import org.sistcoop.representations.idm.PersonaJuridicaRepresentation;
+import org.sistcoop.representations.idm.PersonaNaturalRepresentation;
+import org.sistcoop.representations.idm.TipoDocumentoRepresentation;
 
 public class ModelToRepresentation {
 
@@ -113,16 +113,8 @@ public class ModelToRepresentation {
 		rep.setId(model.getId());
 		rep.setPorcentajeParticipacion(model.getPorcentajeParticipacion());
 
-		rep.setIdPersonaNatural(model.getPersonaNatural().getId());
-		rep.setCodigoPais(model.getPersonaNatural().getCodigoPais());
-		rep.setTipoDocumento(model.getPersonaNatural().getTipoDocumento().getAbreviatura());
-		rep.setNumeroDocumento(model.getPersonaNatural().getNumeroDocumento());
-
-		rep.setApellidoPaterno(model.getPersonaNatural().getApellidoPaterno());
-		rep.setApellidoMaterno(model.getPersonaNatural().getApellidoMaterno());
-		rep.setNombres(model.getPersonaNatural().getNombres());
-		rep.setFechaNacimiento(model.getPersonaNatural().getFechaNacimiento());
-		rep.setSexo(model.getPersonaNatural().getSexo().toString());
+		PersonaNaturalRepresentation personaNaturalRepresentation = ModelToRepresentation.toRepresentation(model.getPersonaNatural());		
+		rep.setPersonaNatural(personaNaturalRepresentation);
 
 		return rep;
 	}

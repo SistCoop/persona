@@ -4,9 +4,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
-import org.keycloak.representations.idm.PersonaJuridicaRepresentation;
-import org.keycloak.representations.idm.PersonaNaturalRepresentation;
-import org.keycloak.representations.idm.TipoDocumentoRepresentation;
 import org.sistcoop.models.PersonaJuridicaModel;
 import org.sistcoop.models.PersonaJuridicaProvider;
 import org.sistcoop.models.PersonaNaturalModel;
@@ -17,6 +14,9 @@ import org.sistcoop.models.enums.EstadoCivil;
 import org.sistcoop.models.enums.Sexo;
 import org.sistcoop.models.enums.TipoEmpresa;
 import org.sistcoop.models.enums.TipoPersona;
+import org.sistcoop.representations.idm.PersonaJuridicaRepresentation;
+import org.sistcoop.representations.idm.PersonaNaturalRepresentation;
+import org.sistcoop.representations.idm.TipoDocumentoRepresentation;
 
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
