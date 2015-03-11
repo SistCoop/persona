@@ -1,4 +1,4 @@
-package org.sistcoop.models.jpa;
+package org.sistcoop.models;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -12,18 +12,8 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.ejb.EJBException;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -46,25 +36,23 @@ import org.sistcoop.models.TipoDocumentoProvider;
 import org.sistcoop.models.enums.Sexo;
 import org.sistcoop.models.enums.TipoEmpresa;
 import org.sistcoop.models.enums.TipoPersona;
-import org.sistcoop.models.jpa.entities.AccionistaEntity;
+import org.sistcoop.models.jpa.AccionistaAdapter;
+import org.sistcoop.models.jpa.JpaAccionistaProvider;
+import org.sistcoop.models.jpa.JpaPersonaJuridicaProvider;
+import org.sistcoop.models.jpa.JpaPersonaNaturalProvider;
+import org.sistcoop.models.jpa.JpaTipoDocumentoProvider;
+import org.sistcoop.models.jpa.PersonaJuridicaAdapter;
+import org.sistcoop.models.jpa.PersonaNaturalAdapter;
+import org.sistcoop.models.jpa.TipoDocumentoAdapter;
 import org.sistcoop.models.jpa.entities.PersonaEntity;
-import org.sistcoop.models.jpa.entities.PersonaJuridicaEntity;
-import org.sistcoop.models.jpa.entities.PersonaNaturalEntity;
-import org.sistcoop.models.jpa.entities.TipoDocumentoEntity;
 import org.sistcoop.provider.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RunWith(Arquillian.class)
-public class JpaAccionistaProviderTest {
+public class AccionistaProviderTest {
 
-	Logger log = LoggerFactory.getLogger(JpaAccionistaProviderTest.class);
-
-	@PersistenceContext
-	private EntityManager em;
-
-	@Resource           
-	private UserTransaction utx; 
+	Logger log = LoggerFactory.getLogger(AccionistaProviderTest.class);	
 	
 	@Inject
 	private TipoDocumentoProvider tipoDocumentoProvider;
@@ -91,14 +79,14 @@ public class JpaAccionistaProviderTest {
 				/**persona-model-api**/
 				.addClass(Provider.class)										
 				.addClass(TipoDocumentoProvider.class)
-				.addClass(PersonaJuridicaProvider.class)
 				.addClass(PersonaNaturalProvider.class)
+				.addClass(PersonaJuridicaProvider.class)				
 				.addClass(AccionistaProvider.class)
 				
 				.addPackage(TipoDocumentoModel.class.getPackage())
 				.addPackage(TipoPersona.class.getPackage())								
 				
-				/**persona-model-jpa**/
+				/**persona-model-jpa**/		
 				.addClass(JpaTipoDocumentoProvider.class)
 				.addClass(TipoDocumentoAdapter.class)		
 						
@@ -137,52 +125,32 @@ public class JpaAccionistaProviderTest {
     }
 	
 	@After
-    public void executedAfterEach() throws NotSupportedException, 
-    SystemException, SecurityException, IllegalStateException, 
-    RollbackException, HeuristicMixedException, HeuristicRollbackException {      
+    public void executedAfterEach() {      
 		
-		utx.begin();
-	     
-		//remove all AccionistaEntity
-		List<Object> listAccionista = null;
-		CriteriaQuery<Object> cqAccionista = this.em.getCriteriaBuilder().createQuery();
-		cqAccionista.select(cqAccionista.from(AccionistaEntity.class));
-		listAccionista = this.em.createQuery(cqAccionista).getResultList();
-			
-		for (Object object : listAccionista) {
-			this.em.remove(object);
+		//remove all AccionistaModel
+		List<AccionistaModel> accionistasModels = personaJuridicaModel.getAccionistas();
+		for (AccionistaModel accionistaModel : accionistasModels) {
+			accionistaProvider.removeAccionista(accionistaModel);
+		}				
+		
+		//remove all PersonaNaturalModel
+		List<PersonaNaturalModel> personaNaturalModels = personaNaturalProvider.getPersonasNaturales();
+		for (PersonaNaturalModel personaNaturalModel : personaNaturalModels) {
+			personaNaturalProvider.removePersonaNatural(personaNaturalModel);
 		}
+
+		//remove all PersonaJuridicaModel
+		List<PersonaJuridicaModel> personaJuridicaModels = personaJuridicaProvider.getPersonasJuridicas();
+		for (PersonaJuridicaModel personaJuridicaModel : personaJuridicaModels) {
+			personaJuridicaProvider.removePersonaJuridica(personaJuridicaModel);
+		}								
 				
-		//remove all PersonaJuridicaEntity
-		List<Object> listPersonaJuridica = null;
-		CriteriaQuery<Object> cqPersonaJuridica = this.em.getCriteriaBuilder().createQuery();
-		cqPersonaJuridica.select(cqPersonaJuridica.from(PersonaJuridicaEntity.class));
-		listPersonaJuridica = this.em.createQuery(cqPersonaJuridica).getResultList();
-			
-		for (Object object : listPersonaJuridica) {
-			this.em.remove(object);
+		//remove all TipoDocumentoModels				
+		List<TipoDocumentoModel> tipoDocumentoModels = tipoDocumentoProvider.getTiposDocumento();
+		for (TipoDocumentoModel tipoDocumentoModel : tipoDocumentoModels) {
+			tipoDocumentoProvider.removeTipoDocumento(tipoDocumentoModel);
 		}
-				
-		//remove all PersonaNaturalEntity
-		List<Object> listPersonaNatural = null;
-		CriteriaQuery<Object> cqPersonaNatural = this.em.getCriteriaBuilder().createQuery();
-		cqPersonaNatural.select(cqPersonaNatural.from(PersonaNaturalEntity.class));
-		listPersonaNatural = this.em.createQuery(cqPersonaNatural).getResultList();
-			
-		for (Object object : listPersonaNatural) {
-			this.em.remove(object);
-		}					
-				
-		//remove all TipoDocumentoEntity				
-		List<Object> listTipoDocumento = null;
-		CriteriaQuery<Object> cqTipoDocumento = this.em.getCriteriaBuilder().createQuery();
-		cqTipoDocumento.select(cqTipoDocumento.from(TipoDocumentoEntity.class));
-		listTipoDocumento = this.em.createQuery(cqTipoDocumento).getResultList();		
-		for (Object object : listTipoDocumento) {
-			this.em.remove(object);
-		}
-						
-		utx.commit();
+
     }
 	   
 	@Test

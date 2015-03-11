@@ -1,4 +1,4 @@
-package org.sistcoop.models.jpa;
+package org.sistcoop.models;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -30,15 +30,17 @@ import org.junit.runner.RunWith;
 import org.sistcoop.models.TipoDocumentoModel;
 import org.sistcoop.models.TipoDocumentoProvider;
 import org.sistcoop.models.enums.TipoPersona;
+import org.sistcoop.models.jpa.JpaTipoDocumentoProvider;
+import org.sistcoop.models.jpa.TipoDocumentoAdapter;
 import org.sistcoop.models.jpa.entities.PersonaEntity;
 import org.sistcoop.provider.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RunWith(Arquillian.class)
-public class JpaTipoDocumentoProviderTest {
+public class TipoDocumentoProviderTest {
 
-	Logger log = LoggerFactory.getLogger(JpaTipoDocumentoProviderTest.class);
+	Logger log = LoggerFactory.getLogger(TipoDocumentoProviderTest.class);
 
 	@PersistenceContext
 	private EntityManager em;
