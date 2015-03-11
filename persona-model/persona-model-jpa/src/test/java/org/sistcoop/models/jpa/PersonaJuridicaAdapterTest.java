@@ -1,5 +1,9 @@
 package org.sistcoop.models.jpa;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.util.Calendar;
 import java.util.List;
@@ -9,6 +13,11 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -98,7 +107,7 @@ public class PersonaJuridicaAdapterTest {
 	}		
 
 	@Before
-    public void executedBeforeEach() throws Exception {    
+    public void executedBeforeEach() {    
 		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);
 		
 		PersonaNaturalModel personaNaturalModel = personaNaturalProvider.addPersonaNatural(
@@ -112,7 +121,10 @@ public class PersonaJuridicaAdapterTest {
     }
 	
 	@After
-    public void executedAfterEach() throws Exception {      
+    public void executedAfterEach() throws NotSupportedException, 
+    SystemException, SecurityException, IllegalStateException, 
+    RollbackException, HeuristicMixedException, HeuristicRollbackException {      
+		
 		utx.begin();
 	       
 		//remove all PersonaJuridicaEntity
@@ -148,18 +160,9 @@ public class PersonaJuridicaAdapterTest {
     }
 	   
 	@Test
-	public void addTipoDocumento() throws Exception {
-		PersonaJuridicaEntity personaJuridicaEntity = PersonaJuridicaAdapter.toPersonaJuridicaEntity(personaJuridicaModel, em);		
-		if(personaJuridicaEntity != null) {
-			log.info("Entity:" + personaJuridicaEntity.toString());
-		} else {
-			log.error("Entity es NULL");
-			throw new Exception("Entity es NULL");
-		}
-		
-		log.info("SUCCESS");
+	public void addTipoDocumento()  {
+		PersonaJuridicaEntity personaJuridicaEntity = PersonaJuridicaAdapter.toPersonaJuridicaEntity(personaJuridicaModel, em);				
+		assertThat(personaJuridicaEntity, is(notNullValue()));
 	}
-	
-	
 	
 }

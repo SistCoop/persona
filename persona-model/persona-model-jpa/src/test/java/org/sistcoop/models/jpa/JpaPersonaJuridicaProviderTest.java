@@ -1,16 +1,29 @@
 package org.sistcoop.models.jpa;
 
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.ejb.EJBTransactionRolledbackException;
+import javax.ejb.EJBException;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -101,7 +114,7 @@ public class JpaPersonaJuridicaProviderTest {
 	}		
 
 	@Before
-    public void executedBeforeEach() throws Exception {    
+    public void executedBeforeEach()  {    
 		tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);
 		
 		representanteLegalModel = personaNaturalProvider.addPersonaNatural(
@@ -110,7 +123,10 @@ public class JpaPersonaJuridicaProviderTest {
     }
 	
 	@After
-    public void executedAfterEach() throws Exception {      
+    public void executedAfterEach() throws NotSupportedException, 
+    SystemException, SecurityException, IllegalStateException, 
+    RollbackException, HeuristicMixedException, HeuristicRollbackException {      
+		
 		utx.begin();
 	       
 		//remove all PersonaJuridicaEntity
@@ -146,17 +162,16 @@ public class JpaPersonaJuridicaProviderTest {
     }
 	   
 	@Test
-	public void addPersonaJuridica() throws Exception {				
+	public void addPersonaJuridica()  {				
 		PersonaJuridicaModel model = personaJuridicaProvider.addPersonaJuridica(
 				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
 				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);
 		
-		log.info("Objeto " + model.toString() + " creado");
-		log.info("SUCCESS");
+		assertThat(model, is(notNullValue()));	
 	}
 	
 	@Test
-	public void addPersonaJuridicaUniqueTest() throws Exception {		
+	public void addPersonaJuridicaUniqueTest()  {		
 		PersonaJuridicaModel model1 = personaJuridicaProvider.addPersonaJuridica(
 				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
 				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);
@@ -166,24 +181,17 @@ public class JpaPersonaJuridicaProviderTest {
 			model2 = personaJuridicaProvider.addPersonaJuridica(
 					representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
 					"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);
-		} catch (EJBTransactionRolledbackException e) {
-			log.info("Objeto " + model1.toString() + "creado");
-			log.info("Segundo Objeto no creado por tener el mismo TipoDocumento y NumeroDocumento");				
-		} catch (Exception e) {
-			log.error("No se creó el objeto por una excepcion que no es EntityExistsException");
-			throw new Exception("No se creó el objeto por una excepcion que no es EJBTransactionRolledbackException");					
+		} catch (Exception e) {		
+			assertThat(e, instanceOf(EJBException.class));						
 		}		
 		
-		if(model2 != null) {
-			log.error("Existen dos personas con el mismo TipoDocumento y NumeroDocumento");
-			throw new Exception("Existen dos personas con el mismo TipoDocumento y NumeroDocumento");	
-		}
-		
-		log.info("SUCCESS");
+		assertThat(model1, is(notNullValue()));
+		assertThat(model2, is(nullValue()));
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
-	public void addPersonaJuridicaNotnullAttibutesTest() throws Exception {		
+	public void addPersonaJuridicaNotnullAttibutesTest()  {		
 		Object[] fields = new Object[8];
 		fields[0] = representanteLegalModel;
 		fields[1] = "PER";
@@ -196,73 +204,52 @@ public class JpaPersonaJuridicaProviderTest {
 		
 		Object aux = null;
 		
-		for (int i = 0; i < fields.length; i++) {
-			aux = fields[i];
-			fields[i] = null;
+		for (int i = 0; i < fields.length; i++) {			
 			if(i > 0)
 				fields[i - 1] = aux;
-			
+			aux = fields[i];
+			fields[i] = null;			
+								
 			PersonaJuridicaModel model = null;
-			try {
+			try {				
 				model = personaJuridicaProvider.addPersonaJuridica(
 						(PersonaNaturalModel) fields[0], (String) fields[1], (TipoDocumentoModel) fields[2], (String) fields[3], 
 						(String) fields[4], (Date) fields[5], (TipoEmpresa) fields[6], (Boolean) fields[7]);
-			} catch (EJBTransactionRolledbackException e) {
-				log.info(e.getMessage());				
-			} catch (Exception e) {
-				log.info(e.getMessage());				
-			}		
+			} catch (Exception e) {						
+				assertThat(e, anyOf(instanceOf(NullPointerException.class), instanceOf(EJBException.class)));						
+			}	
 			
-			if(model != null) {
-				log.error("No debe permitir un valor nulo para fields[" + i + "]");
-				throw new Exception("No debe permitir un valor nulo para fields[" + i + "]");	
-			}
-		}
-		
-		log.info("SUCCESS");
+			assertThat(model, is(nullValue()));
+		}	
 	}
 	
 	@Test
-	public void getPersonaJuridicaById() throws Exception {
+	public void getPersonaJuridicaById()  {
 		PersonaJuridicaModel model1 = personaJuridicaProvider.addPersonaJuridica(
 				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
 				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);
 			
-		Long id = model1.getId();
-		
+		Long id = model1.getId();		
 		PersonaJuridicaModel model2 = personaJuridicaProvider.getPersonaJuridicaById(id);
-		if(model1.equals(model2)) {
-			log.info("Objeto:" + model1.toString() + " encontrado");				
-		} else {
-			log.error("Objeto creado:"+ model1.toString() + " no pudo ser encontrado");
-			throw new Exception("Objeto creado:"+ model1.toString() + " no pudo ser encontrado");
-		}
 		
-		log.info("SUCCESS");
+		assertThat(model1, is(equalTo(model2)));
 	}
 	
 	@Test
-	public void getPersonaJuridicaByTipoNumeroDoc() throws Exception {							
+	public void getPersonaJuridicaByTipoNumeroDoc()  {							
 		PersonaJuridicaModel model1 = personaJuridicaProvider.addPersonaJuridica(
 				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
 				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);			
 		
 		TipoDocumentoModel tipoDocumento = model1.getTipoDocumento();
-		String numeroDocumento = model1.getNumeroDocumento();
-		
+		String numeroDocumento = model1.getNumeroDocumento();		
 		PersonaJuridicaModel model2 = personaJuridicaProvider.getPersonaJuridicaByTipoNumeroDoc(tipoDocumento, numeroDocumento);
-		if(model1.equals(model2)) {
-			log.info("Objeto:" + model1.toString() + " encontrado");				
-		} else {
-			log.error("Objeto creado:"+ model1.toString() + " no pudo ser encontrado");
-			throw new Exception("Objeto creado:"+ model1.toString() + " no pudo ser encontrado");
-		}
 		
-		log.info("SUCCESS");
+		assertThat(model1, is(equalTo(model2)));
 	}
 	
 	@Test
-	public void getPersonasJuridicasCount() throws Exception {	
+	public void getPersonasJuridicasCount()  {	
 		Long count1 = personaJuridicaProvider.getPersonasJuridicasCount();
 		
 		CriteriaQuery<Object> cq = this.em.getCriteriaBuilder().createQuery();
@@ -271,39 +258,22 @@ public class JpaPersonaJuridicaProviderTest {
         javax.persistence.Query q = this.em.createQuery(cq);
         Long count2 = (Long) q.getSingleResult();
         
-        if(count1.compareTo(count2) != 0) {
-        	log.error("Count " + count1 + " no es igual a " + count2);
-			throw new Exception("Count " + count1 + " no es igual a " + count2);
-        }
-        
-        log.info("SUCCESS");
+        assertThat(count1, is(equalTo(count2))); 
 	}
 	
 	@Test
-	public void removePersonaJuridica() throws Exception {	
-		PersonaJuridicaModel model = personaJuridicaProvider.addPersonaJuridica(
+	public void removePersonaJuridica()  {	
+		PersonaJuridicaModel model1 = personaJuridicaProvider.addPersonaJuridica(
 				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
 				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);								
 		
-		Long id = model.getId();
-		
-		boolean result = personaJuridicaProvider.removePersonaJuridica(model);
-		if(result) {
-			log.info("Resultado de eliminacion:" + result);
-		} else {
-			log.error("Resultado de eliminacion:" + result);
-			throw new Exception("Resultado de eliminacion:" + result);
-		}
+		Long id = model1.getId();		
+		boolean result = personaJuridicaProvider.removePersonaJuridica(model1);		
 				
-		model = personaJuridicaProvider.getPersonaJuridicaById(id);
-		if(model == null) {
-			log.info("Objeto no encontrado");			
-		} else {
-			log.error("Objeto " + model.toString() + " encontrado, no fue eliminado");
-			throw new Exception("Objeto encontrado, no fue eliminado");
-		}	
+		PersonaJuridicaModel model2 = personaJuridicaProvider.getPersonaJuridicaById(id);
 		
-		log.info("SUCCESS");
+		assertThat(result, is(true));
+		assertThat(model2, is(nullValue()));
 	}
 	
 }

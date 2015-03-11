@@ -1,14 +1,26 @@
 package org.sistcoop.models.jpa;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.ejb.EJBTransactionRolledbackException;
+import javax.ejb.EJBException;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -74,11 +86,14 @@ public class JpaTipoDocumentoProviderTest {
 	}		
 
 	@Before
-    public void executedBeforeEach() throws Exception {      						
+    public void executedBeforeEach() {      						
     }
 	
 	@After
-    public void executedAfterEach() throws Exception {      
+    public void executedAfterEach() throws NotSupportedException, 
+    SystemException, SecurityException, IllegalStateException, 
+    RollbackException, HeuristicMixedException, HeuristicRollbackException {      
+		
 		utx.begin();
          
 		//remove all TipoDocumentoEntity					
@@ -94,247 +109,125 @@ public class JpaTipoDocumentoProviderTest {
     }
 	   
 	@Test
-	public void addTipoDocumento() throws Exception {
-		TipoDocumentoModel model = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
-		if(model != null) {
-			log.info("Objeto " + model.toString() + " creado");							
-		} else {
-			throw new Exception("Objeto no creado");
-		}
-		
-		if(model.getEstado()){
-			log.info("Objeto creado con estado true");
-		} else {
-			log.error("Objeto creado con estado false");
-			throw new Exception("Objeto creado con estado false");
-		}			
-		
-		log.info("SUCCESS");
+	public void addTipoDocumento() {
+		TipoDocumentoModel model = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);		
+		assertThat(model, is(notNullValue()));
+		assertThat(model.getEstado(), is(true));	
 	}
 	
 	@Test
-	public void addTipoDocumentoUniqueTest() throws Exception {
+	public void addTipoDocumentoUniqueTest() {
 		TipoDocumentoModel model1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
 		
 		TipoDocumentoModel model2 = null;
 		try {
 			model2 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
-		} catch (EJBTransactionRolledbackException e) {
-			log.info("Objeto " + model1.toString() + "creado");
-			log.info("Segundo Objeto no creado por tener la misma abreviatura");				
-		} catch (Exception e) {
-			log.error("No se creó el objeto por una excepcion que no es EntityExistsException");
-			throw new Exception("No se creó el objeto por una excepcion que no es EJBTransactionRolledbackException");					
+		} catch (Exception e) {		
+			assertThat(e, instanceOf(EJBException.class));						
 		}		
 		
-		if(model2 != null) {
-			log.error("Existen dos TipoDocumento con la misma abreviatura");
-			throw new Exception("Existen dos TipoDocumento con la misma abreviatura");	
-		}
-		
-		log.info("SUCCESS");			
+		assertThat(model1, is(notNullValue()));
+		assertThat(model2, is(nullValue()));		
 	}
 
 	@Test
-	public void getTipoDocumentoByAbreviatura() throws Exception {
-		TipoDocumentoModel model1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);				
-		
-		String abreviatura = model1.getAbreviatura();
-		
+	public void getTipoDocumentoByAbreviatura() {
+		TipoDocumentoModel model1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);						
+		String abreviatura = model1.getAbreviatura();		
 		TipoDocumentoModel model2 = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(abreviatura);
-		if(model1.equals(model2)) {
-			log.info("Objeto:" + model1.toString() + " encontrado");				
-		} else {
-			log.error("Objeto creado:"+ model1.toString() + " no pudo ser encontrado");
-			throw new Exception("Objeto creado:"+ model1.toString() + " no pudo ser encontrado");
-		}
-		
-		log.info("SUCCESS");
+				
+		assertThat(model1, is(equalTo(model2)));
 	}
 	
 
 	@Test
-	public void getTiposDocumento() throws Exception {
+	public void getTiposDocumento() {
 		List<TipoDocumentoModel> models = tipoDocumentoProvider.getTiposDocumento();
-		for (TipoDocumentoModel tipoDocumentoModel : models) {
-			if(tipoDocumentoModel.getEstado()) {
-				log.info("Objeto:" + tipoDocumentoModel.toString() + " encontrado");
-			} else {
-				throw new Exception("Model inactivo. No debe de devolver documentos inactivos");
-			}				
+		for (TipoDocumentoModel tipoDocumentoModel : models) {			
+			assertThat(tipoDocumentoModel.getEstado(), is(true));
 		}
 	}
 	
 	@Test
-	public void getTiposDocumentoByTipoPersona() throws Exception {		
+	public void getTiposDocumentoByTipoPersona() {		
 		List<TipoDocumentoModel> modelsNatural = tipoDocumentoProvider.getTiposDocumento(TipoPersona.NATURAL);
-		for (TipoDocumentoModel tipoDocumentoModel : modelsNatural) {
-			if(tipoDocumentoModel.getEstado()) {
-				log.info("Objeto:" + tipoDocumentoModel.toString() + " encontrado");
-			} else {
-				throw new Exception("Model inactivo. No debe de devolver documentos inactivos");
-			}
-			
-			if(tipoDocumentoModel.getTipoPersona().equals(TipoPersona.NATURAL)) {
-				log.info("Objeto:" + tipoDocumentoModel.toString() + " es de tipo NATURAL");
-			} else {
-				throw new Exception("Model no pertenece a persona NATURAL");
-			}						
+		for (TipoDocumentoModel tipoDocumentoModel : modelsNatural) {			
+			assertThat(tipoDocumentoModel.getEstado(), is(true));
+			assertThat(tipoDocumentoModel.getTipoPersona(), is(equalTo(TipoPersona.NATURAL)));
 		}
 		
 		List<TipoDocumentoModel> modelsJuridico = tipoDocumentoProvider.getTiposDocumento(TipoPersona.JURIDICA);
 		for (TipoDocumentoModel tipoDocumentoModel : modelsJuridico) {
-			if(tipoDocumentoModel.getEstado()) {
-				log.info("Objeto:" + tipoDocumentoModel.toString() + " encontrado");
-			} else {
-				throw new Exception("Model inactivo. No debe de devolver documentos inactivos");
-			}
-			
-			if(tipoDocumentoModel.getTipoPersona().equals(TipoPersona.JURIDICA)) {
-				log.info("Objeto:" + tipoDocumentoModel.toString() + " es de tipo JURIDICA");
-			} else {
-				throw new Exception("Model no pertenece a persona JURIDICA");
-			}	
+			assertThat(tipoDocumentoModel.getEstado(), is(true));
+			assertThat(tipoDocumentoModel.getTipoPersona(), is(equalTo(TipoPersona.JURIDICA)));	
 		}
 	}
 	
 	@Test
-	public void getTiposDocumentoByEstado() throws Exception {				
+	public void getTiposDocumentoByEstado() {				
 		List<TipoDocumentoModel> modelsActive = tipoDocumentoProvider.getTiposDocumento(true);
 		for (TipoDocumentoModel tipoDocumentoModel : modelsActive) {
-			if(tipoDocumentoModel.getEstado()) {
-				log.info("Objeto:" + tipoDocumentoModel.toString() + " encontrado");
-			} else {
-				throw new Exception("Model inactivo. No debe de devolver documentos inactivos");
-			}							
+			assertThat(tipoDocumentoModel.getEstado(), is(true));								
 		}
 		
 		List<TipoDocumentoModel> modelsInactive = tipoDocumentoProvider.getTiposDocumento(false);
 		for (TipoDocumentoModel tipoDocumentoModel : modelsInactive) {
-			if(!tipoDocumentoModel.getEstado()) {
-				log.info("Objeto:" + tipoDocumentoModel.toString() + " encontrado");
-			} else {
-				throw new Exception("Model activo. No debe de devolver documentos activos");
-			}			
+			assertThat(tipoDocumentoModel.getEstado(), is(false));				
 		}
 	}
 	
 	@Test
-	public void getTiposDocumentoByTipoPersonaAndEstado() throws Exception {				
+	public void getTiposDocumentoByTipoPersonaAndEstado()  {				
 		List<TipoDocumentoModel> modelsNaturalActivo = tipoDocumentoProvider.getTiposDocumento(TipoPersona.NATURAL, true);
 		for (TipoDocumentoModel tipoDocumentoModel : modelsNaturalActivo) {
-			if(tipoDocumentoModel.getEstado()) {
-				log.info("Objeto:" + tipoDocumentoModel.toString() + " encontrado");
-			} else {
-				throw new Exception("Model inactivo. No debe de devolver documentos inactivos");
-			}
-			
-			if(tipoDocumentoModel.getTipoPersona().equals(TipoPersona.NATURAL)) {
-				log.info("Objeto:" + tipoDocumentoModel.toString() + " es de tipo NATURAL");
-			} else {
-				throw new Exception("Model no pertenece a persona NATURAL");
-			}	
+			assertThat(tipoDocumentoModel.getEstado(), is(true));
+			assertThat(tipoDocumentoModel.getTipoPersona(), is(equalTo(TipoPersona.NATURAL)));
 		}
 		
 		List<TipoDocumentoModel> modelsNaturalInactivo = tipoDocumentoProvider.getTiposDocumento(TipoPersona.NATURAL, false);
 		for (TipoDocumentoModel tipoDocumentoModel : modelsNaturalInactivo) {
-			if(!tipoDocumentoModel.getEstado()) {
-				log.info("Objeto:" + tipoDocumentoModel.toString() + " encontrado");
-			} else {
-				throw new Exception("Model activo. No debe de devolver documentos activos");
-			}
-			
-			if(tipoDocumentoModel.getTipoPersona().equals(TipoPersona.NATURAL)) {
-				log.info("Objeto:" + tipoDocumentoModel.toString() + " es de tipo NATURAL");
-			} else {
-				throw new Exception("Model no pertenece a persona NATURAL");
-			}	
+			assertThat(tipoDocumentoModel.getEstado(), is(false));
+			assertThat(tipoDocumentoModel.getTipoPersona(), is(equalTo(TipoPersona.NATURAL)));
 		}
 		
 		List<TipoDocumentoModel> modelsJuridicaActivo = tipoDocumentoProvider.getTiposDocumento(TipoPersona.JURIDICA, true);
 		for (TipoDocumentoModel tipoDocumentoModel : modelsJuridicaActivo) {
-			if(tipoDocumentoModel.getEstado()) {
-				log.info("Objeto:" + tipoDocumentoModel.toString() + " encontrado");
-			} else {
-				throw new Exception("Model inactivo. No debe de devolver documentos inactivos");
-			}
-			
-			if(tipoDocumentoModel.getTipoPersona().equals(TipoPersona.JURIDICA)) {
-				log.info("Objeto:" + tipoDocumentoModel.toString() + " es de tipo JURIDICA");
-			} else {
-				throw new Exception("Model no pertenece a persona JURIDICA");
-			}	
+			assertThat(tipoDocumentoModel.getEstado(), is(true));
+			assertThat(tipoDocumentoModel.getTipoPersona(), is(equalTo(TipoPersona.JURIDICA)));
 		}
 		
 		List<TipoDocumentoModel> modelsJuridicaInactivo = tipoDocumentoProvider.getTiposDocumento(TipoPersona.JURIDICA, false);
 		for (TipoDocumentoModel tipoDocumentoModel : modelsJuridicaInactivo) {
-			if(!tipoDocumentoModel.getEstado()) {
-				log.info("Objeto:" + tipoDocumentoModel.toString() + " encontrado");
-			} else {
-				throw new Exception("Model activo. No debe de devolver documentos activos");
-			}
-			
-			if(tipoDocumentoModel.getTipoPersona().equals(TipoPersona.JURIDICA)) {
-				log.info("Objeto:" + tipoDocumentoModel.toString() + " es de tipo JURIDICA");
-			} else {
-				throw new Exception("Model no pertenece a persona JURIDICA");
-			}	
+			assertThat(tipoDocumentoModel.getEstado(), is(false));
+			assertThat(tipoDocumentoModel.getTipoPersona(), is(equalTo(TipoPersona.JURIDICA)));
 		}
 	}
 	
 	@Test
-	public void desactivarTipoDocumento() throws Exception {			
+	public void desactivarTipoDocumento()  {			
+		TipoDocumentoModel model1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);						
+		
+		String abreviatura = model1.getAbreviatura();		
+		boolean result = tipoDocumentoProvider.desactivarTipoDocumento(model1);
+		
+		TipoDocumentoModel model2 = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(abreviatura);
+		
+		assertThat(result, is(true));
+		assertThat(model2, is(notNullValue()));
+		assertThat(model2.getEstado(), is(false));			
+	}
+	
+	@Test
+	public void removeTipoDocumento()  {			
 		TipoDocumentoModel model1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);				
 		
 		String abreviatura = model1.getAbreviatura();
+		boolean result = tipoDocumentoProvider.removeTipoDocumento(model1);
 		
-		boolean result = tipoDocumentoProvider.desactivarTipoDocumento(model1);
-		if(result) {
-			log.info("Resultado de eliminacion:" + result);
-		} else {
-			log.error("Resultado de eliminacion:" + result);
-			throw new Exception("Resultado de eliminacion:" + result);
-		}
-				
-		TipoDocumentoModel model2 = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(abreviatura);		
-		if(model2 != null) {
-			log.info("Objeto no encontrado");			
-		} else {
-			log.error("Objeto " + model1.toString() + " encontrado, fue eliminado");
-			throw new Exception("Objeto encontrado, fue eliminado");
-		}	
+		TipoDocumentoModel model2 = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(abreviatura);			
 		
-		if(model2.getEstado()) {
-			log.error("Objeto tiene estado TRUE");
-			throw new Exception("Objeto tiene estado TRUE");
-		}
-				
-		log.info("SUCCESS");
-	}
-	
-	@Test
-	public void removeTipoDocumento() throws Exception {			
-		TipoDocumentoModel model = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);				
-		
-		String abreviatura = model.getAbreviatura();
-		
-		boolean result = tipoDocumentoProvider.removeTipoDocumento(model);
-		if(result) {
-			log.info("Resultado de eliminacion:" + result);
-		} else {
-			log.error("Resultado de eliminacion:" + result);
-			throw new Exception("Resultado de eliminacion:" + result);
-		}
-				
-		model = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(abreviatura);
-		if(model == null) {
-			log.info("Objeto no encontrado");			
-		} else {
-			log.error("Objeto " + model.toString() + " encontrado, no fue eliminado");
-			throw new Exception("Objeto encontrado, no fue eliminado");
-		}	
-		
-		log.info("SUCCESS");
+		assertThat(result, is(true));
+		assertThat(model2, is(nullValue()));	
 	}
 	
 }

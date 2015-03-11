@@ -1,16 +1,29 @@
 package org.sistcoop.models.jpa;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.ejb.EJBTransactionRolledbackException;
+import javax.ejb.EJBException;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -89,13 +102,16 @@ public class JpaPersonaNaturalProviderTest {
 	}		
 
 	@Before
-    public void executedBeforeEach() throws Exception {    
+    public void executedBeforeEach() {    
 		tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
     }
 	
 	@After
-    public void executedAfterEach() throws Exception {      
-		 utx.begin();
+    public void executedAfterEach() throws NotSupportedException, 
+    SystemException, SecurityException, IllegalStateException, 
+    RollbackException, HeuristicMixedException, HeuristicRollbackException {      
+		
+		utx.begin();
        
 		//remove all PersonaNaturalEntity
 		List<Object> listPersonaNatural = null;
@@ -122,17 +138,16 @@ public class JpaPersonaNaturalProviderTest {
     }
 	   
 	@Test
-	public void addPersonaNatural() throws Exception {
+	public void addPersonaNatural() {
 		PersonaNaturalModel model = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				Calendar.getInstance().getTime(), Sexo.MASCULINO);
 		
-		log.info("Objeto " + model.toString() + " creado");
-		log.info("SUCCESS");
+		assertThat(model, is(notNullValue()));
 	}
 	
 	@Test
-	public void addPersonaNaturalUniqueTest() throws Exception {		
+	public void addPersonaNaturalUniqueTest()  {		
 		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				Calendar.getInstance().getTime(), Sexo.MASCULINO);
@@ -142,24 +157,17 @@ public class JpaPersonaNaturalProviderTest {
 			model2 = personaNaturalProvider.addPersonaNatural(
 					"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 					Calendar.getInstance().getTime(), Sexo.MASCULINO);
-		} catch (EJBTransactionRolledbackException e) {
-			log.info("Objeto " + model1.toString() + "creado");
-			log.info("Segundo Objeto no creado por tener el mismo TipoDocumento y NumeroDocumento");				
-		} catch (Exception e) {
-			log.error("No se creó el objeto por una excepcion que no es EntityExistsException");
-			throw new Exception("No se creó el objeto por una excepcion que no es EJBTransactionRolledbackException");					
-		}		
+		} catch (Exception e) {		
+			assertThat(e, instanceOf(EJBException.class));						
+		}	
 		
-		if(model2 != null) {
-			log.error("Existen dos personas con el mismo TipoDocumento y NumeroDocumento");
-			throw new Exception("Existen dos personas con el mismo TipoDocumento y NumeroDocumento");	
-		}
-		
-		log.info("SUCCESS");
+		assertThat(model1, is(notNullValue()));
+		assertThat(model2, is(nullValue()));
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
-	public void addPersonaNaturalNotnullAttibutesTest() throws Exception {		
+	public void addPersonaNaturalNotnullAttibutesTest()  {		
 		Object[] fields = new Object[8];
 		fields[0] = "PER";
 		fields[1] = tipoDocumentoModel;
@@ -170,110 +178,87 @@ public class JpaPersonaNaturalProviderTest {
 		fields[6] = Calendar.getInstance().getTime();
 		fields[7] = Sexo.MASCULINO;
 				
+		Object aux = null;
+		
 		for (int i = 0; i < fields.length; i++) {
-			fields[i] = null;
+			if(i > 0)
+				fields[i - 1] = aux;
+			aux = fields[i];
+			fields[i] = null;			
+			
 			PersonaNaturalModel model = null;
 			try {
 				model = personaNaturalProvider.addPersonaNatural(
 						(String) fields[0], (TipoDocumentoModel) fields[1], (String) fields[2], (String) fields[3], 
 						(String) fields[4], (String) fields[5], (Date) fields[6], (Sexo) fields[7]);
-			} catch (EJBTransactionRolledbackException e) {
-				log.info(e.getMessage());				
-			} catch (Exception e) {
-				log.info(e.getMessage());				
-			}		
+			} catch (Exception e) {		
+				assertThat(e, anyOf(instanceOf(NullPointerException.class), instanceOf(EJBException.class)));					
+			}	
 			
-			if(model != null) {
-				log.error("No debe permitir un valor nulo para fields[" + i + "]");
-				throw new Exception("No debe permitir un valor nulo para fields[" + i + "]");	
-			}
-		}
-		
-		log.info("SUCCESS");
+			assertThat(model, is(nullValue()));
+		}			
 	}
 	
 
 	@Test
-	public void getPersonaNaturalById() throws Exception {
+	public void getPersonaNaturalById()  {
 		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				Calendar.getInstance().getTime(), Sexo.MASCULINO);		
 		
-		Long id = model1.getId();
-		
+		Long id = model1.getId();		
 		PersonaNaturalModel model2 = personaNaturalProvider.getPersonaNaturalById(id);
-		if(model1.equals(model2)) {
-			log.info("Objeto:" + model1.toString() + " encontrado");				
-		} else {
-			log.error("Objeto creado:"+ model1.toString() + " no pudo ser encontrado");
-			throw new Exception("Objeto creado:"+ model1.toString() + " no pudo ser encontrado");
-		}
 		
-		log.info("SUCCESS");
+		assertThat(model1, is(equalTo(model2)));
 	}
 	
 	@Test
-	public void getPersonaNaturalByTipoNumeroDoc() throws Exception {							
+	public void getPersonaNaturalByTipoNumeroDoc()  {							
 		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				Calendar.getInstance().getTime(), Sexo.MASCULINO);	
 		
 		TipoDocumentoModel tipoDocumento = model1.getTipoDocumento();
-		String numeroDocumento = model1.getNumeroDocumento();
-		
+		String numeroDocumento = model1.getNumeroDocumento();		
 		PersonaNaturalModel model2 = personaNaturalProvider.getPersonaNaturalByTipoNumeroDoc(tipoDocumento, numeroDocumento);
-		if(model1.equals(model2)) {
-			log.info("Objeto:" + model1.toString() + " encontrado");				
-		} else {
-			log.error("Objeto creado:"+ model1.toString() + " no pudo ser encontrado");
-			throw new Exception("Objeto creado:"+ model1.toString() + " no pudo ser encontrado");
-		}
 		
-		log.info("SUCCESS");
+		assertThat(model1, is(equalTo(model2)));
 	}
 	
 	@Test
-	public void getPersonasNaturales() throws Exception {										
+	public void getPersonasNaturales()  {										
 		List<PersonaNaturalModel> models = personaNaturalProvider.getPersonasNaturales();
 		for (PersonaNaturalModel personaNaturalModel : models) {
-			log.info("Objeto:" + personaNaturalModel.toString() + " encontrado");	
-		}
-		
-		log.info("SUCCESS");
+			assertThat(personaNaturalModel, is(notNullValue()));	
+		}		
 	}
 	
 	@Test
-	public void getPersonasNaturalesFirstResulAndLimit() throws Exception {										
+	public void getPersonasNaturalesFirstResulAndLimit()  {										
 		List<PersonaNaturalModel> models = personaNaturalProvider.getPersonasNaturales(0, 10);
 		for (PersonaNaturalModel personaNaturalModel : models) {
-			log.info("Objeto:" + personaNaturalModel.toString() + " encontrado");	
+			assertThat(personaNaturalModel, is(notNullValue()));
 		}
-		
-		log.info("SUCCESS");
 	}
 	
 	@Test
-	public void searchForFilterText() throws Exception {										
+	public void searchForFilterText()  {										
 		List<PersonaNaturalModel> models = personaNaturalProvider.searchForFilterText("f");
 		for (PersonaNaturalModel personaNaturalModel : models) {
-			log.info("Objeto:" + personaNaturalModel.toString() + " encontrado");	
-		}
-		
-		log.info("SUCCESS");
+			assertThat(personaNaturalModel, is(notNullValue()));
+		}		
 	}
 	
 	@Test
-	public void searchForFilterTextFirstResulAndLimit() throws Exception {										
+	public void searchForFilterTextFirstResulAndLimit()  {										
 		List<PersonaNaturalModel> models = personaNaturalProvider.searchForFilterText("f", 0, 10);
 		for (PersonaNaturalModel personaNaturalModel : models) {
-			log.info("Objeto:" + personaNaturalModel.toString() + " encontrado");	
-		}
-		
-		log.info("SUCCESS");
+			assertThat(personaNaturalModel, is(notNullValue()));
+		}		
 	}
 	
 	@Test
-	public void getPersonasNaturalesCount() throws Exception {	
+	public void getPersonasNaturalesCount()  {	
 		Long count1 = personaNaturalProvider.getPersonasNaturalesCount();
 		
 		CriteriaQuery<Object> cq = this.em.getCriteriaBuilder().createQuery();
@@ -281,40 +266,23 @@ public class JpaPersonaNaturalProviderTest {
         cq.select(this.em.getCriteriaBuilder().count(rt));
         javax.persistence.Query q = this.em.createQuery(cq);
         Long count2 = (Long) q.getSingleResult();
-        
-        if(count1.compareTo(count2) != 0) {
-        	log.error("Count " + count1 + " no es igual a " + count2);
-			throw new Exception("Count " + count1 + " no es igual a " + count2);
-        }
-        
-        log.info("SUCCESS");
+                          
+        assertThat(count1, is(equalTo(count2)));        
 	}
 	
 	@Test
-	public void removePersonaNatural() throws Exception {	
-		PersonaNaturalModel model = personaNaturalProvider.addPersonaNatural(
+	public void removePersonaNatural()  {	
+		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				Calendar.getInstance().getTime(), Sexo.MASCULINO);				
 		
-		Long id = model.getId();
+		Long id = model1.getId();		
+		boolean result = personaNaturalProvider.removePersonaNatural(model1);
 		
-		boolean result = personaNaturalProvider.removePersonaNatural(model);
-		if(result) {
-			log.info("Resultado de eliminacion:" + result);
-		} else {
-			log.error("Resultado de eliminacion:" + result);
-			throw new Exception("Resultado de eliminacion:" + result);
-		}
-				
-		model = personaNaturalProvider.getPersonaNaturalById(id);
-		if(model == null) {
-			log.info("Objeto no encontrado");			
-		} else {
-			log.error("Objeto " + model.toString() + " encontrado, no fue eliminado");
-			throw new Exception("Objeto encontrado, no fue eliminado");
-		}	
+		PersonaNaturalModel model2 = personaNaturalProvider.getPersonaNaturalById(id);
 		
-		log.info("SUCCESS");
+		assertThat(result, is(true));
+		assertThat(model2, is(nullValue()));				
 	}
 	
 }

@@ -1,5 +1,9 @@
 package org.sistcoop.models.jpa;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.util.List;
 
@@ -8,6 +12,11 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -75,14 +84,17 @@ public class TipoDocumentoAdapterTest {
 	}		
 
 	@Before
-    public void executedBeforeEach() throws Exception {    
+    public void executedBeforeEach() {    
 		tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
     }
 	
-	@After
-    public void executedAfterEach() throws Exception {      
-		 utx.begin();
-         
+	@After()
+    public void executedAfterEach() throws NotSupportedException, 
+    SystemException, SecurityException, IllegalStateException, 
+    RollbackException, HeuristicMixedException, HeuristicRollbackException {      
+		
+		utx.begin();
+		
 		//remove all TipoDocumentoEntity
 		tipoDocumentoModel = null;
 		
@@ -92,24 +104,15 @@ public class TipoDocumentoAdapterTest {
 		listTipoDocumento = this.em.createQuery(cqTipoDocumento).getResultList();		
 		for (Object object : listTipoDocumento) {
 			this.em.remove(object);
-		}		
+		}	
 		
-		utx.commit();
+		utx.commit();        					
     }
 	   
 	@Test
-	public void toTipoDocumentoEntity() throws Exception {
-		TipoDocumentoEntity tipoDocumentoEntity = TipoDocumentoAdapter.toTipoDocumentoEntity(tipoDocumentoModel, em);
-		if(tipoDocumentoEntity != null) {
-			log.info("Entity:" + tipoDocumentoEntity.toString());
-		} else {
-			log.error("Entity es NULL");
-			throw new Exception("Entity es NULL");
-		}
-		
-		log.info("SUCCESS");
+	public void toTipoDocumentoEntity() {
+		TipoDocumentoEntity tipoDocumentoEntity = TipoDocumentoAdapter.toTipoDocumentoEntity(tipoDocumentoModel, em);		
+		assertThat(tipoDocumentoEntity, is(notNullValue()));
 	}
-	
-	
 	
 }

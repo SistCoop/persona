@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
 
@@ -30,13 +31,20 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.sistcoop.models.AccionistaModel;
+import org.sistcoop.models.AccionistaProvider;
+import org.sistcoop.models.PersonaJuridicaModel;
+import org.sistcoop.models.PersonaJuridicaProvider;
 import org.sistcoop.models.PersonaNaturalModel;
 import org.sistcoop.models.PersonaNaturalProvider;
 import org.sistcoop.models.TipoDocumentoModel;
 import org.sistcoop.models.TipoDocumentoProvider;
 import org.sistcoop.models.enums.Sexo;
+import org.sistcoop.models.enums.TipoEmpresa;
 import org.sistcoop.models.enums.TipoPersona;
+import org.sistcoop.models.jpa.entities.AccionistaEntity;
 import org.sistcoop.models.jpa.entities.PersonaEntity;
+import org.sistcoop.models.jpa.entities.PersonaJuridicaEntity;
 import org.sistcoop.models.jpa.entities.PersonaNaturalEntity;
 import org.sistcoop.models.jpa.entities.TipoDocumentoEntity;
 import org.sistcoop.provider.Provider;
@@ -44,9 +52,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RunWith(Arquillian.class)
-public class PersonaNaturalAdapterTest {
+public class AccionistaAdapterTest {
 
-	Logger log = LoggerFactory.getLogger(PersonaNaturalAdapterTest.class);
+	Logger log = LoggerFactory.getLogger(AccionistaAdapterTest.class);
 
 	@PersistenceContext
 	private EntityManager em;
@@ -58,9 +66,15 @@ public class PersonaNaturalAdapterTest {
 	private TipoDocumentoProvider tipoDocumentoProvider;
 	
 	@Inject
-	private PersonaNaturalProvider personaNaturalProvider;	
+	private PersonaNaturalProvider personaNaturalProvider;		
 	
-	private PersonaNaturalModel personaNaturalModel;
+	@Inject
+	private PersonaJuridicaProvider personaJuridicaProvider;	
+	
+	@Inject
+	private AccionistaProvider accionistaProvider;
+	
+	private AccionistaModel accionistaModel;
 	
 	@Deployment
 	public static WebArchive createDeployment() {
@@ -72,7 +86,9 @@ public class PersonaNaturalAdapterTest {
 				/**persona-model-api**/
 				.addClass(Provider.class)										
 				.addClass(TipoDocumentoProvider.class)
+				.addClass(PersonaJuridicaProvider.class)
 				.addClass(PersonaNaturalProvider.class)
+				.addClass(AccionistaProvider.class)
 				
 				.addPackage(TipoDocumentoModel.class.getPackage())
 				.addPackage(TipoPersona.class.getPackage())								
@@ -80,9 +96,15 @@ public class PersonaNaturalAdapterTest {
 				/**persona-model-jpa**/
 				.addClass(JpaTipoDocumentoProvider.class)
 				.addClass(TipoDocumentoAdapter.class)		
-								
+						
 				.addClass(JpaPersonaNaturalProvider.class)
-				.addClass(PersonaNaturalAdapter.class)						
+				.addClass(PersonaNaturalAdapter.class)	
+				
+				.addClass(JpaPersonaJuridicaProvider.class)
+				.addClass(PersonaJuridicaAdapter.class)						
+				
+				.addClass(JpaAccionistaProvider.class)
+				.addClass(AccionistaAdapter.class)	
 				
 				.addPackage(PersonaEntity.class.getPackage())
 				
@@ -96,21 +118,49 @@ public class PersonaNaturalAdapterTest {
 	}		
 
 	@Before
-    public void executedBeforeEach() {    
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
-		
-		personaNaturalModel = personaNaturalProvider.addPersonaNatural(
-				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
+    public void executedBeforeEach()  {    
+		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
+				
+		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.addPersonaNatural(
+				"PER", tipoDocumentoModel1, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				Calendar.getInstance().getTime(), Sexo.MASCULINO);
+		
+		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.addPersonaJuridica(
+				representanteLegalModel, "PER", tipoDocumentoModel2, "10467793549", 
+				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);
+				
+		accionistaModel = accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);
+		
     }
 	
 	@After
     public void executedAfterEach() throws NotSupportedException, 
     SystemException, SecurityException, IllegalStateException, 
-    RollbackException, HeuristicMixedException, HeuristicRollbackException  {      
+    RollbackException, HeuristicMixedException, HeuristicRollbackException {      
 		
 		utx.begin();
-	       
+	     
+		//remove all AccionistaEntity
+		List<Object> listAccionista = null;
+		CriteriaQuery<Object> cqAccionista = this.em.getCriteriaBuilder().createQuery();
+		cqAccionista.select(cqAccionista.from(AccionistaEntity.class));
+		listAccionista = this.em.createQuery(cqAccionista).getResultList();
+			
+		for (Object object : listAccionista) {
+			this.em.remove(object);
+		}
+				
+		//remove all PersonaJuridicaEntity
+		List<Object> listPersonaJuridica = null;
+		CriteriaQuery<Object> cqPersonaJuridica = this.em.getCriteriaBuilder().createQuery();
+		cqPersonaJuridica.select(cqPersonaJuridica.from(PersonaJuridicaEntity.class));
+		listPersonaJuridica = this.em.createQuery(cqPersonaJuridica).getResultList();
+			
+		for (Object object : listPersonaJuridica) {
+			this.em.remove(object);
+		}
+				
 		//remove all PersonaNaturalEntity
 		List<Object> listPersonaNatural = null;
 		CriteriaQuery<Object> cqPersonaNatural = this.em.getCriteriaBuilder().createQuery();
@@ -119,8 +169,8 @@ public class PersonaNaturalAdapterTest {
 			
 		for (Object object : listPersonaNatural) {
 			this.em.remove(object);
-		}
-			
+		}					
+				
 		//remove all TipoDocumentoEntity				
 		List<Object> listTipoDocumento = null;
 		CriteriaQuery<Object> cqTipoDocumento = this.em.getCriteriaBuilder().createQuery();
@@ -134,9 +184,9 @@ public class PersonaNaturalAdapterTest {
     }
 	   
 	@Test
-	public void addTipoDocumento()  {
-		PersonaNaturalEntity personaNaturalEntity = PersonaNaturalAdapter.toPersonaNaturalEntity(personaNaturalModel, em);		
-		assertThat(personaNaturalEntity, is(notNullValue()));
+	public void addTipoDocumento() {
+		AccionistaEntity accionistaEntity = AccionistaAdapter.toAccionistaEntity(accionistaModel, em);		
+		assertThat(accionistaEntity, is(notNullValue()));		
 	}
 	
 }
