@@ -1,1 +1,1 @@
-include "persona-core", "persona-core-jaxrs", "persona-services", "persona-model:persona-model-api", "persona-model:persona-model-jpa", "persona-model:persona-model-mongo", "persona-integration:persona-admin-client"
+include "persona-core", "persona-core-jaxrs", "persona-services", "persona-model:persona-model-api", "persona-model:persona-model-jpa", "persona-model:persona-model-mongo", "persona-integration:persona-admin-client", "persona-testsuite:persona-testsuite-model" 

@@ -1,7 +1,30 @@
 
-description = 'persona sub project' 
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'eclipse' 
+	  
+sourceCompatibility = 1.7  
+targetCompatibility = 1.7
+
+description = 'persona project' 
 
 ext.jbossHome = hasProperty('jbossHome') ? jbossHome : "C:/Users/Huertas/wildfly-8.1.0.Final"
+
+repositories {   
+	maven { url 'https://repository.jboss.org/nexus/content/groups/public-jboss' }  
+	maven { url 'https://repository.jboss.org/nexus/content/repositories' }  
+	maven { url 'https://repository.jboss.org/nexus/content/repositories/thirdparty-releases' } 
+	    	 	
+    mavenCentral()
+}
+    
+dependencies {
+     compile project(":persona-core")
+     compile project(":persona-core-jaxrs")
+     compile project(":persona-integration")
+     compile project(":persona-services")     
+     compile project(":persona-model")           
+}
 
 subprojects {        
     

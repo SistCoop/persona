@@ -1,0 +1,5 @@
+dependencies {
+	compile project(':persona-model:persona-model-api')
+	compile project(':persona-model:persona-model-jpa')
+	compile project(':persona-model:persona-model-mongo')
+}
