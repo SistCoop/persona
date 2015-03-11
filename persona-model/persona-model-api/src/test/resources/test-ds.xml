@@ -3,12 +3,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema
 	http://docs.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
-
-	<container qualifier="jboss" default="true">
-		<configuration>			
-			<property name="jbossHome">C:\Users\Huertas\wildfly-8.1.0.Final/</property>
-		</configuration>
-	</container>
 	
 	<datasource jndi-name="java:jboss/datasources/personaTestDS"
 		pool-name="personaTest" enabled="true" use-java-context="true">
@@ -19,5 +13,5 @@
 			<password>123456</password>
 		</security>
 	</datasource>
-
+	
 </datasources>
