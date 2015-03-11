@@ -1,7 +1,7 @@
 
 description = 'persona sub project' 
 
-ext.jbossHome = hasProperty('jbossHome') ? jbossHome : "C:/Users/Huertas/wildfly-8.1.0.Final"
+ext.jbossHome = hasProperty('jbossHome') ? jbossHome : "C:/Users/carlos/wildfly-8.1.0.Final"
 
 subprojects {        
     

@@ -62,7 +62,8 @@ public class JpaTipoDocumentoProviderTest {
 				.addClass(TipoDocumentoEntity.class)
 				
 				.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
-				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
+				.addAsWebInfResource("test-ds.xml");
 
 		war.addAsLibraries(dependencies);
 
