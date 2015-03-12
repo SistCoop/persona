@@ -1,4 +1,9 @@
 dependencies {
-	//compile project(':persona-integration:persona-admin')
-	//compile project(':persona-services')	
+	testCompile 'org.jboss.arquillian.extension:arquillian-rest-client-api:1.0.0.Alpha3'
+    testCompile 'org.jboss.arquillian.extension:arquillian-rest-client-impl-3x:1.0.0.Alpha3'
+    testCompile 'org.jboss.resteasy:resteasy-jackson-provider:3.0.10.Final'
+       
+    compile project(':persona-integration:persona-client')
+	compile project(':persona-services')   	   
 }
+
