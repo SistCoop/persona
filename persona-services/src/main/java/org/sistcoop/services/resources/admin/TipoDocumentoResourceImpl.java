@@ -1,5 +1,6 @@
 package org.sistcoop.services.resources.admin;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.Context;
@@ -14,6 +15,7 @@ import org.sistcoop.models.utils.ModelToRepresentation;
 import org.sistcoop.models.utils.RepresentationToModel;
 import org.sistcoop.representations.idm.TipoDocumentoRepresentation;
 
+@Stateless
 public class TipoDocumentoResourceImpl implements TipoDocumentoResource {
 
 	@Inject

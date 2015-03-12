@@ -1,5 +1,6 @@
 package org.sistcoop.services.resources.admin;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -16,6 +17,7 @@ import org.sistcoop.models.utils.ModelToRepresentation;
 import org.sistcoop.models.utils.RepresentationToModel;
 import org.sistcoop.representations.idm.PersonaNaturalRepresentation;
 
+@Stateless
 public class PersonaNaturalResourceImpl implements PersonaNaturalResource {
 
 	@Inject

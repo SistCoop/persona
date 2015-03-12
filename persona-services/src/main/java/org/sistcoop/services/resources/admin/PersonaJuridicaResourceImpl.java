@@ -3,6 +3,7 @@ package org.sistcoop.services.resources.admin;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.Context;
@@ -24,6 +25,7 @@ import org.sistcoop.models.utils.RepresentationToModel;
 import org.sistcoop.representations.idm.AccionistaRepresentation;
 import org.sistcoop.representations.idm.PersonaJuridicaRepresentation;
 
+@Stateless
 public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
 
 	@Inject

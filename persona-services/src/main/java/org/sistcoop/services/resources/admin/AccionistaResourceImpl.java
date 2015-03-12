@@ -1,5 +1,6 @@
 package org.sistcoop.services.resources.admin;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
@@ -10,6 +11,7 @@ import org.sistcoop.models.AccionistaProvider;
 import org.sistcoop.models.utils.ModelToRepresentation;
 import org.sistcoop.representations.idm.AccionistaRepresentation;
 
+@Stateless
 public class AccionistaResourceImpl implements AccionistaResource {
 	@Inject
 	protected AccionistaProvider accionistaProvider;

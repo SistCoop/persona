@@ -3,6 +3,7 @@ package org.sistcoop.services.resources.admin;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.sistcoop.admin.client.resource.PersonasJuridicasResource;
@@ -11,6 +12,7 @@ import org.sistcoop.models.PersonaJuridicaProvider;
 import org.sistcoop.models.utils.ModelToRepresentation;
 import org.sistcoop.representations.idm.PersonaJuridicaRepresentation;
 
+@Stateless
 public class PersonasJuridicasResourceImpl implements PersonasJuridicasResource {
 
 	@Inject
