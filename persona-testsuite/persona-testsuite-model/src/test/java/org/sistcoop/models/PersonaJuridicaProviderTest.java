@@ -8,7 +8,9 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
-import java.util.Calendar;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJBException;
@@ -24,12 +26,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.sistcoop.models.PersonaJuridicaModel;
-import org.sistcoop.models.PersonaJuridicaProvider;
-import org.sistcoop.models.PersonaNaturalModel;
-import org.sistcoop.models.PersonaNaturalProvider;
-import org.sistcoop.models.TipoDocumentoModel;
-import org.sistcoop.models.TipoDocumentoProvider;
 import org.sistcoop.models.enums.Sexo;
 import org.sistcoop.models.enums.TipoEmpresa;
 import org.sistcoop.models.enums.TipoPersona;
@@ -48,6 +44,8 @@ import org.slf4j.LoggerFactory;
 public class PersonaJuridicaProviderTest {
 
 	Logger log = LoggerFactory.getLogger(PersonaJuridicaProviderTest.class);
+	
+	private Date date;
 	
 	@Inject
 	private TipoDocumentoProvider tipoDocumentoProvider;
@@ -96,15 +94,18 @@ public class PersonaJuridicaProviderTest {
 		war.addAsLibraries(dependencies);
 
 		return war;
-	}		
-
+	}			
+	
 	@Before
-    public void executedBeforeEach()  {    
+    public void executedBeforeEach() throws ParseException  {    
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		date = formatter.parse("01/01/1991");
+		
 		tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);
 		
 		representanteLegalModel = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				Calendar.getInstance().getTime(), Sexo.MASCULINO);					
+				date, Sexo.MASCULINO);					
     }
 	
 	@After
@@ -132,7 +133,7 @@ public class PersonaJuridicaProviderTest {
 	public void addPersonaJuridica()  {				
 		PersonaJuridicaModel model = personaJuridicaProvider.addPersonaJuridica(
 				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
-				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);
+				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
 		
 		assertThat(model, is(notNullValue()));	
 	}
@@ -141,13 +142,13 @@ public class PersonaJuridicaProviderTest {
 	public void addPersonaJuridicaUniqueTest()  {		
 		PersonaJuridicaModel model1 = personaJuridicaProvider.addPersonaJuridica(
 				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
-				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);
+				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
 				
 		PersonaJuridicaModel model2 = null;
 		try {
 			model2 = personaJuridicaProvider.addPersonaJuridica(
 					representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
-					"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);
+					"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
 		} catch (Exception e) {		
 			assertThat(e, instanceOf(EJBException.class));						
 		}		
@@ -160,7 +161,7 @@ public class PersonaJuridicaProviderTest {
 	public void getPersonaJuridicaById()  {
 		PersonaJuridicaModel model1 = personaJuridicaProvider.addPersonaJuridica(
 				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
-				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);
+				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
 			
 		Long id = model1.getId();		
 		PersonaJuridicaModel model2 = personaJuridicaProvider.getPersonaJuridicaById(id);
@@ -172,7 +173,7 @@ public class PersonaJuridicaProviderTest {
 	public void getPersonaJuridicaByTipoNumeroDoc()  {							
 		PersonaJuridicaModel model1 = personaJuridicaProvider.addPersonaJuridica(
 				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
-				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);			
+				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);			
 		
 		TipoDocumentoModel tipoDocumento = model1.getTipoDocumento();
 		String numeroDocumento = model1.getNumeroDocumento();		
@@ -185,7 +186,7 @@ public class PersonaJuridicaProviderTest {
 	public void removePersonaJuridica()  {	
 		PersonaJuridicaModel model1 = personaJuridicaProvider.addPersonaJuridica(
 				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
-				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);								
+				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);								
 		
 		Long id = model1.getId();		
 		boolean result = personaJuridicaProvider.removePersonaJuridica(model1);		

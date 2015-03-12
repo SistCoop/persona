@@ -10,25 +10,18 @@ import static org.junit.Assert.assertThat;
 import java.io.File;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.ejb.EJBException;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.sistcoop.models.TipoDocumentoModel;
-import org.sistcoop.models.TipoDocumentoProvider;
 import org.sistcoop.models.enums.TipoPersona;
 import org.sistcoop.models.jpa.JpaTipoDocumentoProvider;
 import org.sistcoop.models.jpa.TipoDocumentoAdapter;
@@ -38,15 +31,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RunWith(Arquillian.class)
+@UsingDataSet("empty.xml")
 public class TipoDocumentoProviderTest {
 
-	Logger log = LoggerFactory.getLogger(TipoDocumentoProviderTest.class);
-
-	@PersistenceContext
-	private EntityManager em;
-
-	@Resource           
-	private UserTransaction utx; 
+	Logger log = LoggerFactory.getLogger(TipoDocumentoProviderTest.class);	
 	
 	@Inject
 	private TipoDocumentoProvider tipoDocumentoProvider;	
@@ -78,20 +66,7 @@ public class TipoDocumentoProviderTest {
 		war.addAsLibraries(dependencies);
 
 		return war;
-	}		
-
-	@Before
-    public void executedBeforeEach() {      						
-    }
-	
-	@After
-    public void executedAfterEach() {      
-		// remove all TipoDocumentoModels
-		List<TipoDocumentoModel> tipoDocumentoModels = tipoDocumentoProvider.getTiposDocumento();
-		for (TipoDocumentoModel tipoDocumentoModel : tipoDocumentoModels) {
-			tipoDocumentoProvider.removeTipoDocumento(tipoDocumentoModel);
-		}
-    }
+	}			
 	   
 	@Test
 	public void addTipoDocumento() {
@@ -118,6 +93,7 @@ public class TipoDocumentoProviderTest {
 	@Test
 	public void getTipoDocumentoByAbreviatura() {
 		TipoDocumentoModel model1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);						
+		
 		String abreviatura = model1.getAbreviatura();		
 		TipoDocumentoModel model2 = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(abreviatura);
 				
@@ -126,7 +102,7 @@ public class TipoDocumentoProviderTest {
 	
 
 	@Test
-	public void getTiposDocumento() {
+	public void getTiposDocumento() {		
 		List<TipoDocumentoModel> models = tipoDocumentoProvider.getTiposDocumento();
 		for (TipoDocumentoModel tipoDocumentoModel : models) {			
 			assertThat(tipoDocumentoModel.getEstado(), is(true));

@@ -8,7 +8,9 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
-import java.util.Calendar;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -20,18 +22,16 @@ import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.sistcoop.models.PersonaNaturalModel;
-import org.sistcoop.models.PersonaNaturalProvider;
-import org.sistcoop.models.TipoDocumentoModel;
-import org.sistcoop.models.TipoDocumentoProvider;
 import org.sistcoop.models.enums.Sexo;
 import org.sistcoop.models.enums.TipoPersona;
 import org.sistcoop.models.jpa.JpaPersonaNaturalProvider;
@@ -44,15 +44,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RunWith(Arquillian.class)
+@UsingDataSet("empty.xml")
 public class PersonaNaturalProviderTest {
 
 	Logger log = LoggerFactory.getLogger(PersonaNaturalProviderTest.class);
 
-	@PersistenceContext
-	private EntityManager em;
-
-	@Resource           
-	private UserTransaction utx; 
+	private Date date;	
 	
 	@Inject
 	private PersonaNaturalProvider personaNaturalProvider;		
@@ -93,10 +90,13 @@ public class PersonaNaturalProviderTest {
 		war.addAsLibraries(dependencies);
 
 		return war;
-	}		
-
+	}			
+	
 	@Before
-    public void executedBeforeEach() {    
+    public void executedBeforeEach() throws ParseException {   
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		date = formatter.parse("01/01/1991");
+		
 		tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
     }
 	
@@ -119,7 +119,7 @@ public class PersonaNaturalProviderTest {
 	public void addPersonaNatural() {
 		PersonaNaturalModel model = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				Calendar.getInstance().getTime(), Sexo.MASCULINO);
+				date, Sexo.MASCULINO);
 		
 		assertThat(model, is(notNullValue()));
 	}
@@ -128,60 +128,26 @@ public class PersonaNaturalProviderTest {
 	public void addPersonaNaturalUniqueTest()  {		
 		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				Calendar.getInstance().getTime(), Sexo.MASCULINO);
+				date, Sexo.MASCULINO);
 		
 		PersonaNaturalModel model2 = null;
 		try {
 			model2 = personaNaturalProvider.addPersonaNatural(
 					"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-					Calendar.getInstance().getTime(), Sexo.MASCULINO);
+					date, Sexo.MASCULINO);
 		} catch (Exception e) {		
 			assertThat(e, instanceOf(EJBException.class));						
 		}	
 		
 		assertThat(model1, is(notNullValue()));
 		assertThat(model2, is(nullValue()));
-	}
-	
-	/*@SuppressWarnings("unchecked")
-	@Test
-	public void addPersonaNaturalNotnullAttibutesTest()  {		
-		Object[] fields = new Object[8];
-		fields[0] = "PER";
-		fields[1] = tipoDocumentoModel;
-		fields[2] = "12345678";
-		fields[3] = "Flores";
-		fields[4] = "Huertas";
-		fields[5] = "Jhon wilber";
-		fields[6] = Calendar.getInstance().getTime();
-		fields[7] = Sexo.MASCULINO;
-				
-		Object aux = null;
-		
-		for (int i = 0; i < fields.length; i++) {
-			if(i > 0)
-				fields[i - 1] = aux;
-			aux = fields[i];
-			fields[i] = null;			
-			
-			PersonaNaturalModel model = null;
-			try {
-				model = personaNaturalProvider.addPersonaNatural(
-						(String) fields[0], (TipoDocumentoModel) fields[1], (String) fields[2], (String) fields[3], 
-						(String) fields[4], (String) fields[5], (Date) fields[6], (Sexo) fields[7]);
-			} catch (Exception e) {		
-				assertThat(e, anyOf(instanceOf(NullPointerException.class), instanceOf(EJBException.class)));					
-			}	
-			
-			assertThat(model, is(nullValue()));
-		}			
-	}*/	
+	}	
 
 	@Test
 	public void getPersonaNaturalById()  {
 		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				Calendar.getInstance().getTime(), Sexo.MASCULINO);		
+				date, Sexo.MASCULINO);		
 		
 		Long id = model1.getId();		
 		PersonaNaturalModel model2 = personaNaturalProvider.getPersonaNaturalById(id);
@@ -193,7 +159,7 @@ public class PersonaNaturalProviderTest {
 	public void getPersonaNaturalByTipoNumeroDoc()  {							
 		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				Calendar.getInstance().getTime(), Sexo.MASCULINO);	
+				date, Sexo.MASCULINO);	
 		
 		TipoDocumentoModel tipoDocumento = model1.getTipoDocumento();
 		String numeroDocumento = model1.getNumeroDocumento();		
@@ -238,7 +204,7 @@ public class PersonaNaturalProviderTest {
 	public void removePersonaNatural()  {	
 		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				Calendar.getInstance().getTime(), Sexo.MASCULINO);				
+				date, Sexo.MASCULINO);				
 		
 		Long id = model1.getId();		
 		boolean result = personaNaturalProvider.removePersonaNatural(model1);

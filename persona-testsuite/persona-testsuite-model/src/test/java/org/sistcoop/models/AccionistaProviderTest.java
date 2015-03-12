@@ -9,7 +9,9 @@ import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.Calendar;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJBException;
@@ -53,6 +55,8 @@ import org.slf4j.LoggerFactory;
 public class AccionistaProviderTest {
 
 	Logger log = LoggerFactory.getLogger(AccionistaProviderTest.class);	
+	
+	private Date date;
 	
 	@Inject
 	private TipoDocumentoProvider tipoDocumentoProvider;
@@ -109,26 +113,30 @@ public class AccionistaProviderTest {
 
 		return war;
 	}		
-
+	
+	
 	@Before
-    public void executedBeforeEach()  {    
+    public void executedBeforeEach() throws ParseException  {    
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		date = formatter.parse("01/01/1991");
+		
 		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
 		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
 				
 		representanteLegalModel = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel1, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				Calendar.getInstance().getTime(), Sexo.MASCULINO);
+				date, Sexo.MASCULINO);
 		
 		personaJuridicaModel = personaJuridicaProvider.addPersonaJuridica(
 				representanteLegalModel, "PER", tipoDocumentoModel2, "10467793549", 
-				"Softgreen S.A.C.", Calendar.getInstance().getTime(), TipoEmpresa.PRIVADA, true);								
+				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);								
     }
 	
 	@After
     public void executedAfterEach() {      		
 		//remove all AccionistaModel
-		List<AccionistaModel> accionistasModels = personaJuridicaModel.getAccionistas();
-		for (AccionistaModel accionistaModel : accionistasModels) {
+		List<AccionistaModel> accionistasModels = personaJuridicaModel.getAccionistas();			
+		for (AccionistaModel accionistaModel : accionistasModels) {			
 			accionistaProvider.removeAccionista(accionistaModel);
 		}
 		
@@ -137,8 +145,7 @@ public class AccionistaProviderTest {
 		for (PersonaNaturalModel personaNaturalModel : personaNaturalModels) {
 			personaNaturalProvider.removePersonaNatural(personaNaturalModel);
 		}
-
-		/*
+				
 		//remove all PersonaJuridicaModel
 		List<PersonaJuridicaModel> personaJuridicaModels = personaJuridicaProvider.getPersonasJuridicas();
 		for (PersonaJuridicaModel personaJuridicaModel : personaJuridicaModels) {
@@ -149,8 +156,7 @@ public class AccionistaProviderTest {
 		List<TipoDocumentoModel> tipoDocumentoModels = tipoDocumentoProvider.getTiposDocumento();
 		for (TipoDocumentoModel tipoDocumentoModel : tipoDocumentoModels) {
 			tipoDocumentoProvider.removeTipoDocumento(tipoDocumentoModel);
-		}*/
-
+		}
     }
 	   
 	@Test
@@ -160,7 +166,7 @@ public class AccionistaProviderTest {
 		assertThat(model, is(notNullValue()));
 	}
 	
-	/*@Test
+	@Test
 	public void addAccionistaUniqueTest()  {		
 		AccionistaModel model1 = accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);
 		
@@ -196,6 +202,6 @@ public class AccionistaProviderTest {
 		
 		assertThat(result, is(true));
 		assertThat(model2, is(nullValue()));				
-	}*/
+	}
 	
 }
