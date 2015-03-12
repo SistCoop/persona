@@ -18,18 +18,6 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-/**
- * {@link ExceptionMapper} for {@link ValidationException}.
- * <p>
- * Send a {@link ViolationReport} in {@link Response} in addition to HTTP
- * 400/500 status code. Supported media types are: {@code application/json} /
- * {@code application/xml} (if appropriate provider is registered on server).
- * </p>
- * 
- * @see org.jboss.resteasy.api.validation.ResteasyViolationExceptionMapper The
- *      original WildFly class:
- *      {@code org.jboss.resteasy.api.validation.ResteasyViolationExceptionMapper}
- */
 @Provider
 public class ValidationExceptionMapper implements ExceptionMapper<ValidationException> {
 
@@ -105,23 +93,12 @@ public class ValidationExceptionMapper implements ExceptionMapper<ValidationExce
 		Iterator<MediaType> it = accept.iterator();
 		while (it.hasNext()) {
 			MediaType mt = it.next();
-			/*
-			 * application/xml media type causes an exception:
-			 * org.jboss.resteasy.core.NoMessageBodyWriterFoundFailure: Could
-			 * not find MessageBodyWriter for response object of type:
-			 * org.jboss.resteasy.api.validation.ViolationReport of media type:
-			 * application/xml
-			 */
-			/*
-			 * if (MediaType.APPLICATION_XML_TYPE.getType().equals(mt.getType())
-			 * &&
-			 * MediaType.APPLICATION_XML_TYPE.getSubtype().equals(mt.getSubtype
-			 * ())) { return MediaType.APPLICATION_XML_TYPE; }
-			 */
+
 			if (MediaType.APPLICATION_JSON_TYPE.getType().equals(mt.getType()) && MediaType.APPLICATION_JSON_TYPE.getSubtype().equals(mt.getSubtype())) {
 				return MediaType.APPLICATION_JSON_TYPE;
 			}
 		}
 		return null;
 	}
+	
 }

@@ -16,6 +16,35 @@
  */
 package org.sistcoop.admin.client.resource;
 
-public class MaestroResource {
+import java.util.List;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import org.sistcoop.representations.idm.EstadoCivilRepresentation;
+import org.sistcoop.representations.idm.SexoRepresentation;
+import org.sistcoop.representations.idm.TipoEmpresaRepresentation;
+import org.sistcoop.representations.idm.TipoPersonaRepresentation;
+
+@Produces(MediaType.APPLICATION_JSON)
+public interface MaestroResource {
+
+	@GET
+	@Path("/tiposPersona")
+	public List<TipoPersonaRepresentation> getTipoPersonas();
+
+	@GET
+	@Path("/estadosCiviles")
+	public List<EstadoCivilRepresentation> getEstadosCiviles();
+
+	@GET
+	@Path("/sexos")
+	public List<SexoRepresentation> getSexos();
+
+	@GET
+	@Path("/tiposEmpresa")
+	public List<TipoEmpresaRepresentation> getTiposEmpresa();
 
 }

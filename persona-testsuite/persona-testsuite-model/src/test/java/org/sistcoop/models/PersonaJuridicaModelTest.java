@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.sistcoop.models.enums.Sexo;
 import org.sistcoop.models.enums.TipoEmpresa;
 import org.sistcoop.models.enums.TipoPersona;
+import org.sistcoop.models.jpa.AccionistaAdapter;
 import org.sistcoop.models.jpa.JpaPersonaJuridicaProvider;
 import org.sistcoop.models.jpa.JpaPersonaNaturalProvider;
 import org.sistcoop.models.jpa.JpaTipoDocumentoProvider;
@@ -79,7 +80,9 @@ public class PersonaJuridicaModelTest {
 				.addClass(PersonaNaturalAdapter.class)	
 				
 				.addClass(JpaPersonaJuridicaProvider.class)
-				.addClass(PersonaJuridicaAdapter.class)						
+				.addClass(PersonaJuridicaAdapter.class)
+				
+				.addClass(AccionistaAdapter.class)
 				
 				.addPackage(PersonaEntity.class.getPackage())
 				

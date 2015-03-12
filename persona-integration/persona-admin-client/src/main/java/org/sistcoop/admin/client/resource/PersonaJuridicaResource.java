@@ -71,16 +71,6 @@ public interface PersonaJuridicaResource {
 	/**
 	 * ACCIONISTA
 	 */
-	@GET
-	@Path("/{id}/accionistas/{idAccionista}")
-	public AccionistaRepresentation findAccionistaById(
-			@PathParam("id") 
-			@NotNull 
-			@Min(value = 1) Long id,
-			
-			@PathParam("idAccionista") 			
-			@NotNull 
-			@Min(value = 1) Long idAccionista);
 
 	@GET
 	@Path("/{id}/accionistas")
@@ -97,31 +87,6 @@ public interface PersonaJuridicaResource {
 			@Min(value = 1) Long id,
 			
 			@NotNull
-			@Valid AccionistaRepresentation accionistaRepresentation);
-
-	@PUT
-	@Path("/{id}/accionistas/{idAccionista}")
-	public void updateAccionista(
-			@PathParam("id") 
-			@NotNull 
-			@Min(value = 1) Long id,
-			
-			@PathParam("idAccionista") 			
-			@NotNull 
-			@Min(value = 1) Long idAccionista,
-			
-			@NotNull
-			@Valid AccionistaRepresentation accionistaRepresentation);
-
-	@DELETE
-	@Path("/{id}/accionistas/{idAccionista}")
-	public void removeAccionista(
-			@PathParam("id") 
-			@NotNull 
-			@Min(value = 1) Long id,
-			
-			@PathParam("idAccionista") 			
-			@NotNull 
-			@Min(value = 1) Long idAccionista);
+			@Valid AccionistaRepresentation accionistaRepresentation);	
 
 }
