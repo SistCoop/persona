@@ -61,13 +61,9 @@ public class JpaPersonaJuridicaProvider implements PersonaJuridicaProvider {
 	}
 
 	@Override
-	public PersonaJuridicaModel getPersonaJuridicaById(Long id) {
-		if(id == null)
-			return null;
-		PersonaJuridicaEntity personaJuridicaEntity = em.find(PersonaJuridicaEntity.class, id);
-		if(personaJuridicaEntity == null)
-			return null;
-		return new PersonaJuridicaAdapter(em, personaJuridicaEntity);
+	public PersonaJuridicaModel getPersonaJuridicaById(Long id) {	
+		PersonaJuridicaEntity personaJuridicaEntity = em.find(PersonaJuridicaEntity.class, id);		
+		return personaJuridicaEntity != null ? new PersonaJuridicaAdapter(em, personaJuridicaEntity) : null;	
 	}
 
 	@Override

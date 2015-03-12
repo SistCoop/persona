@@ -1,7 +1,6 @@
 package org.sistcoop.models;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -12,29 +11,19 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
-import javax.ejb.EJBException;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.sistcoop.models.AccionistaModel;
-import org.sistcoop.models.AccionistaProvider;
-import org.sistcoop.models.PersonaJuridicaModel;
-import org.sistcoop.models.PersonaJuridicaProvider;
-import org.sistcoop.models.PersonaNaturalModel;
-import org.sistcoop.models.PersonaNaturalProvider;
-import org.sistcoop.models.TipoDocumentoModel;
-import org.sistcoop.models.TipoDocumentoProvider;
 import org.sistcoop.models.enums.Sexo;
 import org.sistcoop.models.enums.TipoEmpresa;
 import org.sistcoop.models.enums.TipoPersona;
@@ -52,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RunWith(Arquillian.class)
+@UsingDataSet("empty.xml")
 public class AccionistaProviderTest {
 
 	Logger log = LoggerFactory.getLogger(AccionistaProviderTest.class);	
@@ -69,9 +59,6 @@ public class AccionistaProviderTest {
 	
 	@Inject
 	private AccionistaProvider accionistaProvider;
-	
-	private PersonaJuridicaModel personaJuridicaModel;	
-	private PersonaNaturalModel representanteLegalModel;
 	
 	@Deployment
 	public static WebArchive createDeployment() {
@@ -114,75 +101,43 @@ public class AccionistaProviderTest {
 		return war;
 	}		
 	
-	
 	@Before
-    public void executedBeforeEach() throws ParseException  {    
+    public void executedBeforeEach() throws ParseException {   
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		date = formatter.parse("01/01/1991");
-		
-		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
-		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
-				
-		representanteLegalModel = personaNaturalProvider.addPersonaNatural(
-				"PER", tipoDocumentoModel1, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				date, Sexo.MASCULINO);
-		
-		personaJuridicaModel = personaJuridicaProvider.addPersonaJuridica(
-				representanteLegalModel, "PER", tipoDocumentoModel2, "10467793549", 
-				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);								
-    }
-	
-	@After
-    public void executedAfterEach() {      		
-		//remove all AccionistaModel
-		List<AccionistaModel> accionistasModels = personaJuridicaModel.getAccionistas();			
-		for (AccionistaModel accionistaModel : accionistasModels) {			
-			accionistaProvider.removeAccionista(accionistaModel);
-		}
-		
-		//remove all PersonaNaturalModel
-		List<PersonaNaturalModel> personaNaturalModels = personaNaturalProvider.getPersonasNaturales();
-		for (PersonaNaturalModel personaNaturalModel : personaNaturalModels) {
-			personaNaturalProvider.removePersonaNatural(personaNaturalModel);
-		}
-				
-		//remove all PersonaJuridicaModel
-		List<PersonaJuridicaModel> personaJuridicaModels = personaJuridicaProvider.getPersonasJuridicas();
-		for (PersonaJuridicaModel personaJuridicaModel : personaJuridicaModels) {
-			personaJuridicaProvider.removePersonaJuridica(personaJuridicaModel);
-		}								
-				
-		//remove all TipoDocumentoModels				
-		List<TipoDocumentoModel> tipoDocumentoModels = tipoDocumentoProvider.getTiposDocumento();
-		for (TipoDocumentoModel tipoDocumentoModel : tipoDocumentoModels) {
-			tipoDocumentoProvider.removeTipoDocumento(tipoDocumentoModel);
-		}
-    }
+		date = formatter.parse("01/01/1991");				
+    }			
 	   
 	@Test
 	public void addAccionista() {
+		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
+				
+		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.addPersonaNatural(
+				"PER", tipoDocumentoModel1, "12345678", "Flores", "Huertas", "Jhon wilber", 
+				date, Sexo.MASCULINO);
+		
+		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.addPersonaJuridica(
+				representanteLegalModel, "PER", tipoDocumentoModel2, "10467793549", 
+				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
+		
 		AccionistaModel model = accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);
 		
 		assertThat(model, is(notNullValue()));
 	}
 	
 	@Test
-	public void addAccionistaUniqueTest()  {		
-		AccionistaModel model1 = accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);
-		
-		AccionistaModel model2 = null;
-		try {
-			model2 = accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);
-		} catch (Exception e) {		
-			assertThat(e, instanceOf(EJBException.class));						
-		}	
-		
-		assertThat(model1, is(notNullValue()));
-		assertThat(model2, is(nullValue()));
-	}
-	
-	@Test
 	public void getAccionistaById()  {		
+		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
+				
+		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.addPersonaNatural(
+				"PER", tipoDocumentoModel1, "12345678", "Flores", "Huertas", "Jhon wilber", 
+				date, Sexo.MASCULINO);
+		
+		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.addPersonaJuridica(
+				representanteLegalModel, "PER", tipoDocumentoModel2, "10467793549", 
+				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
+		
 		AccionistaModel model1 =  accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);
 		
 		Long id = model1.getId();		
@@ -193,6 +148,17 @@ public class AccionistaProviderTest {
 	
 	@Test
 	public void removeAccionista()  {	
+		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
+				
+		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.addPersonaNatural(
+				"PER", tipoDocumentoModel1, "12345678", "Flores", "Huertas", "Jhon wilber", 
+				date, Sexo.MASCULINO);
+		
+		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.addPersonaJuridica(
+				representanteLegalModel, "PER", tipoDocumentoModel2, "10467793549", 
+				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
+		
 		AccionistaModel model1 =  accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);		
 		
 		Long id = model1.getId();		
@@ -201,7 +167,7 @@ public class AccionistaProviderTest {
 		AccionistaModel model2 = accionistaProvider.getAccionistaById(id);
 		
 		assertThat(result, is(true));
-		assertThat(model2, is(nullValue()));				
+		assertThat(model2, is(nullValue()));			
 	}
 	
 }

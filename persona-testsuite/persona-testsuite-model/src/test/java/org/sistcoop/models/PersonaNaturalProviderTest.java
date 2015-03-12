@@ -1,7 +1,6 @@
 package org.sistcoop.models;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -13,12 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.ejb.EJBException;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -27,9 +21,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sistcoop.models.enums.Sexo;
@@ -56,8 +48,6 @@ public class PersonaNaturalProviderTest {
 	
 	@Inject
 	private TipoDocumentoProvider tipoDocumentoProvider;	
-	
-	private TipoDocumentoModel tipoDocumentoModel;
 	
 	@Deployment
 	public static WebArchive createDeployment() {
@@ -95,56 +85,24 @@ public class PersonaNaturalProviderTest {
 	@Before
     public void executedBeforeEach() throws ParseException {   
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		date = formatter.parse("01/01/1991");
-		
-		tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
-    }
-	
-	@After
-    public void executedAfterEach() {      
-		// remove all PersonaNaturalModel
-		List<PersonaNaturalModel> personaNaturalModels = personaNaturalProvider.getPersonasNaturales();
-		for (PersonaNaturalModel personaNaturalModel : personaNaturalModels) {
-			personaNaturalProvider.removePersonaNatural(personaNaturalModel);
-		}
-
-		// remove all TipoDocumentoModels
-		List<TipoDocumentoModel> tipoDocumentoModels = tipoDocumentoProvider.getTiposDocumento();
-		for (TipoDocumentoModel tipoDocumentoModel : tipoDocumentoModels) {
-			tipoDocumentoProvider.removeTipoDocumento(tipoDocumentoModel);
-		}
-    }
+		date = formatter.parse("01/01/1991");				
+    }	
 	   
 	@Test
 	public void addPersonaNatural() {
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		
 		PersonaNaturalModel model = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);
 		
 		assertThat(model, is(notNullValue()));
-	}
-	
-	@Test
-	public void addPersonaNaturalUniqueTest()  {		
-		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
-				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				date, Sexo.MASCULINO);
-		
-		PersonaNaturalModel model2 = null;
-		try {
-			model2 = personaNaturalProvider.addPersonaNatural(
-					"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-					date, Sexo.MASCULINO);
-		} catch (Exception e) {		
-			assertThat(e, instanceOf(EJBException.class));						
-		}	
-		
-		assertThat(model1, is(notNullValue()));
-		assertThat(model2, is(nullValue()));
 	}	
 
 	@Test
 	public void getPersonaNaturalById()  {
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		
 		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);		
@@ -156,7 +114,9 @@ public class PersonaNaturalProviderTest {
 	}
 	
 	@Test
-	public void getPersonaNaturalByTipoNumeroDoc()  {							
+	public void getPersonaNaturalByTipoNumeroDoc()  {
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		
 		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);	
@@ -202,6 +162,8 @@ public class PersonaNaturalProviderTest {
 	
 	@Test
 	public void removePersonaNatural()  {	
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		
 		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);				

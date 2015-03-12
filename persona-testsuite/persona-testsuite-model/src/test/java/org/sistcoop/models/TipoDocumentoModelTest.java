@@ -1,17 +1,13 @@
 package org.sistcoop.models;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
-import java.util.List;
 
 import javax.annotation.Resource;
-import javax.ejb.EJBException;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,16 +15,13 @@ import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.sistcoop.models.TipoDocumentoModel;
-import org.sistcoop.models.TipoDocumentoProvider;
 import org.sistcoop.models.enums.TipoPersona;
 import org.sistcoop.models.jpa.JpaTipoDocumentoProvider;
 import org.sistcoop.models.jpa.TipoDocumentoAdapter;
@@ -38,9 +31,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RunWith(Arquillian.class)
+@UsingDataSet("empty.xml")
 public class TipoDocumentoModelTest {
 
-	private Logger log = LoggerFactory.getLogger(TipoDocumentoModelTest.class);
+	Logger log = LoggerFactory.getLogger(TipoDocumentoModelTest.class);
 
 	@PersistenceContext
 	private EntityManager em;
@@ -91,5 +85,4 @@ public class TipoDocumentoModelTest {
 		assertThat(model.getEstado(), is(true));	
 	}
 		
-	
 }
