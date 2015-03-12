@@ -1,9 +1,6 @@
 package org.sistcoop.testsuite.client;
 
-import java.io.File;
 import java.net.URL;
-
-import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.extension.rest.client.ArquillianResteasyResource;
@@ -11,9 +8,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sistcoop.JaxRsActivator;
@@ -30,10 +25,7 @@ public class TipoDocumentoResourceTest {
 	Logger log = LoggerFactory.getLogger(TipoDocumentoResourceTest.class);	
 		
 	@ArquillianResource
-    private URL deploymentURL;
-	
-	@Inject
-	private TipoDocumentoResource tipoDocumentoResource;
+    private URL deploymentURL;	
 	
 	@Deployment(testable = false)
     public static WebArchive create()
@@ -47,7 +39,8 @@ public class TipoDocumentoResourceTest {
     public void getTipoDocumentoById(@ArquillianResteasyResource TipoDocumentoResource tipoDocumentoResource)
     {  
         final String name = "DNI";  
-        final TipoDocumentoRepresentation result = tipoDocumentoResource.findById(name);       
+        final TipoDocumentoRepresentation result = tipoDocumentoResource.findById(name);   
+        System.out.println(result);
     }
 	
 }

@@ -1,4 +1,4 @@
-subprojects {
+/*subprojects {
     apply plugin: 'java'
     apply plugin: 'eclipse'
 
@@ -15,4 +15,4 @@ subprojects {
     jar {
         manifest.attributes provider: 'my cool company'
     }
-}
+}*/
