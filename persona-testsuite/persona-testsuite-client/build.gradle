@@ -1,0 +1,4 @@
+dependencies {
+	//compile project(':persona-integration:persona-admin')
+	//compile project(':persona-services')	
+}

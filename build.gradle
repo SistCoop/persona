@@ -7,7 +7,7 @@ targetCompatibility = 1.7
 
 description = 'persona project' 
 
-ext.jbossHome = hasProperty('jbossHome') ? jbossHome : "C:/Users/carlos/wildfly-8.1.0.Final"
+ext.jbossHome = hasProperty('jbossHome') ? jbossHome : "C:/Users/Huertas/wildfly-8.1.0.Final"
 
 repositories {   
 	maven { url 'https://repository.jboss.org/nexus/content/groups/public-jboss' }  
