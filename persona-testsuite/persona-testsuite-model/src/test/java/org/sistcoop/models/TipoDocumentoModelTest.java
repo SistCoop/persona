@@ -72,8 +72,31 @@ public class TipoDocumentoModelTest {
 		war.addAsLibraries(dependencies);
 
 		return war;
-	}			
-	   
+	}				
+	
+	@Test
+	public void desactivar() {
+		TipoDocumentoModel model = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);				
+		model.desactivar();
+		
+		assertThat(model.getEstado(), is(false));
+	}
+	
+	@Test
+	public void commit() {
+		TipoDocumentoModel model1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);		
+		
+		String abreviatura = model1.getAbreviatura();
+		String denominacionNueva = "Otra denominacion";
+		
+		model1.setDenominacion(denominacionNueva);
+		model1.commit();	
+						
+		TipoDocumentoModel model2 = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(abreviatura);
+		
+		assertThat(model2.getDenominacion(), is(equalTo(denominacionNueva)));
+	}	
+	
 	@Test
 	public void testAttributes() {
 		TipoDocumentoModel model = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);		
@@ -83,6 +106,6 @@ public class TipoDocumentoModelTest {
 		assertThat(model.getCantidadCaracteres(), is(notNullValue()));
 		assertThat(model.getTipoPersona(), is(equalTo(TipoPersona.NATURAL)));
 		assertThat(model.getEstado(), is(true));	
-	}
+	}	
 		
 }

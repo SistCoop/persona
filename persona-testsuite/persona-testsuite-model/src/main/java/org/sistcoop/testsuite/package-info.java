@@ -5,4 +5,4 @@
  * @author Huertas
  *
  */
-package org.sistcoop;
+package org.sistcoop.testsuite;
