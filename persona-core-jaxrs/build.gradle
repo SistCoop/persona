@@ -1,7 +1,4 @@
-dependencies {
-	compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
-	
-	compile group: 'org.jboss.resteasy', name: 'jaxrs-api', version: '3.0.10.Final'
+dependencies {	
 	compile group: 'org.jboss.resteasy', name: 'resteasy-jaxrs', version: '3.0.10.Final'
 	compile group: 'org.jboss.resteasy', name: 'resteasy-validator-provider-11', version: '3.0.10.Final'
 	

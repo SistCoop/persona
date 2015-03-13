@@ -1,7 +1,5 @@
 dependencies {
 	compile project(':persona-integration:persona-client')
 	compile project(':persona-model:persona-model-api')
-	compile project(':persona-model:persona-model-jpa')
-	
-	compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+	compile project(':persona-model:persona-model-jpa')	
 }

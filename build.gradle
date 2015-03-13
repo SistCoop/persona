@@ -1,84 +1,50 @@
-apply plugin: 'java'
-apply plugin: 'war' 
-apply plugin: 'eclipse' 
-	  
-sourceCompatibility = 1.7  
-targetCompatibility = 1.7
+group = 'org.jboss.shrinkwrap.resolver.example'
+version = '1.0.0'
+description = """ShrinkWrap Resolver Gradle Embedded Importer Example"""
 
-description = 'persona project' 
-
-ext.jbossHome = hasProperty('jbossHome') ? jbossHome : "C:/Users/Huertas/wildfly-8.1.0.Final"
-
-repositories {   
-	maven { url 'https://repository.jboss.org/nexus/content/groups/public-jboss' }  
-	maven { url 'https://repository.jboss.org/nexus/content/repositories' }  
-	maven { url 'https://repository.jboss.org/nexus/content/repositories/thirdparty-releases' } 
-	    	 	
-    mavenCentral()
-}
-    
-dependencies {
-     compile project(":persona-core")
-     compile project(":persona-core-jaxrs")
-     compile project(":persona-integration")
-     compile project(":persona-services")     
-     compile project(":persona-model")           
-}
-
-subprojects {        
-    
-    apply plugin: 'java'
-    apply plugin: 'eclipse' 
-	  
-	sourceCompatibility = 1.7  
-	targetCompatibility = 1.7			
+subprojects {
 	
-    repositories {
-   	 	maven { url 'https://repository.jboss.org/nexus/content/groups/public-jboss' }  
-	    maven { url 'https://repository.jboss.org/nexus/content/repositories' }  
-	    maven { url 'https://repository.jboss.org/nexus/content/repositories/thirdparty-releases' } 
-       	mavenCentral()
-    }
+	apply plugin: 'java'
+	
+    ext.libraryVersions = [
+            javaee                  : '7.0',
+            wildfly                 : '8.1.0.Final',
+            junit                   : '4.11',
+            arquillian              : '1.1.5.Final',
+            shrinkWrapResolverGradle: '2.2.0-beta-1'
+    ]
 
-    dependencies {
-        testCompile 'junit:junit:4.8.2'
-        testCompile 'org.hamcrest:hamcrest-all:1.3'       
-        
-        compile 'org.wildfly:wildfly-spec-api:8.1.0.Final'  
-	    compile 'org.slf4j:slf4j-simple:1.7.10'  	  
-	  
-	    testCompile 'org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-depchain:2.1.1'  	    
-	    testCompile 'org.jboss.arquillian:arquillian-bom:1.1.6.Final-wildfly-1'
-	    testCompile 'org.jboss.arquillian.junit:arquillian-junit-container:1.1.6.Final-wildfly-1' 
+    repositories {
+        mavenCentral()
+        maven { url 'http://repository.jboss.org/nexus/content/groups/public' }
+        maven { url 'http://repository.jboss.org/nexus/content/repositories/deprecated' }
+        maven { url 'http://repo.jfrog.org/artifactory/repo' }
+    }
+    
+    dependencies {    	
+	    testCompile "junit:junit:${libraryVersions.junit}"
+	    testCompile "org.jboss.arquillian.junit:arquillian-junit-container:${libraryVersions.arquillian}"
+	    testCompile "org.jboss.arquillian.protocol:arquillian-protocol-servlet:${libraryVersions.arquillian}"
+	    testCompile "org.wildfly:wildfly-arquillian-container-managed:${libraryVersions.wildfly}"
+	    testCompile "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-gradle-depchain:${libraryVersions.shrinkWrapResolverGradle}"
+	    
+        testCompile 'org.hamcrest:hamcrest-all:1.3'
+	    
+	    testCompile 'org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-api-maven:2.2.0-beta-1'
+	    testCompile 'org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven:2.2.0-beta-1'
 	    
 	    testCompile 'org.jboss.arquillian.extension:arquillian-persistence-api:1.0.0.Alpha7' 
-	    testCompile 'org.jboss.arquillian.extension:arquillian-persistence-impl:1.0.0.Alpha6' 
-	  
-	    testRuntime 'org.jboss.logging:jboss-logging:3.2.1.Final'  
-	    /** 
-	     * Embedded means it runs in the same JVM, it still needs the full installation 
-	     */  
-	    testRuntime 'org.wildfly:wildfly-arquillian-container-embedded:8.1.0.Final' 	    
-    }
+	    testCompile 'org.jboss.arquillian.extension:arquillian-persistence-impl:1.0.0.Alpha6'
+	}
 
-    version = '1.0'
+    test {
+    	testLogging {
+        	events 'passed', 'skipped', 'failed'
+        	exceptionFormat = 'full'
+    	}
+	}
+}
 
-    jar {
-        manifest.attributes provider: 'my cool company'
-    }
-        
-	test {  
-	    jvmArgs '-XX:MaxPermSize=256m'  
-	  
-	    /** 
-	     * Installation of JBOSS to use for testing, this can be set here 
-	     * or in the arquillian.xml. 
-	     */  
-	    environment 'JBOSS_HOME', rootProject.jbossHome  
-	    /** 
-	     * WildFly embedded default logging 
-	     */  
-	    systemProperty 'java.util.logging.manager', 'org.jboss.logmanager.LogManager'  
-	}  
-
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.1'
 }
