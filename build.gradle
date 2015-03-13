@@ -1,16 +1,20 @@
 apply plugin: 'war'
 
-group = 'org.jboss.shrinkwrap.resolver.example'
-version = '1.0.0'
+group = 'org.sistcoop.persona'
+version = '1.0.0.Final'
 description = """Persona SistCoopEE Software"""
 
+war {
+	archiveName 'persona.war'
+}
+    
 dependencies {	 
      compile project(":persona-core")	 
      compile project(":persona-core-jaxrs")
      compile project(":persona-integration:persona-client")	 
      compile project(":persona-services")     	 
      compile project(":persona-model:persona-model-api")
-     compile project(":persona-model:persona-model-jpa")           	 
+     compile project(":persona-model:persona-model-jpa")             	 
 }
 
 repositories {
@@ -67,3 +71,13 @@ subprojects {
 task wrapper(type: Wrapper) {
     gradleVersion = '2.1'
 }
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.mamohr.gradle:jboss-deployment-structure:0.8.0'
+    }
+}
+apply plugin: 'com.github.mamohr.jboss-deployment-structure'
