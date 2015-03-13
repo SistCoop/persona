@@ -38,7 +38,11 @@ subprojects {
             shrinkWrapResolverApiMaven	: '2.2.0-beta-1',
             shrinkWrapResolverImplMaven	: '2.2.0-beta-1',
             arquillianPersistenceApi	: '1.0.0.Alpha7',
-            arquillianPersistenceImpl	: '1.0.0.Alpha6'
+            arquillianPersistenceImpl	: '1.0.0.Alpha6',
+            
+            arquillianRestClientApi		: '1.0.0.Final-SNAPSHOT',
+            arquillianRestClientImpl	: '1.0.0.Final-SNAPSHOT',
+            resteasyJacksonProvider		: '3.0.10.Final'
     ]
 
     repositories {
@@ -59,7 +63,11 @@ subprojects {
 	    testCompile "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-api-maven:${libraryVersions.shrinkWrapResolverApiMaven}"
 	    testCompile "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven:${libraryVersions.shrinkWrapResolverImplMaven}"	    	    	    
 	    testCompile "org.jboss.arquillian.extension:arquillian-persistence-api:${libraryVersions.arquillianPersistenceApi}"
-	    testCompile "org.jboss.arquillian.extension:arquillian-persistence-impl:${libraryVersions.arquillianPersistenceImpl}"	    	       
+	    testCompile "org.jboss.arquillian.extension:arquillian-persistence-impl:${libraryVersions.arquillianPersistenceImpl}"
+	    
+	    testCompile "org.jboss.arquillian.extension:arquillian-rest-client-api:${libraryVersions.arquillianRestClientApi}"
+	    testCompile "org.jboss.arquillian.extension:arquillian-rest-client-impl-3x:${libraryVersions.arquillianRestClientImpl}"
+	    testCompile "org.jboss.resteasy:resteasy-jackson-provider:${libraryVersions.resteasyJacksonProvider}"	    	       
 	}
 
     test {
