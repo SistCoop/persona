@@ -1,7 +1,22 @@
+apply plugin: 'war'
+
 group = 'org.jboss.shrinkwrap.resolver.example'
 version = '1.0.0'
 description = """Persona SistCoopEE Software"""
 
+dependencies {	 
+     compile project(":persona-core")	 
+     compile project(":persona-core-jaxrs")
+     compile project(":persona-integration:persona-client")	 
+     compile project(":persona-services")     	 
+     compile project(":persona-model:persona-model-api")
+     compile project(":persona-model:persona-model-jpa")           	 
+}
+
+repositories {
+	mavenCentral()       
+}
+    
 subprojects {
 	
 	apply plugin: 'java'
@@ -32,13 +47,13 @@ subprojects {
 	    testCompile "org.jboss.arquillian.junit:arquillian-junit-container:${libraryVersions.arquillian}"
 	    testCompile "org.jboss.arquillian.protocol:arquillian-protocol-servlet:${libraryVersions.arquillian}"
 	    testCompile "org.wildfly:wildfly-arquillian-container-managed:${libraryVersions.wildfly}"
-	    testCompile "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-gradle-depchain:${libraryVersions.shrinkWrapResolverGradle}"
+	    testCompile "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-gradle-depchain:${libraryVersions.shrinkWrapResolverGradle}"	    
 	    
         testCompile "org.hamcrest:hamcrest-all:${libraryVersions.hamcrest}"	    
-	    testCompile "org.jboss.shrinkwrap.resolver:${libraryVersions.shrinkWrapResolverApiMaven}"
-	    testCompile "org.jboss.shrinkwrap.resolver:${libraryVersions.shrinkWrapResolverImplMaven}"	    
-	    testCompile "org.jboss.arquillian.extension:${libraryVersions.arquillianPersistenceApi}"
-	    testCompile "org.jboss.arquillian.extension:${libraryVersions.arquillianPersistenceImpl}"	    
+	    testCompile "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-api-maven:${libraryVersions.shrinkWrapResolverApiMaven}"
+	    testCompile "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven:${libraryVersions.shrinkWrapResolverImplMaven}"	    	    	    
+	    testCompile "org.jboss.arquillian.extension:arquillian-persistence-api:${libraryVersions.arquillianPersistenceApi}"
+	    testCompile "org.jboss.arquillian.extension:arquillian-persistence-impl:${libraryVersions.arquillianPersistenceImpl}"	    	       
 	}
 
     test {
