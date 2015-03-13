@@ -16,6 +16,7 @@ import org.sistcoop.representations.idm.AccionistaRepresentation;
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Path("/accionistas")
 public interface AccionistaResource {
 
 	@GET

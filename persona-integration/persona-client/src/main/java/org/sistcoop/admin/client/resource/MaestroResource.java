@@ -29,6 +29,7 @@ import org.sistcoop.representations.idm.TipoEmpresaRepresentation;
 import org.sistcoop.representations.idm.TipoPersonaRepresentation;
 
 @Produces(MediaType.APPLICATION_JSON)
+@Path("/")
 public interface MaestroResource {
 
 	@GET

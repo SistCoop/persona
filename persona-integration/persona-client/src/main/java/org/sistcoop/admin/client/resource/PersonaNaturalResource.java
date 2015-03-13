@@ -21,6 +21,7 @@ import org.sistcoop.representations.idm.PersonaNaturalRepresentation;
 
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Path("/personasNaturales")
 public interface PersonaNaturalResource {
 
 	@GET

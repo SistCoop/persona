@@ -18,6 +18,7 @@ import org.sistcoop.representations.idm.TipoDocumentoRepresentation;
 
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Path("/tiposDocumento")
 public interface TipoDocumentoResource {
 
 	@GET
