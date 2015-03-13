@@ -14,7 +14,9 @@ dependencies {
      compile project(":persona-integration:persona-client")	 
      compile project(":persona-services")     	 
      compile project(":persona-model:persona-model-api")
-     compile project(":persona-model:persona-model-jpa")             	 
+     compile project(":persona-model:persona-model-jpa")       
+     
+     providedCompile 'org.jboss.resteasy:resteasy-jaxrs:3.0.10.Final'         	
 }
 
 repositories {
