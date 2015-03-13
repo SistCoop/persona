@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -166,7 +165,7 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
 		this.representanteLegal = representanteLegal;
 	}
 
-	@OneToMany(mappedBy = "personaJuridica", fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
+	@OneToMany(mappedBy = "personaJuridica", fetch = FetchType.LAZY)
 	public Set<AccionistaEntity> getAccionistas() {
 		return accionistas;
 	}

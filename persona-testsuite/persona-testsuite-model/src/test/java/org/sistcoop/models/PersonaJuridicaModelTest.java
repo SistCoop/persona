@@ -141,9 +141,10 @@ public class PersonaJuridicaModelTest {
 				date, Sexo.MASCULINO);
 		
 		AccionistaModel accionistaModel = personaJuridicaModel.addAccionista(personaNaturalAccionistaModel, BigDecimal.TEN);
-				
+						
 		assertThat(accionistaModel, is(notNullValue()));
-		
+		assertThat(accionistaModel.getPersonaNatural(), is(equalTo(personaNaturalAccionistaModel)));
+		assertThat(accionistaModel.getPersonaJuridica(), is(equalTo(personaJuridicaModel)));
 	}
 	
 	@Test
@@ -154,18 +155,18 @@ public class PersonaJuridicaModelTest {
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);				
 		
-		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.addPersonaJuridica(
-				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
-				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
-		
 		PersonaNaturalModel personaNaturalAccionistaModel = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "00000000", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);
 		
+		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.addPersonaJuridica(
+				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
+				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
+						
 		AccionistaModel accionistaModel = personaJuridicaModel.addAccionista(personaNaturalAccionistaModel, BigDecimal.TEN);
 		
-		List<AccionistaModel> accionistaModels = personaJuridicaModel.getAccionistas();
-						
+		List<AccionistaModel> accionistaModels = personaJuridicaModel.getAccionistas();						
+		
 		assertThat(accionistaModels.size(), is(equalTo(1)));
 		assertThat(accionistaModels.get(0), is(equalTo(accionistaModel)));
 		
