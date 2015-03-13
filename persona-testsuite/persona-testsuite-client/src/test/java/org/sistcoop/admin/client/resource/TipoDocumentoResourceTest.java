@@ -7,6 +7,10 @@ import static org.junit.Assert.assertThat;
 import java.net.URL;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.extension.rest.client.ArquillianResteasyResource;
 import org.jboss.arquillian.junit.Arquillian;
@@ -32,8 +36,8 @@ import org.sistcoop.services.resources.admin.TiposDocumentoResourceImpl;
 @RunWith(Arquillian.class)
 public class TipoDocumentoResourceTest {
 
-	@ArquillianResource
-    private URL deploymentURL;
+	//@ArquillianResource
+    //private URL deploymentURL;
 
     @Deployment(testable = false)
     public static WebArchive create()
@@ -70,17 +74,14 @@ public class TipoDocumentoResourceTest {
     }
     
     @Test
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public void findAll(@ArquillianResteasyResource TipoDocumentoResource tipoDocumentoResource)
     {   
-    	TipoDocumentoRepresentation tipoDocumentoRepresentation = new TipoDocumentoRepresentation();
-    	tipoDocumentoRepresentation.setAbreviatura("DNI");
-    	tipoDocumentoRepresentation.setDenominacion("Documento Nacional de identidad");    	
-    	tipoDocumentoRepresentation.setCantidadCaracteres(8);
-    	tipoDocumentoRepresentation.setTipoPersona(TipoPersona.NATURAL.toString());
-    	
-    	assertThat(tipoDocumentoResource, is(notNullValue()));    	
-    	tipoDocumentoResource.create(tipoDocumentoRepresentation);
-    	//assertThat(tipoDocumentoRepresentations, is(notNullValue()));
+    	 final String abreviatura = "DNI";         
+
+         final TipoDocumentoRepresentation result = tipoDocumentoResource.findById(abreviatura);
+         
     }
     
 }

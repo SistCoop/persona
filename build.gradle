@@ -40,6 +40,7 @@ subprojects {
             arquillianPersistenceApi	: '1.0.0.Alpha7',
             arquillianPersistenceImpl	: '1.0.0.Alpha6',
             
+            arquillianRestWarpImplJaxrs2: '1.0.0.Final-SNAPSHOT',
             arquillianRestClientApi		: '1.0.0.Final-SNAPSHOT',
             arquillianRestClientImpl	: '1.0.0.Final-SNAPSHOT',
             resteasyJacksonProvider		: '3.0.10.Final'
@@ -65,6 +66,7 @@ subprojects {
 	    testCompile "org.jboss.arquillian.extension:arquillian-persistence-api:${libraryVersions.arquillianPersistenceApi}"
 	    testCompile "org.jboss.arquillian.extension:arquillian-persistence-impl:${libraryVersions.arquillianPersistenceImpl}"
 	    
+	    testCompile "org.jboss.arquillian.extension:arquillian-rest-warp-impl-jaxrs-2.0:${libraryVersions.arquillianRestWarpImplJaxrs2}"	    
 	    testCompile "org.jboss.arquillian.extension:arquillian-rest-client-api:${libraryVersions.arquillianRestClientApi}"
 	    testCompile "org.jboss.arquillian.extension:arquillian-rest-client-impl-3x:${libraryVersions.arquillianRestClientImpl}"
 	    testCompile "org.jboss.resteasy:resteasy-jackson-provider:${libraryVersions.resteasyJacksonProvider}"	    	       
