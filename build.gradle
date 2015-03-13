@@ -1,17 +1,23 @@
 group = 'org.jboss.shrinkwrap.resolver.example'
 version = '1.0.0'
-description = """ShrinkWrap Resolver Gradle Embedded Importer Example"""
+description = """Persona SistCoopEE Software"""
 
 subprojects {
 	
 	apply plugin: 'java'
 	
     ext.libraryVersions = [
-            javaee                  : '7.0',
-            wildfly                 : '8.1.0.Final',
-            junit                   : '4.11',
-            arquillian              : '1.1.5.Final',
-            shrinkWrapResolverGradle: '2.2.0-beta-1'
+            javaee                  	: '7.0',
+            wildfly                 	: '8.1.0.Final',
+            junit                   	: '4.11',
+            arquillian              	: '1.1.5.Final',
+            shrinkWrapResolverGradle	: '2.2.0-beta-1',
+            
+            hamcrest					: '1.3',
+            shrinkWrapResolverApiMaven	: '2.2.0-beta-1',
+            shrinkWrapResolverImplMaven	: '2.2.0-beta-1',
+            arquillianPersistenceApi	: '1.0.0.Alpha7',
+            arquillianPersistenceImpl	: '1.0.0.Alpha6'
     ]
 
     repositories {
@@ -28,13 +34,11 @@ subprojects {
 	    testCompile "org.wildfly:wildfly-arquillian-container-managed:${libraryVersions.wildfly}"
 	    testCompile "org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-gradle-depchain:${libraryVersions.shrinkWrapResolverGradle}"
 	    
-        testCompile 'org.hamcrest:hamcrest-all:1.3'
-	    
-	    testCompile 'org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-api-maven:2.2.0-beta-1'
-	    testCompile 'org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven:2.2.0-beta-1'
-	    
-	    testCompile 'org.jboss.arquillian.extension:arquillian-persistence-api:1.0.0.Alpha7' 
-	    testCompile 'org.jboss.arquillian.extension:arquillian-persistence-impl:1.0.0.Alpha6'
+        testCompile "org.hamcrest:hamcrest-all:${libraryVersions.hamcrest}"	    
+	    testCompile "org.jboss.shrinkwrap.resolver:${libraryVersions.shrinkWrapResolverApiMaven}"
+	    testCompile "org.jboss.shrinkwrap.resolver:${libraryVersions.shrinkWrapResolverImplMaven}"	    
+	    testCompile "org.jboss.arquillian.extension:${libraryVersions.arquillianPersistenceApi}"
+	    testCompile "org.jboss.arquillian.extension:${libraryVersions.arquillianPersistenceImpl}"	    
 	}
 
     test {
