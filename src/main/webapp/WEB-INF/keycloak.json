@@ -1,0 +1,9 @@
+{
+  "realm": "SistCoop",
+  "realm-public-key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDB/k/bAvvZEIf4KGICYfll+2Gmtr+iYj3mruiOpncYy9a7bEvUk9AtqGxIOTS3gPZHl7HpsEHnETED3/IpvkzYFdKQD8Ttwu5RCyRPL/pql7CvIYXxvvcmCLzmsxuU36Zad8X4EHAzhZBPyMBnfABR4m3IP/FJN8fIYpYgKB3PCQIDAQAB",
+  "bearer-only": true,
+  "ssl-required": "external",
+  "resource": "persona_restful",
+  "use-resource-role-mappings": true,
+  "enable-cors": true
+}
