@@ -62,7 +62,7 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
 
 	private PersonaNaturalEntity representanteLegal;
 	private Set<AccionistaEntity> accionistas = new HashSet<AccionistaEntity>();
-
+	
 	public PersonaJuridicaEntity() {
 		super();
 	}

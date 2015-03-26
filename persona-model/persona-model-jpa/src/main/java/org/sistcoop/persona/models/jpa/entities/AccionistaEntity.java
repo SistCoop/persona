@@ -38,15 +38,7 @@ public class AccionistaEntity implements java.io.Serializable {
 	private PersonaJuridicaEntity personaJuridica;
 	private BigDecimal porcentajeParticipacion;
 
-	private Timestamp optlk;
-
-	public AccionistaEntity() {
-
-	}
-
-	public AccionistaEntity(Long id) {
-		this.id = id;
-	}
+	private Timestamp optlk;		
 
 	@Id
 	@GeneratedValue(generator = "SgGenericGenerator")
@@ -61,7 +53,7 @@ public class AccionistaEntity implements java.io.Serializable {
 	@NotNull
 	@NaturalId
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(foreignKey = @ForeignKey)
+	@JoinColumn(foreignKey = @ForeignKey, nullable = false)
 	public PersonaNaturalEntity getPersonaNatural() {
 		return personaNatural;
 	}
@@ -73,7 +65,7 @@ public class AccionistaEntity implements java.io.Serializable {
 	@NotNull
 	@NaturalId
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(foreignKey = @ForeignKey)
+	@JoinColumn(foreignKey = @ForeignKey, nullable = false)
 	public PersonaJuridicaEntity getPersonaJuridica() {
 		return personaJuridica;
 	}
