@@ -47,19 +47,12 @@ public class JpaPersonaNaturalProvider implements PersonaNaturalProvider {
 	}
 
 	@Override
-	public boolean removePersonaNatural(PersonaNaturalModel personaNatural) {
-		PersonaNaturalEntity personaNaturalEntity = em.find(PersonaNaturalEntity.class, personaNatural.getId());
-		if (em.contains(personaNaturalEntity))
-			em.remove(personaNaturalEntity);
-		else
-			em.remove(em.getReference(PersonaNaturalEntity.class, personaNaturalEntity.getId()));
-		removePersonaNatural(personaNaturalEntity);
-		return true;
-	}
-
-	public void removePersonaNatural(PersonaNaturalEntity personaNaturalEntity) {
-		em.remove(personaNaturalEntity);
-	}
+	public boolean removePersonaNatural(PersonaNaturalModel personaNaturalModel) {
+		PersonaNaturalEntity personaNaturalEntity = em.find(PersonaNaturalEntity.class, personaNaturalModel.getId());
+		if (personaNaturalEntity == null) return false;
+        em.remove(personaNaturalEntity);
+        return true;
+	}	
 
 	@Override
 	public PersonaNaturalModel getPersonaNaturalById(Long id) {
