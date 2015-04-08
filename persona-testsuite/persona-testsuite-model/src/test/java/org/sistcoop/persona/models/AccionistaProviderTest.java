@@ -131,6 +131,11 @@ public class AccionistaProviderTest {
 		AccionistaModel model = accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);
 		
 		assertThat(model, is(notNullValue()));
+		assertThat(model.getId(), is(notNullValue()));
+		assertThat(model.getPersonaJuridica(), is(notNullValue()));
+		assertThat(model.getPersonaJuridica(), is(equalTo(personaJuridicaModel)));
+		assertThat(model.getPersonaNatural(), is(notNullValue()));
+		assertThat(model.getPersonaNatural(), is(equalTo(representanteLegalModel)));
 	}
 	
 	@Test

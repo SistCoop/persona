@@ -35,6 +35,7 @@ import org.sistcoop.persona.models.enums.Sexo;
 import org.sistcoop.persona.models.enums.TipoEmpresa;
 import org.sistcoop.persona.models.enums.TipoPersona;
 import org.sistcoop.persona.models.jpa.AccionistaAdapter;
+import org.sistcoop.persona.models.jpa.JpaAccionistaProvider;
 import org.sistcoop.persona.models.jpa.JpaPersonaJuridicaProvider;
 import org.sistcoop.persona.models.jpa.JpaPersonaNaturalProvider;
 import org.sistcoop.persona.models.jpa.JpaTipoDocumentoProvider;
@@ -63,6 +64,9 @@ public class PersonaJuridicaModelTest {
 	@Inject
 	private PersonaJuridicaProvider personaJuridicaProvider;		
 	
+	@Inject
+	private AccionistaProvider accionistaProvider;
+	
 	@Deployment
 	public static WebArchive createDeployment() {
 		File[] dependencies = Maven.resolver()
@@ -70,16 +74,17 @@ public class PersonaJuridicaModelTest {
 				.withoutTransitivity().asFile();
 
 		WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
-				/**persona-model-api**/
+				/**model-api**/
 				.addClass(Provider.class)										
 				.addClass(TipoDocumentoProvider.class)
 				.addClass(PersonaJuridicaProvider.class)
 				.addClass(PersonaNaturalProvider.class)
+				.addClass(AccionistaProvider.class)
 				
 				.addPackage(TipoDocumentoModel.class.getPackage())
 				.addPackage(TipoPersona.class.getPackage())								
 				
-				/**persona-model-jpa**/
+				/**model-jpa**/
 				.addClass(JpaTipoDocumentoProvider.class)
 				.addClass(TipoDocumentoAdapter.class)		
 						
@@ -89,6 +94,7 @@ public class PersonaJuridicaModelTest {
 				.addClass(JpaPersonaJuridicaProvider.class)
 				.addClass(PersonaJuridicaAdapter.class)
 				
+				.addClass(JpaAccionistaProvider.class)
 				.addClass(AccionistaAdapter.class)
 				
 				.addPackage(PersonaEntity.class.getPackage())
@@ -129,34 +135,11 @@ public class PersonaJuridicaModelTest {
 		PersonaJuridicaModel model2 = personaJuridicaProvider.getPersonaJuridicaById(id);
 				
 		assertThat(model2.getRazonSocial(), is(equalTo(razonSocialNueva)));
-	}
-	
-	@Test
-	public void addAccionista() {
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);		
-		
-		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.addPersonaNatural(
-				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				date, Sexo.MASCULINO);				
-		
-		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.addPersonaJuridica(
-				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
-				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
-		
-		PersonaNaturalModel personaNaturalAccionistaModel = personaNaturalProvider.addPersonaNatural(
-				"PER", tipoDocumentoModel, "00000000", "Flores", "Huertas", "Jhon wilber", 
-				date, Sexo.MASCULINO);
-		
-		AccionistaModel accionistaModel = personaJuridicaModel.addAccionista(personaNaturalAccionistaModel, BigDecimal.TEN);
-						
-		assertThat(accionistaModel, is(notNullValue()));
-		assertThat(accionistaModel.getPersonaNatural(), is(equalTo(personaNaturalAccionistaModel)));
-		assertThat(accionistaModel.getPersonaJuridica(), is(equalTo(personaJuridicaModel)));
-	}
+	}	
 	
 	@Test
 	public void getAccionistas() {
-		/*TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);		
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);		
 		
 		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.addPersonaNatural(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
@@ -171,62 +154,13 @@ public class PersonaJuridicaModelTest {
 				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
 					
 				
-		AccionistaModel accionistaModel = personaJuridicaModel.addAccionista(personaNaturalAccionistaModel, BigDecimal.TEN);		
+		AccionistaModel accionistaModel = accionistaProvider.addAccionista(personaJuridicaModel, personaNaturalAccionistaModel, BigDecimal.TEN);				
 		
 		List<AccionistaModel> accionistaModels = personaJuridicaModel.getAccionistas();									
 		
 		assertThat(accionistaModels.size(), is(equalTo(1)));
-		assertThat(accionistaModels.get(0), is(equalTo(accionistaModel)));*/
+		assertThat(accionistaModels.get(0), is(equalTo(accionistaModel)));
 		
-	}
-	
-	@Test
-	public void removeAccionista() {
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);		
-		
-		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.addPersonaNatural(
-				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				date, Sexo.MASCULINO);				
-		
-		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.addPersonaJuridica(
-				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
-				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
-		
-		PersonaNaturalModel personaNaturalAccionistaModel = personaNaturalProvider.addPersonaNatural(
-				"PER", tipoDocumentoModel, "00000000", "Flores", "Huertas", "Jhon wilber", 
-				date, Sexo.MASCULINO);
-		
-		AccionistaModel accionistaModel = personaJuridicaModel.addAccionista(personaNaturalAccionistaModel, BigDecimal.TEN);
-			
-		boolean result = personaJuridicaModel.removeAccionista(accionistaModel);
-		
-		List<AccionistaModel> accionistaModels = personaJuridicaModel.getAccionistas(); 
-				
-		assertThat(result, is(true));
-		assertThat(accionistaModels.size(), is(equalTo(0)));
-		
-	}
-	
-	@Test
-	public void testAttributes() {
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);		
-		
-		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.addPersonaNatural(
-				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				date, Sexo.MASCULINO);				
-		
-		PersonaJuridicaModel model = personaJuridicaProvider.addPersonaJuridica(
-				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
-				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
-		
-		assertThat(model.getRepresentanteLegal(), is(equalTo(representanteLegalModel)));
-		assertThat(model.getCodigoPais(), is(notNullValue()));
-		assertThat(model.getTipoDocumento(), is(equalTo(tipoDocumentoModel)));
-		assertThat(model.getNumeroDocumento(), is(notNullValue()));
-		assertThat(model.getRazonSocial(), is(notNullValue()));
-		assertThat(model.getFechaConstitucion(), is(notNullValue()));
-		assertThat(model.getTipoEmpresa(), is(equalTo(TipoEmpresa.PRIVADA)));
-		assertThat(model.isFinLucro(), is(equalTo(true)));	
 	}
 	
 }

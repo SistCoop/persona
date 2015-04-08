@@ -115,7 +115,10 @@ public class PersonaJuridicaProviderTest {
 				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
 				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
 		
-		assertThat(model, is(notNullValue()));	
+		assertThat(model, is(notNullValue()));
+		assertThat(model.getId(), is(notNullValue()));
+		assertThat(model.getTipoDocumento(), is(equalTo(tipoDocumentoModel)));
+		assertThat(model.getRepresentanteLegal(), is(equalTo(representanteLegalModel)));
 	}	
 	
 	@Test

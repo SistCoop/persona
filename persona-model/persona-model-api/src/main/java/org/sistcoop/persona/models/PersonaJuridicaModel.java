@@ -1,6 +1,5 @@
 package org.sistcoop.persona.models;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -13,10 +12,6 @@ public interface PersonaJuridicaModel extends Model {
 	PersonaNaturalModel getRepresentanteLegal();
 
 	void setRepresentanteLegal(PersonaNaturalModel representanteLegal);
-
-	AccionistaModel addAccionista(PersonaNaturalModel personaNaturalModel, BigDecimal porcentajeParticipacion);
-
-	boolean removeAccionista(AccionistaModel accionistaModel);
 
 	List<AccionistaModel> getAccionistas();
 

@@ -2,16 +2,13 @@ package org.sistcoop.persona.models;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -22,8 +19,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.sistcoop.persona.models.TipoDocumentoModel;
-import org.sistcoop.persona.models.TipoDocumentoProvider;
 import org.sistcoop.persona.models.enums.TipoPersona;
 import org.sistcoop.persona.models.jpa.JpaTipoDocumentoProvider;
 import org.sistcoop.persona.models.jpa.TipoDocumentoAdapter;
@@ -40,9 +35,6 @@ public class TipoDocumentoModelTest {
 
 	@PersistenceContext
 	private EntityManager em;
-
-	@Resource           
-	private UserTransaction utx; 
 	
 	@Inject
 	private TipoDocumentoProvider tipoDocumentoProvider;	
@@ -77,14 +69,6 @@ public class TipoDocumentoModelTest {
 	}				
 	
 	@Test
-	public void desactivar() {
-		TipoDocumentoModel model = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);				
-		model.desactivar();
-		
-		assertThat(model.getEstado(), is(false));
-	}
-	
-	@Test
 	public void commit() {
 		TipoDocumentoModel model1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);		
 		
@@ -97,17 +81,6 @@ public class TipoDocumentoModelTest {
 		TipoDocumentoModel model2 = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(abreviatura);
 		
 		assertThat(model2.getDenominacion(), is(equalTo(denominacionNueva)));
-	}	
-	
-	@Test
-	public void testAttributes() {
-		TipoDocumentoModel model = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);		
-		
-		assertThat(model.getAbreviatura(), is(notNullValue()));
-		assertThat(model.getDenominacion(), is(notNullValue()));
-		assertThat(model.getCantidadCaracteres(), is(notNullValue()));
-		assertThat(model.getTipoPersona(), is(equalTo(TipoPersona.NATURAL)));
-		assertThat(model.getEstado(), is(true));	
 	}	
 		
 }

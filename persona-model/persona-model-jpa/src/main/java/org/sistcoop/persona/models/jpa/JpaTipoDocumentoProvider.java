@@ -95,14 +95,6 @@ public class JpaTipoDocumentoProvider implements TipoDocumentoProvider {
 		}
 		return results;
 	}
-
-	@Override
-	public boolean desactivarTipoDocumento(TipoDocumentoModel tipoDocumentoModel) {
-		TipoDocumentoEntity tipoDocumentoEntity = TipoDocumentoAdapter.toTipoDocumentoEntity(tipoDocumentoModel, em);
-		tipoDocumentoEntity.setEstado(false);
-		em.merge(tipoDocumentoEntity);
-		return true;
-	}
 	
 	@Override
 	public boolean removeTipoDocumento(TipoDocumentoModel tipoDocumentoModel) {		

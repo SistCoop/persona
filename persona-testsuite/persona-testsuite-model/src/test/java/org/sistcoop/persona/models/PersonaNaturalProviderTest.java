@@ -60,7 +60,7 @@ public class PersonaNaturalProviderTest {
 				.withoutTransitivity().asFile();
 
 		WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
-				/**persona-model-api**/
+				/**model-api**/
 				.addClass(Provider.class)										
 				.addClass(PersonaNaturalProvider.class)
 				.addClass(TipoDocumentoProvider.class)
@@ -68,7 +68,7 @@ public class PersonaNaturalProviderTest {
 				.addPackage(PersonaNaturalModel.class.getPackage())
 				.addPackage(TipoPersona.class.getPackage())
 												
-				/**persona-model-jpa**/				
+				/**model-jpa**/				
 				.addClass(JpaPersonaNaturalProvider.class)
 				.addClass(PersonaNaturalAdapter.class)											
 				
@@ -100,7 +100,10 @@ public class PersonaNaturalProviderTest {
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);
 		
-		assertThat(model, is(notNullValue()));
+		assertThat("model no debe ser null", model, is(notNullValue()));
+		assertThat("id no debe ser null", model.getId(), is(notNullValue()));
+		assertThat("tipoDocumento no debe ser null", model.getTipoDocumento(), is(notNullValue()));
+		assertThat("tipoDocumento debe ser igual al insertado", model.getTipoDocumento(), is(equalTo(tipoDocumentoModel)));
 	}	
 
 	@Test

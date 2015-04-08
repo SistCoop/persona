@@ -1,12 +1,12 @@
 package org.sistcoop.persona.models.jpa;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 import org.sistcoop.persona.models.AccionistaModel;
 import org.sistcoop.persona.models.PersonaJuridicaModel;
@@ -54,31 +54,14 @@ public class PersonaJuridicaAdapter implements PersonaJuridicaModel {
 	}
 
 	@Override
-	public AccionistaModel addAccionista(PersonaNaturalModel personaNaturalModel, BigDecimal porcentajeParticipacion) {
-		PersonaNaturalEntity personaNaturalEntity = PersonaNaturalAdapter.toPersonaNaturalEntity(personaNaturalModel, em);
-
-		AccionistaEntity accionistaEntity = new AccionistaEntity();
-		accionistaEntity.setPersonaNatural(personaNaturalEntity);
-		accionistaEntity.setPersonaJuridica(personaJuridicaEntity);
-		accionistaEntity.setPorcentajeParticipacion(porcentajeParticipacion);
-
-		em.persist(accionistaEntity);
-		return new AccionistaAdapter(em, accionistaEntity);
-	}
-
-	@Override
-	public boolean removeAccionista(AccionistaModel accionistaModel) {
-		AccionistaEntity accionistaEntity = AccionistaAdapter.toAccionistaEntity(accionistaModel, em);
-		accionistaEntity.setPersonaJuridica(personaJuridicaEntity);
-		em.remove(accionistaEntity);
-		return true;
-	}
-
-	@Override
-	public List<AccionistaModel> getAccionistas() {
-		Set<AccionistaEntity> list = personaJuridicaEntity.getAccionistas();
+	public List<AccionistaModel> getAccionistas() {		
+		TypedQuery<AccionistaEntity> query = em.createQuery("select a from AccionistaEntity a WHERE a.personaJuridica.id = :id", AccionistaEntity.class);
+		query.setParameter("id", getId());
+		List<AccionistaEntity> results = query.getResultList();
+		
+		//Set<AccionistaEntity> list = personaJuridicaEntity.getAccionistas();
 		List<AccionistaModel> result = new ArrayList<AccionistaModel>();
-		for (AccionistaEntity entity : list) {
+		for (AccionistaEntity entity : results) {
 			result.add(new AccionistaAdapter(em, entity));
 		}
 		return result;

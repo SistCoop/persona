@@ -2,7 +2,6 @@ package org.sistcoop.persona.models;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
@@ -22,10 +21,6 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.sistcoop.persona.models.PersonaNaturalModel;
-import org.sistcoop.persona.models.PersonaNaturalProvider;
-import org.sistcoop.persona.models.TipoDocumentoModel;
-import org.sistcoop.persona.models.TipoDocumentoProvider;
 import org.sistcoop.persona.models.enums.Sexo;
 import org.sistcoop.persona.models.enums.TipoPersona;
 import org.sistcoop.persona.models.jpa.JpaPersonaNaturalProvider;
@@ -109,21 +104,4 @@ public class PersonaNaturalModelTest {
 		assertThat(model2.getNombres(), is(equalTo(nombreNuevo)));
 	}	
 
-	@Test
-	public void testAttributes() {
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
-		
-		PersonaNaturalModel model = personaNaturalProvider.addPersonaNatural(
-				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
-				date, Sexo.MASCULINO);
-		
-		assertThat(model.getCodigoPais(), is(notNullValue()));
-		assertThat(model.getTipoDocumento(), is(equalTo(tipoDocumentoModel)));
-		assertThat(model.getNumeroDocumento(), is(notNullValue()));
-		assertThat(model.getApellidoPaterno(), is(notNullValue()));
-		assertThat(model.getApellidoMaterno(), is(notNullValue()));
-		assertThat(model.getNombres(), is(notNullValue()));
-		assertThat(model.getFechaNacimiento(), is(equalTo(date)));
-		assertThat(model.getSexo(), is(equalTo(Sexo.MASCULINO)));	
-	}
 }

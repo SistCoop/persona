@@ -10,9 +10,7 @@ import org.sistcoop.persona.provider.Provider;
 @Local
 public interface TipoDocumentoProvider extends Provider {
 
-	TipoDocumentoModel addTipoDocumento(String abreviatura, String denominacion, int cantidadCaracteres, TipoPersona tipoPersona);
-
-	boolean desactivarTipoDocumento(TipoDocumentoModel tipoDocumentoModel);
+	TipoDocumentoModel addTipoDocumento(String abreviatura, String denominacion, int cantidadCaracteres, TipoPersona tipoPersona);	
 	
 	boolean removeTipoDocumento(TipoDocumentoModel tipoDocumentoModel);
 

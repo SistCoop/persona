@@ -71,8 +71,9 @@ public class TipoDocumentoProviderTest {
 	@Test
 	public void addTipoDocumento() {
 		TipoDocumentoModel model = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);		
-		assertThat(model, is(notNullValue()));
-		assertThat(model.getEstado(), is(true));	
+		
+		assertThat("model no debe ser null", model, is(notNullValue()));			
+		assertThat("estado debe ser true", model.getEstado(), is(true));	
 	}	
 
 	@Test
@@ -82,7 +83,7 @@ public class TipoDocumentoProviderTest {
 		String abreviatura = model1.getAbreviatura();		
 		TipoDocumentoModel model2 = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(abreviatura);
 				
-		assertThat(model1, is(equalTo(model2)));
+		assertThat("model1 debe ser igual a model2", model1, is(equalTo(model2)));
 	}
 	
 
@@ -125,7 +126,8 @@ public class TipoDocumentoProviderTest {
 		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
 		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
 		
-		tipoDocumentoProvider.desactivarTipoDocumento(tipoDocumentoModel2);
+		tipoDocumentoModel2.desactivar();
+		tipoDocumentoModel2.commit();		
 		
 		List<TipoDocumentoModel> modelsActive = tipoDocumentoProvider.getTiposDocumento(true);
 		for (TipoDocumentoModel tipoDocumentoModel : modelsActive) {
@@ -151,8 +153,10 @@ public class TipoDocumentoProviderTest {
 		TipoDocumentoModel tipoDocumentoModel3 = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
 		TipoDocumentoModel tipoDocumentoModel4 = tipoDocumentoProvider.addTipoDocumento("RRR", "Registro registral restricto", 11, TipoPersona.JURIDICA);
 		
-		tipoDocumentoProvider.desactivarTipoDocumento(tipoDocumentoModel2);
-		tipoDocumentoProvider.desactivarTipoDocumento(tipoDocumentoModel4);
+		tipoDocumentoModel2.desactivar();
+		tipoDocumentoModel4.desactivar();
+		tipoDocumentoModel2.commit();
+		tipoDocumentoModel4.commit();		
 		
 		List<TipoDocumentoModel> modelsNaturalActivo = tipoDocumentoProvider.getTiposDocumento(TipoPersona.NATURAL, true);
 		for (TipoDocumentoModel tipoDocumentoModel : modelsNaturalActivo) {
@@ -182,21 +186,7 @@ public class TipoDocumentoProviderTest {
 		assertThat(modelsNaturalInactivo.size(), is(equalTo(1)));
 		assertThat(modelsJuridicaActivo.size(), is(equalTo(1)));
 		assertThat(modelsJuridicaInactivo.size(), is(equalTo(1)));
-	}
-	
-	@Test
-	public void desactivarTipoDocumento()  {			
-		TipoDocumentoModel model1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);						
-		
-		String abreviatura = model1.getAbreviatura();		
-		boolean result = tipoDocumentoProvider.desactivarTipoDocumento(model1);
-		
-		TipoDocumentoModel model2 = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(abreviatura);
-		
-		assertThat(result, is(true));
-		assertThat(model2, is(notNullValue()));
-		assertThat(model2.getEstado(), is(false));			
-	}
+	}	
 	
 	@Test
 	public void removeTipoDocumento()  {			

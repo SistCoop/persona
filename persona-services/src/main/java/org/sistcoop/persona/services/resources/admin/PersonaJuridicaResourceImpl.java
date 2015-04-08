@@ -131,7 +131,7 @@ public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
 		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(accionistaRepresentation.getPersonaNatural().getTipoDocumento());
 		PersonaNaturalModel personaNaturalModel = personaNaturalProvider.getPersonaNaturalByTipoNumeroDoc(tipoDocumentoModel, accionistaRepresentation.getPersonaNatural().getNumeroDocumento());
 
-		AccionistaModel accionistaModel = personaJuridicaModel.addAccionista(personaNaturalModel, accionistaRepresentation.getPorcentajeParticipacion());
+		AccionistaModel accionistaModel = accionistaProvider.addAccionista(personaJuridicaModel, personaNaturalModel, accionistaRepresentation.getPorcentajeParticipacion());		
 		AccionistaRepresentation representation = ModelToRepresentation.toRepresentation(accionistaModel);
 		return Response.created(uriInfo.getAbsolutePathBuilder().path(representation.getId().toString()).build()).header("Access-Control-Expose-Headers", "Location").build();
 	}
