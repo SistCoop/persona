@@ -43,7 +43,14 @@ subprojects {
             arquillianRestWarpImplJaxrs2: '1.0.0.Final-SNAPSHOT',
             arquillianRestClientApi		: '1.0.0.Final-SNAPSHOT',
             arquillianRestClientImpl	: '1.0.0.Final-SNAPSHOT',
-            resteasyJacksonProvider		: '3.0.10.Final'
+            resteasyJacksonProvider		: '3.0.10.Final',                
+            
+            resteasy					: '3.0.10.Final',
+            hibernateValidator			: '5.1.3.Final',
+            hibernateEntitymanager		: '4.3.8.Final',
+            jacksonJaxrsJsonProvider	: '2.5.1',
+            javaxEjbApi					: '3.2',
+            cdiApi						: '1.2'
     ]
 
     repositories {

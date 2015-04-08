@@ -1,5 +1,6 @@
 dependencies {
 	compile project(':persona-core')
 			
-	compile group: 'javax.ejb', name: 'javax.ejb-api', version: '3.2'	
+	compile "javax.ejb:javax.ejb-api:${libraryVersions.javaxEjbApi}"
+	
 }
