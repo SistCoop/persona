@@ -53,7 +53,7 @@ public class PersonaJuridicaAdapter implements PersonaJuridicaModel {
 	}
 
 	@Override
-	public List<AccionistaModel> getAccionistas() {				
+	public List<AccionistaModel> getAccionistas() {					
 		Set<AccionistaEntity> list = personaJuridicaEntity.getAccionistas();
 		List<AccionistaModel> result = new ArrayList<AccionistaModel>();
 		for (AccionistaEntity entity : list) {
