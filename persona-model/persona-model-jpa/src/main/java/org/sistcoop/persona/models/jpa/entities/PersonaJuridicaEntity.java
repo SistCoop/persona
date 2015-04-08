@@ -2,6 +2,7 @@ package org.sistcoop.persona.models.jpa.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -60,7 +61,7 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
 	private boolean finLucro;
 
 	private PersonaNaturalEntity representanteLegal;
-	private Set<AccionistaEntity> accionistas;
+	private Set<AccionistaEntity> accionistas = new HashSet<AccionistaEntity>(0);
 	
 	public PersonaJuridicaEntity() {
 		super();
