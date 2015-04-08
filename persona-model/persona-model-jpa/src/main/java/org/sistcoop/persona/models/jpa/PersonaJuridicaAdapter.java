@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 
 import org.sistcoop.persona.models.AccionistaModel;
 import org.sistcoop.persona.models.PersonaJuridicaModel;
@@ -54,14 +53,10 @@ public class PersonaJuridicaAdapter implements PersonaJuridicaModel {
 	}
 
 	@Override
-	public List<AccionistaModel> getAccionistas() {		
-		TypedQuery<AccionistaEntity> query = em.createQuery("select a from AccionistaEntity a WHERE a.personaJuridica.id = :id", AccionistaEntity.class);
-		query.setParameter("id", getId());
-		List<AccionistaEntity> results = query.getResultList();
-		
-		//Set<AccionistaEntity> list = personaJuridicaEntity.getAccionistas();
+	public List<AccionistaModel> getAccionistas() {				
+		Set<AccionistaEntity> list = personaJuridicaEntity.getAccionistas();
 		List<AccionistaModel> result = new ArrayList<AccionistaModel>();
-		for (AccionistaEntity entity : results) {
+		for (AccionistaEntity entity : list) {
 			result.add(new AccionistaAdapter(em, entity));
 		}
 		return result;

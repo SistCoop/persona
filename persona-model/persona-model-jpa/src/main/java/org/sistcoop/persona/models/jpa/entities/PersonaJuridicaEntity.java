@@ -2,7 +2,6 @@ package org.sistcoop.persona.models.jpa.entities;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -61,19 +60,10 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
 	private boolean finLucro;
 
 	private PersonaNaturalEntity representanteLegal;
-	private Set<AccionistaEntity> accionistas = new HashSet<AccionistaEntity>();
+	private Set<AccionistaEntity> accionistas;
 	
 	public PersonaJuridicaEntity() {
 		super();
-	}
-
-	public PersonaJuridicaEntity(Long id) {
-		super();
-		this.id = id;
-	}
-
-	public PersonaJuridicaEntity(TipoDocumentoEntity tipoDocumento, String numeroDocumento) {
-		super(tipoDocumento, numeroDocumento);
 	}
 
 	@Id
@@ -165,7 +155,7 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
 		this.representanteLegal = representanteLegal;
 	}
 
-	@OneToMany(mappedBy = "personaJuridica", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "personaJuridica", fetch = FetchType.LAZY)	
 	public Set<AccionistaEntity> getAccionistas() {
 		return accionistas;
 	}
