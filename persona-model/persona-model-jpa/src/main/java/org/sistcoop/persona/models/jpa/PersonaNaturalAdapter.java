@@ -229,19 +229,34 @@ public class PersonaNaturalAdapter implements PersonaNaturalModel {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || !(o instanceof PersonaNaturalModel))
-			return false;
-
-		PersonaNaturalModel that = (PersonaNaturalModel) o;
-		return that.getId().equals(getId());
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((getNumeroDocumento() == null) ? 0 : getNumeroDocumento().hashCode());
+		result = prime * result + ((getTipoDocumento() == null) ? 0 : getTipoDocumento().hashCode());
+		return result;
 	}
 
 	@Override
-	public int hashCode() {
-		return getId().hashCode();
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof PersonaNaturalModel))
+			return false;
+		PersonaNaturalModel other = (PersonaNaturalModel) obj;
+		if (getNumeroDocumento() == null) {
+			if (other.getNumeroDocumento() != null)
+				return false;
+		} else if (!getNumeroDocumento().equals(other.getNumeroDocumento()))
+			return false;
+		if (getTipoDocumento() == null) {
+			if (other.getTipoDocumento() != null)
+				return false;
+		} else if (!getTipoDocumento().equals(other.getTipoDocumento()))
+			return false;
+		return true;
 	}
 
 }

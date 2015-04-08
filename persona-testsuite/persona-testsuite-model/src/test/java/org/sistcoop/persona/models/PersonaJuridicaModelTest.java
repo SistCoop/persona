@@ -2,6 +2,7 @@ package org.sistcoop.persona.models;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
@@ -157,6 +158,7 @@ public class PersonaJuridicaModelTest {
 		
 		List<AccionistaModel> accionistaModels = personaJuridicaModel.getAccionistas();									
 		
+		assertThat(accionistaModels, is(notNullValue()));
 		assertThat(accionistaModels.size(), is(equalTo(1)));
 		assertThat(accionistaModels.get(0), is(equalTo(accionistaModel)));
 		

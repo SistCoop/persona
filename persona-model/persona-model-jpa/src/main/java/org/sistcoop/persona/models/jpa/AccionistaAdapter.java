@@ -80,19 +80,34 @@ public class AccionistaAdapter implements AccionistaModel {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || !(o instanceof AccionistaModel))
-			return false;
-
-		AccionistaModel that = (AccionistaModel) o;
-		return that.getId().equals(getId());
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((getPersonaJuridica() == null) ? 0 : getPersonaJuridica().hashCode());
+		result = prime * result + ((getPersonaNatural() == null) ? 0 : getPersonaNatural().hashCode());
+		return result;
 	}
 
 	@Override
-	public int hashCode() {
-		return getId().hashCode();
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof AccionistaModel))
+			return false;
+		AccionistaModel other = (AccionistaModel) obj;
+		if (getPersonaJuridica() == null) {
+			if (other.getPersonaJuridica() != null)
+				return false;
+		} else if (!getPersonaJuridica().equals(other.getPersonaJuridica()))
+			return false;
+		if (getPersonaNatural() == null) {
+			if (other.getPersonaNatural() != null)
+				return false;
+		} else if (!getPersonaNatural().equals(other.getPersonaNatural()))
+			return false;
+		return true;
 	}
 
 }

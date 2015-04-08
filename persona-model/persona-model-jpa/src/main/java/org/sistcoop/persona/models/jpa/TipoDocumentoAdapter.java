@@ -85,19 +85,28 @@ public class TipoDocumentoAdapter implements TipoDocumentoModel {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || !(o instanceof TipoDocumentoModel))
-			return false;
-
-		TipoDocumentoModel that = (TipoDocumentoModel) o;
-		return that.getAbreviatura().equals(getAbreviatura());
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((getAbreviatura() == null) ? 0 : getAbreviatura().hashCode());
+		return result;
 	}
 
 	@Override
-	public int hashCode() {
-		return getAbreviatura().hashCode();
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof TipoDocumentoModel))
+			return false;
+		TipoDocumentoModel other = (TipoDocumentoModel) obj;
+		if (getAbreviatura() == null) {
+			if (other.getAbreviatura() != null)
+				return false;
+		} else if (!getAbreviatura().equals(other.getAbreviatura()))
+			return false;
+		return true;
 	}
 
 }

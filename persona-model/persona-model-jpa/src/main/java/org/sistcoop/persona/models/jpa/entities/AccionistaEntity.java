@@ -34,6 +34,10 @@ public class AccionistaEntity implements java.io.Serializable {
 
 	private Timestamp optlk;
 
+	public AccionistaEntity() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	@Id
 	@GeneratedValue(generator = "SgGenericGenerator")
 	@Column(name = "ID")
