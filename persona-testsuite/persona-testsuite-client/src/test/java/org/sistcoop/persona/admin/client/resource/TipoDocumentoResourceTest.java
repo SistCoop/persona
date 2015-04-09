@@ -1,7 +1,7 @@
 package org.sistcoop.persona.admin.client.resource;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+//import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.net.URL;
@@ -92,7 +92,7 @@ public class TipoDocumentoResourceTest {
 		assertThat(response.getStatus(), is(201));
 	}
 	
-	@Test
+	/*@Test
 	public void findById(@ArquillianResteasyResource TipoDocumentoResource tipoDocumentoResource) {		
 		TipoDocumentoRepresentation tipoDocumentoRepresentation1 = new TipoDocumentoRepresentation();
 		tipoDocumentoRepresentation1.setAbreviatura("DNI");
@@ -129,6 +129,6 @@ public class TipoDocumentoResourceTest {
 		tipoDocumentoResource.create(tipoDocumentoRepresentation);
 		
 		tipoDocumentoResource.delete("DNI");
-	}
+	}*/
 
 }
