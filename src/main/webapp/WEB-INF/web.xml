@@ -5,7 +5,7 @@
 	version="3.0">
 
 	<!-- keycloak aplication name -->
-	<module-name>persona_restful</module-name>
+	<module-name>persona</module-name>
 
 	<!-- java ee roles -->
 	<security-role>
@@ -47,7 +47,7 @@
 	<!-- Login method -->
 	<login-config>
 		<auth-method>KEYCLOAK</auth-method>
-		<realm-name>SistemaFinanciero</realm-name>
+		<realm-name>sistcoop</realm-name>
 	</login-config>
 
 </web-app>
