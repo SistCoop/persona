@@ -20,6 +20,7 @@ public class ModelToRepresentation {
 		rep.setDenominacion(model.getDenominacion());
 		rep.setCantidadCaracteres(model.getCantidadCaracteres());
 		rep.setTipoPersona(model.getTipoPersona().toString());
+		rep.setEstado(model.getEstado());
 
 		return rep;
 	}
