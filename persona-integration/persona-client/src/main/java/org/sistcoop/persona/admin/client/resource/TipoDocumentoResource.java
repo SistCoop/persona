@@ -18,7 +18,7 @@ import org.sistcoop.persona.representations.idm.TipoDocumentoRepresentation;
 
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Path("/tiposDocumento")
+@Path("/tipoDocumentos")
 public interface TipoDocumentoResource {
 
 	@GET
