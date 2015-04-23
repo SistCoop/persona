@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 import org.sistcoop.persona.representations.idm.PersonaNaturalRepresentation;
 
 @Produces(MediaType.APPLICATION_JSON)
-@Path("/personasNaturales")
+@Path("/personas/naturales")
 public interface PersonasNaturalesResource {
 
 	@GET	
