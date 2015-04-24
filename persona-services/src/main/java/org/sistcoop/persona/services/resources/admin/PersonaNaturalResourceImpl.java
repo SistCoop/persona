@@ -77,6 +77,7 @@ public class PersonaNaturalResourceImpl implements PersonaNaturalResource {
 		model.setUbigeo(personaNaturalRepresentation.getUbigeo());
 		model.setDireccion(personaNaturalRepresentation.getDireccion());
 		model.setReferencia(personaNaturalRepresentation.getReferencia());
+		model.setOcupacion(personaNaturalRepresentation.getOcupacion());
 		model.setTelefono(personaNaturalRepresentation.getTelefono());
 		model.setCelular(personaNaturalRepresentation.getCelular());
 		model.setEmail(personaNaturalRepresentation.getEmail());
