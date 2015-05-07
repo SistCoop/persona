@@ -1,8 +1,8 @@
 dependencies {
-	compile project(':persona-core')
-	compile project(':persona-core-jaxrs')
-		
-	compile "org.jboss.resteasy:resteasy-jaxrs:${libraryVersions.resteasy}"
-	compile "org.hibernate:hibernate-validator:${libraryVersions.hibernateValidator}"
-	
+    compile project(':persona-core')
+    compile project(':persona-core-jaxrs')
+
+    compile "org.jboss.resteasy:resteasy-jaxrs:${libraryVersions.resteasy}"
+    compile "org.hibernate:hibernate-validator:${libraryVersions.hibernateValidator}"
+
 }

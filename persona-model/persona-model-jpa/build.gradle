@@ -1,8 +1,8 @@
 dependencies {
-	compile project(':persona-model:persona-model-api')
-	
-	compile "org.hibernate:hibernate-entitymanager:${libraryVersions.hibernateEntitymanager}"
-	compile "org.hibernate:hibernate-validator:${libraryVersions.hibernateValidator}" 			
-	compile "javax.enterprise:cdi-api:${libraryVersions.cdiApi}"
-	
+    compile project(':persona-model:persona-model-api')
+
+    compile "org.hibernate:hibernate-entitymanager:${libraryVersions.hibernateEntitymanager}"
+    compile "org.hibernate:hibernate-validator:${libraryVersions.hibernateValidator}"
+    compile "javax.enterprise:cdi-api:${libraryVersions.cdiApi}"
+
 }

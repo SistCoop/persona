@@ -1,5 +1,4 @@
 dependencies {
     compile project(':persona-integration:persona-client')
-	compile project(':persona-services')   	   
+    compile project(':persona-services')
 }
-

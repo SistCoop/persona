@@ -1,8 +1,8 @@
-dependencies {	
+dependencies {
 
-	compile "org.jboss.resteasy:resteasy-jaxrs:${libraryVersions.resteasy}"
-	compile "org.jboss.resteasy:resteasy-validator-provider-11:${libraryVersions.resteasy}"
-	
-	compile "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:${libraryVersions.jacksonJaxrsJsonProvider}"
-			
+    compile "org.jboss.resteasy:resteasy-jaxrs:${libraryVersions.resteasy}"
+    compile "org.jboss.resteasy:resteasy-validator-provider-11:${libraryVersions.resteasy}"
+
+    compile "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:${libraryVersions.jacksonJaxrsJsonProvider}"
+
 }
