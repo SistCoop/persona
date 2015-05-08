@@ -1,4 +1,4 @@
-include "persona-core"
+//include "persona-core"
 /*include "persona-core-jaxrs"
 include "persona-integration:persona-client"
 include "persona-model:persona-model-api"
