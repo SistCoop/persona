@@ -1,5 +1,10 @@
-ext.buildTimestamp = new Date().format('yyyy-MM-dd HH:mm:ss')
-version = new ProjectVersion(1, 0, System.env.SOURCE_BUILD_NUMBER) //Jenkins Build Number
+//import com.manning.gia.ProjectVersion
+
+allprojects {
+    ext.buildTimestamp = new Date().format('yyyy-MM-dd HH:mm:ss')
+    version = new ProjectVersion(1, 0, System.env.SOURCE_BUILD_NUMBER) //Jenkins Build Number
+}
+
 
 class ProjectVersion {
     Integer major
