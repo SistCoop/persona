@@ -3,6 +3,7 @@ package org.sistcoop.persona.services.resources.admin;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
@@ -10,6 +11,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.jboss.ejb3.annotation.SecurityDomain;
+import org.sistcoop.persona.admin.client.Roles;
 import org.sistcoop.persona.admin.client.resource.PersonaJuridicaResource;
 import org.sistcoop.persona.models.AccionistaModel;
 import org.sistcoop.persona.models.AccionistaProvider;
@@ -26,6 +29,7 @@ import org.sistcoop.persona.representations.idm.AccionistaRepresentation;
 import org.sistcoop.persona.representations.idm.PersonaJuridicaRepresentation;
 
 @Stateless
+@SecurityDomain("keycloak")
 public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
 
 	@Inject
@@ -46,6 +50,29 @@ public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
 	@Context
 	protected UriInfo uriInfo;
 
+	@RolesAllowed(Roles.ver_personas)
+	@Override
+	public List<PersonaJuridicaRepresentation> findAll(String filterText, Integer firstResult, Integer maxResults) {
+		filterText = (filterText == null ? "" : filterText);
+		firstResult = (firstResult == null ? -1 : firstResult);
+		maxResults = (maxResults == null ? -1 : maxResults);
+
+		List<PersonaJuridicaModel> list = personaJuridicaProvider.searchForFilterText(filterText, firstResult, maxResults);
+		List<PersonaJuridicaRepresentation> result = new ArrayList<PersonaJuridicaRepresentation>();
+		for (PersonaJuridicaModel model : list) {
+			result.add(ModelToRepresentation.toRepresentation(model));
+		}
+		return result;
+	}
+
+	@RolesAllowed(Roles.ver_personas)
+	@Override
+	public long countAll() {
+		Long count = personaJuridicaProvider.getPersonasJuridicasCount();
+		return count;
+	}
+	
+	@RolesAllowed(Roles.ver_personas)
 	@Override
 	public PersonaJuridicaRepresentation findById(Long id) {
 		PersonaJuridicaModel model = personaJuridicaProvider.getPersonaJuridicaById(id);
@@ -53,6 +80,7 @@ public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
 		return rep;
 	}
 
+	@RolesAllowed(Roles.ver_personas)
 	@Override
 	public PersonaJuridicaRepresentation findByTipoNumeroDocumento(String tipoDocumento, String numeroDocumento) {
 		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(tipoDocumento);
@@ -61,6 +89,7 @@ public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
 		return rep;
 	}
 
+	@RolesAllowed(Roles.administrar_personas)
 	@Override
 	public Response create(PersonaJuridicaRepresentation personaJuridicaRepresentation) {
 		TipoDocumentoModel representanteTipoDocumentoModel = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(personaJuridicaRepresentation.getRepresentanteLegal().getTipoDocumento());
@@ -72,6 +101,7 @@ public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
 		return Response.created(uriInfo.getAbsolutePathBuilder().path(result.getId().toString()).build()).header("Access-Control-Expose-Headers", "Location").entity(result.getId()).build();
 	}
 
+	@RolesAllowed(Roles.administrar_personas)
 	@Override
 	public void update(Long id, PersonaJuridicaRepresentation rep) {
 		PersonaJuridicaModel model = personaJuridicaProvider.getPersonaJuridicaById(id);
@@ -97,6 +127,7 @@ public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
 		model.commit();
 	}
 
+	@RolesAllowed(Roles.eliminar_personas)
 	@Override
 	public void remove(Long id) {
 		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.getPersonaJuridicaById(id);
@@ -110,6 +141,7 @@ public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
 	 * Accionistas
 	 */
 
+	@RolesAllowed(Roles.ver_personas)
 	@Override
 	public List<AccionistaRepresentation> findAllAccionistas(Long id) {
 		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.getPersonaJuridicaById(id);
@@ -121,6 +153,7 @@ public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
 		return result;
 	}
 
+	@RolesAllowed(Roles.administrar_personas)
 	@Override
 	public Response addAccionista(Long id, AccionistaRepresentation accionistaRepresentation) {
 		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.getPersonaJuridicaById(id);

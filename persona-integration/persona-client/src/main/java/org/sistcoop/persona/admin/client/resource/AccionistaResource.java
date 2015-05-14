@@ -14,13 +14,13 @@ import javax.ws.rs.core.MediaType;
 
 import org.sistcoop.persona.representations.idm.AccionistaRepresentation;
 
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 @Path("/accionistas")
 public interface AccionistaResource {
 
 	@GET
 	@Path("/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public AccionistaRepresentation findById(
 			@PathParam("id") 
 			@NotNull 
@@ -28,6 +28,8 @@ public interface AccionistaResource {
 	
 	@PUT
 	@Path("/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public void updateAccionista(
 			@PathParam("id") 
 			@NotNull 

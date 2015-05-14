@@ -27,6 +27,21 @@ import org.sistcoop.persona.representations.idm.PersonaJuridicaRepresentation;
 @Path("/personas/juridicas")
 public interface PersonaJuridicaResource {
 
+	@GET	
+	public List<PersonaJuridicaRepresentation> findAll(
+			@QueryParam("filterText")
+			@Size(min = 1, max = 100) String filterText, 
+			
+			@QueryParam("firstResult") 
+			@Min(value = 0) Integer firstResult, 
+			
+			@QueryParam("maxResults") 
+			@Min(value = 1) Integer maxResults);
+
+	@GET
+	@Path("/count")	
+	public long countAll();	
+	
 	@GET
 	@Path("/{id}")
 	public PersonaJuridicaRepresentation findById(

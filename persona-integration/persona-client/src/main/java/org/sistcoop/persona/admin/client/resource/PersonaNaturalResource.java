@@ -1,5 +1,7 @@
 package org.sistcoop.persona.admin.client.resource;
 
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -19,13 +21,32 @@ import javax.ws.rs.core.Response;
 import org.hibernate.validator.constraints.NotBlank;
 import org.sistcoop.persona.representations.idm.PersonaNaturalRepresentation;
 
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 @Path("/personas/naturales")
 public interface PersonaNaturalResource {
 
+	@GET	
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public List<PersonaNaturalRepresentation> listAll(
+			@QueryParam("filterText")
+			@Size(min = 1, max = 100) String filterText, 
+			
+			@QueryParam("firstResult") 
+			@Min(value = 0) Integer firstResult, 
+			
+			@QueryParam("maxResults") 
+			@Min(value = 1) Integer maxResults);
+
+	@GET
+	@Path("/count")	
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public long countAll();
+	
 	@GET
 	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
 	public PersonaNaturalRepresentation findById(
 			@PathParam("id") 
 			@NotNull 
@@ -33,6 +54,8 @@ public interface PersonaNaturalResource {
 
 	@GET
 	@Path("/buscar")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
 	public PersonaNaturalRepresentation findByTipoNumeroDocumento(
 			@QueryParam("tipoDocumento")
 			@NotNull
@@ -45,12 +68,16 @@ public interface PersonaNaturalResource {
 			@Size(min = 1, max = 20) String numeroDocumento);
 
 	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
 	public Response create(
 			@NotNull
 			@Valid PersonaNaturalRepresentation personaNaturalRepresentation);
 
 	@PUT
 	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
 	public void update(
 			@PathParam("id") 
 			@NotNull 
@@ -60,7 +87,7 @@ public interface PersonaNaturalResource {
 			@Valid PersonaNaturalRepresentation personaNaturalRepresentation);
 
 	@DELETE
-	@Path("/{id}")
+	@Path("/{id}")	
 	public void remove(
 			@PathParam("id") 
 			@NotNull 
