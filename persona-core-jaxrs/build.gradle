@@ -8,7 +8,7 @@ dependencies {
 	compile 'javax.ejb:javax.ejb-api:3.2'
 	compile 'javax.json:javax.json-api:1.0'
 	
-	compile 'org.keycloak:keycloak-core:1.1.0.Final'	
-	compile 'org.keycloak:keycloak-adapter-core:1.1.0.Final'
+	compile 'org.keycloak:keycloak-core:1.2.0.Final'	
+	compile 'org.keycloak:keycloak-adapter-core:1.2.0.Final'
 	
 }
