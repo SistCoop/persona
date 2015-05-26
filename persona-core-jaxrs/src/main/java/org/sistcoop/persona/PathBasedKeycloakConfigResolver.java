@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.keycloak.adapters.HttpFacade;
-import org.keycloak.adapters.HttpFacade.Request;
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.KeycloakDeployment;
 import org.keycloak.adapters.KeycloakDeploymentBuilder;
@@ -33,47 +32,38 @@ import org.keycloak.adapters.KeycloakDeploymentBuilder;
  */
 public class PathBasedKeycloakConfigResolver implements KeycloakConfigResolver {
 
-    private final Map<String, KeycloakDeployment> cache = new ConcurrentHashMap<String, KeycloakDeployment>();
-	
-	@Override
+	private final Map<String, KeycloakDeployment> cache = new ConcurrentHashMap<String, KeycloakDeployment>();
+
+    @Override
     public KeycloakDeployment resolve(HttpFacade.Request request) {
-        String path = request.getURI();
-        
-        
-        System.out.print("Path:");
-        System.out.println(path);
-        
-        System.out.println("remote:");
-        System.out.println(request.getRemoteAddr());
-        
-        /*int multitenantIndex = path.indexOf("sucursales/");
-        if (multitenantIndex == -1) {
+        String path = request.getHeader("referer");       
+        int consoleIndex = path.indexOf("/console");
+        if (consoleIndex == -1) {
             throw new IllegalStateException("Not able to resolve realm from the request path!");
-        }*/
+        }
+   
+        String consoleBaseUrl = path.substring(0, consoleIndex);                     
+        String realm = consoleBaseUrl.split("/")[3];              
+        if(realm.equals("master")) {
+        	realm = "master";
+        } else if(realm.equals("sucursales")){
+        	realm = "default";
+        } else {
+        	throw new IllegalStateException("Not able to resolve realm from the request path!");
+        }
 
-        /*String realm = path.substring(path.indexOf("sucursales/")).split("/")[1];
-        if (realm.contains("?")) {
-            realm = realm.split("\\?")[0];
-        }*/
-
-        KeycloakDeployment deployment = cache.get(path);
+        KeycloakDeployment deployment = cache.get("sistcoop-" + realm);
         if (null == deployment) {
             // not found on the simple cache, try to load it from the file system
-        	InputStream is = null;
-        	//if(realm.equalsIgnoreCase("master"))
-        		is = getClass().getResourceAsStream("/" + "master" + "-keycloak.json");
-        	//else
-        	//	is = getClass().getResourceAsStream("/" + "default" + "-keycloak.json");
-            if (is == null) {
-                throw new IllegalStateException("Not able to find the file /" + path + "-keycloak.json");
+            InputStream is = getClass().getResourceAsStream("/sistcoop-" + realm + ".json");
+            if (is == null) {            	
+                throw new IllegalStateException("Not able to find the file sistcoop-" + realm + ".json");
             }
             deployment = KeycloakDeploymentBuilder.build(is);
-            //cache.put(path, deployment);
+            cache.put("sistcoop-" + realm, deployment);
         }
 
         return deployment;
     }
-
     
-
 }

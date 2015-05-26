@@ -63,7 +63,7 @@
 	<!-- Login method -->
 	<login-config>
 		<auth-method>KEYCLOAK</auth-method>
-		<realm-name>sistcoop-master</realm-name>
+		<realm-name>sistcoop</realm-name>
 	</login-config>
 
 </web-app>
