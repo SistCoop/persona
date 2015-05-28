@@ -78,7 +78,7 @@ public class TipoDocumentoResourceImpl implements TipoDocumentoResource {
 		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(id);
 		tipoDocumentoModel.setDenominacion(tipoDocumentoRepresentation.getDenominacion());
 		tipoDocumentoModel.setTipoPersona(TipoPersona.valueOf(tipoDocumentoRepresentation.getTipoPersona().toUpperCase()));
-		tipoDocumentoRepresentation.setCantidadCaracteres(tipoDocumentoRepresentation.getCantidadCaracteres());
+		tipoDocumentoModel.setCantidadCaracteres(tipoDocumentoRepresentation.getCantidadCaracteres());
 		tipoDocumentoModel.commit();
 	}
 
