@@ -1,7 +1,8 @@
 {
   "realm": "sistcoop-master",
-  "realm-public-key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnvvtVqgnebcD5AgZKkvltizZSWuse9UGfNEhHS5Reg7xF0lNoZ5arYIKXxc2/3buh3VgMnrPmy1s6UvzIfGp9GTVTWO3qQ4bSZInBYRpSpDs+DCDwRhPVCnxvH/JpSOzJAclnaihT5jSJTphAzVwUAxnAtiw7VEKjjvRHS2p3uQIDAQAB",
+  "realm-public-key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4N1OBkgclMnpAZSoMel/M8YC1gNoVSVjilsH9/Z69KoKOYa/kB3fq4v9rgcPYTKeBwNH82q+wycNd4TmU+j6dgQGC7CqLleTpYPmtl0LNlUnS+BJdRJ/Tdd5G7g8wLmgeBMxbRkEIeWktQ0MNL3YObsBd6Hf7AvqERkmeaoxGaDGuQvEaE77AC5AdYoHCO5GdK+jbdZifS7tXKch1r1fnmKBz0NlmVo59Z8wKpJYT+P8Pg/hvdrEFGO+2xwBQWqsxOrkvUwy1SBpUBTVDvTDPt/OJyj6c3LLMNIQbRaoYxEbk08kCkOWP8oL18KZdpmUWqdVeeefVoSXeigUaG7y7QIDAQAB",
   "bearer-only": true,
+  "auth-server-url": "https://keycloak-softgreen.rhcloud.com/auth",
   "ssl-required": "external",
   "resource": "persona",
   "use-resource-role-mappings": true,
