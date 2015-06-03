@@ -1,8 +1,8 @@
 {
   "realm": "sistcoop-master",
-  "realm-public-key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4N1OBkgclMnpAZSoMel/M8YC1gNoVSVjilsH9/Z69KoKOYa/kB3fq4v9rgcPYTKeBwNH82q+wycNd4TmU+j6dgQGC7CqLleTpYPmtl0LNlUnS+BJdRJ/Tdd5G7g8wLmgeBMxbRkEIeWktQ0MNL3YObsBd6Hf7AvqERkmeaoxGaDGuQvEaE77AC5AdYoHCO5GdK+jbdZifS7tXKch1r1fnmKBz0NlmVo59Z8wKpJYT+P8Pg/hvdrEFGO+2xwBQWqsxOrkvUwy1SBpUBTVDvTDPt/OJyj6c3LLMNIQbRaoYxEbk08kCkOWP8oL18KZdpmUWqdVeeefVoSXeigUaG7y7QIDAQAB",
+  "realm-public-key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkwShv7JTfaaaSr+vprXQsaJ8ALfRVRVsqc/NAVvFGxXsHWPDnZqRYR+9F+hZx8bsMFCo7gL6olXtf6iy3MbLgA667CAO/ZIuvktCGuzCv+wubpjJWhrj+5Xgl0GQDgmBeByU6xaz67NAVz8ydGZyTYFlKGJY6AxHC+VaF5v/Th7bCA5HPd8ms6mPEKNOV7yXvS96FztHegkg2/aTezWdi4FKgOXl9ceAWfaUY38FPVMRh/T3laeT00No3nay3rxsDeazvbEvr7MG/EfR9T47PLswnKZvp3DZ0jafgPOg8VsWWEkzSMILW3O1B+4TnCDDMjsEylROwaLli7HiJgA4oQIDAQAB",
   "bearer-only": true,
-  "auth-server-url": "https://keycloak-softgreen.rhcloud.com/auth",
+  "auth-server-url": "http://localhost:8080/auth",
   "ssl-required": "external",
   "resource": "persona",
   "use-resource-role-mappings": true,
