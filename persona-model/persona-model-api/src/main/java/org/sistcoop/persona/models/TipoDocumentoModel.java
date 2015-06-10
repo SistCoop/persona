@@ -22,6 +22,6 @@ public interface TipoDocumentoModel extends Model {
 
 	boolean getEstado();
 
-	void desactivar();
+	void setEstado(boolean estado);
 
 }

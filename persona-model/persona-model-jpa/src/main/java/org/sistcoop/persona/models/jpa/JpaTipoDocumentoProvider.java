@@ -40,7 +40,7 @@ public class JpaTipoDocumentoProvider implements TipoDocumentoProvider {
 
 	@Override
 	public TipoDocumentoModel getTipoDocumentoByAbreviatura(String abreviatura) {
-		TypedQuery<TipoDocumentoEntity> query = em.createNamedQuery(TipoDocumentoEntity.findByAbreviatura, TipoDocumentoEntity.class);
+		TypedQuery<TipoDocumentoEntity> query = em.createQuery("SELECT t FROM TipoDocumentoEntity t WHERE UPPER(t.abreviatura) = UPPER(:abreviatura)", TipoDocumentoEntity.class);
 		query.setParameter("abreviatura", abreviatura);
 		List<TipoDocumentoEntity> results = query.getResultList();
 		if (results.size() == 0)
@@ -50,30 +50,34 @@ public class JpaTipoDocumentoProvider implements TipoDocumentoProvider {
 
 	@Override
 	public List<TipoDocumentoModel> getTiposDocumento() {
-		TypedQuery<TipoDocumentoEntity> query = em.createNamedQuery(TipoDocumentoEntity.findAll, TipoDocumentoEntity.class);
+		TypedQuery<TipoDocumentoEntity> query = em.createQuery("Select t from TipoDocumentoEntity t", TipoDocumentoEntity.class);
 		List<TipoDocumentoEntity> list = query.getResultList();
 		List<TipoDocumentoModel> results = new ArrayList<TipoDocumentoModel>();
 		for (TipoDocumentoEntity entity : list) {
-			results.add(new TipoDocumentoAdapter(em, entity));
+			if(entity.isEstado()) {
+				results.add(new TipoDocumentoAdapter(em, entity));
+			}
 		}
 		return results;
 	}
 
 	@Override
 	public List<TipoDocumentoModel> getTiposDocumento(TipoPersona tipoPersona) {
-		TypedQuery<TipoDocumentoEntity> query = em.createNamedQuery(TipoDocumentoEntity.findByTipopersona, TipoDocumentoEntity.class);
+		TypedQuery<TipoDocumentoEntity> query = em.createQuery("SELECT t FROM TipoDocumentoEntity t WHERE t.tipoPersona = :tipoPersona", TipoDocumentoEntity.class);
 		query.setParameter("tipoPersona", tipoPersona);
 		List<TipoDocumentoEntity> list = query.getResultList();
 		List<TipoDocumentoModel> results = new ArrayList<TipoDocumentoModel>();
 		for (TipoDocumentoEntity entity : list) {
-			results.add(new TipoDocumentoAdapter(em, entity));
+			if(entity.isEstado()) {
+				results.add(new TipoDocumentoAdapter(em, entity));
+			}
 		}
 		return results;
 	}
 
 	@Override
 	public List<TipoDocumentoModel> getTiposDocumento(boolean estado) {
-		TypedQuery<TipoDocumentoEntity> query = em.createNamedQuery(TipoDocumentoEntity.findAll, TipoDocumentoEntity.class);
+		TypedQuery<TipoDocumentoEntity> query = em.createQuery("Select t from TipoDocumentoEntity t", TipoDocumentoEntity.class);
 		List<TipoDocumentoEntity> list = query.getResultList();
 		List<TipoDocumentoModel> results = new ArrayList<TipoDocumentoModel>();
 		for (TipoDocumentoEntity entity : list) {
@@ -85,7 +89,7 @@ public class JpaTipoDocumentoProvider implements TipoDocumentoProvider {
 
 	@Override
 	public List<TipoDocumentoModel> getTiposDocumento(TipoPersona tipoPersona, boolean estado) {
-		TypedQuery<TipoDocumentoEntity> query = em.createNamedQuery(TipoDocumentoEntity.findByTipopersona, TipoDocumentoEntity.class);
+		TypedQuery<TipoDocumentoEntity> query = em.createQuery("SELECT t FROM TipoDocumentoEntity t WHERE t.tipoPersona = :tipoPersona", TipoDocumentoEntity.class);
 		query.setParameter("tipoPersona", tipoPersona);
 		List<TipoDocumentoEntity> list = query.getResultList();
 		List<TipoDocumentoModel> results = new ArrayList<TipoDocumentoModel>();

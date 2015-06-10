@@ -126,7 +126,7 @@ public class TipoDocumentoProviderTest {
 		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
 		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
 		
-		tipoDocumentoModel2.desactivar();
+		tipoDocumentoModel2.setEstado(false);
 		tipoDocumentoModel2.commit();		
 		
 		List<TipoDocumentoModel> modelsActive = tipoDocumentoProvider.getTiposDocumento(true);
@@ -153,8 +153,8 @@ public class TipoDocumentoProviderTest {
 		TipoDocumentoModel tipoDocumentoModel3 = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
 		TipoDocumentoModel tipoDocumentoModel4 = tipoDocumentoProvider.addTipoDocumento("RRR", "Registro registral restricto", 11, TipoPersona.JURIDICA);
 		
-		tipoDocumentoModel2.desactivar();
-		tipoDocumentoModel4.desactivar();
+		tipoDocumentoModel2.setEstado(false);
+		tipoDocumentoModel4.setEstado(false);
 		tipoDocumentoModel2.commit();
 		tipoDocumentoModel4.commit();		
 		

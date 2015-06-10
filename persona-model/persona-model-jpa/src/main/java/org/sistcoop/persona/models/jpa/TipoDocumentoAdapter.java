@@ -18,6 +18,13 @@ public class TipoDocumentoAdapter implements TipoDocumentoModel {
 		this.tipoDocumentoEntity = tipoDocumentoEntity;
 	}
 
+	public static TipoDocumentoEntity toTipoDocumentoEntity(TipoDocumentoModel model, EntityManager em) {
+		if (model instanceof TipoDocumentoAdapter) {
+			return ((TipoDocumentoAdapter) model).getTipoDocumentEntity();
+		}
+		return em.getReference(TipoDocumentoEntity.class, model.getAbreviatura());
+	}
+	
 	public TipoDocumentoEntity getTipoDocumentEntity() {
 		return tipoDocumentoEntity;
 	}
@@ -68,15 +75,8 @@ public class TipoDocumentoAdapter implements TipoDocumentoModel {
 	}
 
 	@Override
-	public void desactivar() {
-		tipoDocumentoEntity.setEstado(false);
-	}
-
-	public static TipoDocumentoEntity toTipoDocumentoEntity(TipoDocumentoModel model, EntityManager em) {
-		if (model instanceof TipoDocumentoAdapter) {
-			return ((TipoDocumentoAdapter) model).getTipoDocumentEntity();
-		}
-		return em.getReference(TipoDocumentoEntity.class, model.getAbreviatura());
+	public void setEstado(boolean estado) {
+		tipoDocumentoEntity.setEstado(estado);
 	}
 
 	@Override

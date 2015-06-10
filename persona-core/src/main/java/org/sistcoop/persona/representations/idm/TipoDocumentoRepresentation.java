@@ -2,13 +2,6 @@ package org.sistcoop.persona.representations.idm;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement(name = "tipoDocumento")
-@XmlAccessorType(XmlAccessType.PROPERTY)
 public class TipoDocumentoRepresentation implements Serializable {
 
 	/**
@@ -22,7 +15,6 @@ public class TipoDocumentoRepresentation implements Serializable {
 	private String tipoPersona;
 	private Boolean estado;
 
-	@XmlAttribute
 	public String getAbreviatura() {
 		return abreviatura;
 	}
@@ -31,7 +23,6 @@ public class TipoDocumentoRepresentation implements Serializable {
 		this.abreviatura = abreviatura;
 	}
 
-	@XmlAttribute
 	public String getDenominacion() {
 		return denominacion;
 	}
@@ -40,7 +31,6 @@ public class TipoDocumentoRepresentation implements Serializable {
 		this.denominacion = denominacion;
 	}
 
-	@XmlAttribute
 	public int getCantidadCaracteres() {
 		return cantidadCaracteres;
 	}
@@ -49,7 +39,6 @@ public class TipoDocumentoRepresentation implements Serializable {
 		this.cantidadCaracteres = cantidadCaracteres;
 	}
 
-	@XmlAttribute
 	public String getTipoPersona() {
 		return tipoPersona;
 	}
@@ -58,7 +47,6 @@ public class TipoDocumentoRepresentation implements Serializable {
 		this.tipoPersona = tipoPersona;
 	}
 
-	@XmlAttribute
 	public Boolean getEstado() {
 		return estado;
 	}

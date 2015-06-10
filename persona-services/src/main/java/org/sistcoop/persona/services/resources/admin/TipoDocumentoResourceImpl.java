@@ -26,33 +26,38 @@ import org.sistcoop.persona.representations.idm.TipoDocumentoRepresentation;
 public class TipoDocumentoResourceImpl implements TipoDocumentoResource {
 
 	@Inject
-	protected TipoDocumentoProvider tipoDocumentoProvider;
+	private TipoDocumentoProvider tipoDocumentoProvider;
 
 	@Inject
-	protected RepresentationToModel representationToModel;
+	private RepresentationToModel representationToModel;
 
 	@Context
-	protected UriInfo uriInfo;
+	private UriInfo uriInfo;
 
 	@RolesAllowed(Roles.ver_documentos)
 	@Override		
 	public List<TipoDocumentoRepresentation> findAll(String tipoPersona, Boolean estado) {
 		List<TipoDocumentoModel> list = null;
-		if (tipoPersona != null) {
+		
+		if(tipoPersona != null) {
 			TipoPersona personType = TipoPersona.valueOf(tipoPersona.toUpperCase());
-			if (personType != null) {
+			if(estado != null){				
+				list = tipoDocumentoProvider.getTiposDocumento(personType, estado);
+			} else {
 				list = tipoDocumentoProvider.getTiposDocumento(personType);
+			}
+		} else {
+			if (estado != null) {
+				list = tipoDocumentoProvider.getTiposDocumento(estado);
 			} else {
 				list = tipoDocumentoProvider.getTiposDocumento();
 			}
-		} else {
-			list = tipoDocumentoProvider.getTiposDocumento();
 		}
 
-		List<TipoDocumentoRepresentation> result = new ArrayList<TipoDocumentoRepresentation>();
+		List<TipoDocumentoRepresentation> result = new ArrayList<>();
 		for (TipoDocumentoModel model : list) {
 			result.add(ModelToRepresentation.toRepresentation(model));
-		}
+		}		
 
 		return result;
 	}
@@ -79,6 +84,7 @@ public class TipoDocumentoResourceImpl implements TipoDocumentoResource {
 		tipoDocumentoModel.setDenominacion(tipoDocumentoRepresentation.getDenominacion());
 		tipoDocumentoModel.setTipoPersona(TipoPersona.valueOf(tipoDocumentoRepresentation.getTipoPersona().toUpperCase()));
 		tipoDocumentoModel.setCantidadCaracteres(tipoDocumentoRepresentation.getCantidadCaracteres());
+		tipoDocumentoModel.setEstado(tipoDocumentoRepresentation.getEstado());
 		tipoDocumentoModel.commit();
 	}
 

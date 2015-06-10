@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
@@ -16,30 +15,19 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.NamedQueries;
-import org.hibernate.annotations.NamedQuery;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.sistcoop.persona.models.enums.TipoPersona;
 
 @Entity
-@Table(name = "TIPO_DOCUMENTO", indexes = { @Index(columnList = "abreviatura") })
-@NamedQueries({ 
-	@NamedQuery(name = TipoDocumentoEntity.findAll, query = "Select t from TipoDocumentoEntity t"), 
-	@NamedQuery(name = TipoDocumentoEntity.findByAbreviatura, query = "SELECT t FROM TipoDocumentoEntity t WHERE UPPER(t.abreviatura) = UPPER(:abreviatura)"), 
-	@NamedQuery(name = TipoDocumentoEntity.findByTipopersona, query = "SELECT t FROM TipoDocumentoEntity t WHERE t.tipoPersona = :tipoPersona") })
+@Table(name = "TIPO_DOCUMENTO")
 public class TipoDocumentoEntity implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	public final static String base = "org.sistcoop.models.jpa.entities.TipoDocumentoEntity.";
-	public final static String findAll = base + "findAll";
-	public final static String findByAbreviatura = base + "findByAbreviatura";
-	public final static String findByTipopersona = base + "findByTipopersona";
 	
 	private String abreviatura;
 	private String denominacion;
