@@ -31,7 +31,7 @@ public class PersonaNaturalAdapter implements PersonaNaturalModel {
 	}
 
 	@Override
-	public Long getId() {
+	public String getId() {
 		return personaNaturalEntity.getId();
 	}
 

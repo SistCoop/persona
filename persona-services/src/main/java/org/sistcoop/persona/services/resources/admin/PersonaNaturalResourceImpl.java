@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.jboss.ejb3.annotation.SecurityDomain;
+import org.sistcoop.persona.Jsend;
 import org.sistcoop.persona.admin.client.Roles;
 import org.sistcoop.persona.admin.client.resource.PersonaNaturalResource;
 import org.sistcoop.persona.models.PersonaNaturalModel;
@@ -71,7 +72,7 @@ public class PersonaNaturalResourceImpl implements PersonaNaturalResource {
 	
 	@RolesAllowed(Roles.ver_personas)
 	@Override
-	public PersonaNaturalRepresentation findById(Long id) {
+	public PersonaNaturalRepresentation findById(String id) {
 		PersonaNaturalModel personaNaturalModel = personaNaturalProvider.getPersonaNaturalById(id);
 		PersonaNaturalRepresentation rep = ModelToRepresentation.toRepresentation(personaNaturalModel);
 		return rep;
@@ -96,12 +97,12 @@ public class PersonaNaturalResourceImpl implements PersonaNaturalResource {
 	public Response create(PersonaNaturalRepresentation personaNaturalRepresentation) {
 		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(personaNaturalRepresentation.getTipoDocumento());
 		PersonaNaturalModel personaNaturalModel = representationToModel.createPersonaNatural(personaNaturalRepresentation, tipoDocumentoModel, personaNaturalProvider);
-		return Response.created(uriInfo.getAbsolutePathBuilder().path(personaNaturalModel.getId().toString()).build()).header("Access-Control-Expose-Headers", "Location").entity(personaNaturalModel.getId()).build();
+		return Response.created(uriInfo.getAbsolutePathBuilder().path(personaNaturalModel.getId().toString()).build()).header("Access-Control-Expose-Headers", "Location").entity(Jsend.getSuccessJSend(personaNaturalModel.getId())).build();
 	}
 
 	@RolesAllowed(Roles.administrar_personas)
 	@Override
-	public void update(Long id, PersonaNaturalRepresentation personaNaturalRepresentation) {
+	public void update(String id, PersonaNaturalRepresentation personaNaturalRepresentation) {
 		PersonaNaturalModel model = personaNaturalProvider.getPersonaNaturalById(id);
 		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(personaNaturalRepresentation.getTipoDocumento());
 
@@ -128,7 +129,7 @@ public class PersonaNaturalResourceImpl implements PersonaNaturalResource {
 
 	@RolesAllowed(Roles.eliminar_personas)
 	@Override
-	public void remove(Long id) {
+	public void remove(String id) {
 		PersonaNaturalModel personaNaturalModel = personaNaturalProvider.getPersonaNaturalById(id);
 		personaNaturalProvider.removePersonaNatural(personaNaturalModel);
 	}

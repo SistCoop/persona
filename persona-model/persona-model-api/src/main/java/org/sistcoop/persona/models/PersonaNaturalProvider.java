@@ -23,7 +23,7 @@ public interface PersonaNaturalProvider extends Provider {
 
 	boolean removePersonaNatural(PersonaNaturalModel personaNaturalModel);
 
-	PersonaNaturalModel getPersonaNaturalById(Long id);
+	PersonaNaturalModel getPersonaNaturalById(String id);
 
 	PersonaNaturalModel getPersonaNaturalByTipoNumeroDoc(TipoDocumentoModel tipoDocumento, String numeroDocumento);
 

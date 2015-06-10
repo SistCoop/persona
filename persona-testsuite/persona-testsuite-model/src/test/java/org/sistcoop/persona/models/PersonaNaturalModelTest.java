@@ -93,7 +93,7 @@ public class PersonaNaturalModelTest {
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);
 		
-		Long id = model1.getId();
+		String id = model1.getId();
 		String nombreNuevo = "Carlos E.";
 		
 		model1.setNombres(nombreNuevo);

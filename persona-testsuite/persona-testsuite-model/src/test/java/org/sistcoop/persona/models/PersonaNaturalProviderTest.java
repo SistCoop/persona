@@ -114,7 +114,7 @@ public class PersonaNaturalProviderTest {
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);		
 		
-		Long id = model1.getId();		
+		String id = model1.getId();		
 		PersonaNaturalModel model2 = personaNaturalProvider.getPersonaNaturalById(id);
 		
 		assertThat(model1, is(equalTo(model2)));
@@ -175,7 +175,7 @@ public class PersonaNaturalProviderTest {
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);				
 		
-		Long id = model1.getId();		
+		String id = model1.getId();		
 		boolean result = personaNaturalProvider.removePersonaNatural(model1);
 		
 		PersonaNaturalModel model2 = personaNaturalProvider.getPersonaNaturalById(id);

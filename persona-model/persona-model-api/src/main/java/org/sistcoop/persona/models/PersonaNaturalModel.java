@@ -7,7 +7,7 @@ import org.sistcoop.persona.models.enums.Sexo;
 
 public interface PersonaNaturalModel extends Model {
 
-	Long getId();
+	String getId();
 
 	String getCodigoPais();
 

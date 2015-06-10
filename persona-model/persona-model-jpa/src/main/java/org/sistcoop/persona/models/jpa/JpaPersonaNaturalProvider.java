@@ -55,14 +55,14 @@ public class JpaPersonaNaturalProvider implements PersonaNaturalProvider {
 	}	
 
 	@Override
-	public PersonaNaturalModel getPersonaNaturalById(Long id) {
+	public PersonaNaturalModel getPersonaNaturalById(String id) {
 		PersonaNaturalEntity personaNaturalEntity = this.em.find(PersonaNaturalEntity.class, id);
 		return personaNaturalEntity != null ? new PersonaNaturalAdapter(em, personaNaturalEntity) : null;
 	}
 
 	@Override
 	public PersonaNaturalModel getPersonaNaturalByTipoNumeroDoc(TipoDocumentoModel tipoDocumento, String numeroDocumento) {
-		TypedQuery<PersonaNaturalEntity> query = em.createNamedQuery(PersonaNaturalEntity.findByTipoAndNumeroDocumento, PersonaNaturalEntity.class);
+		TypedQuery<PersonaNaturalEntity> query = em.createQuery("SELECT p FROM PersonaNaturalEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento AND p.numeroDocumento = :numeroDocumento", PersonaNaturalEntity.class);
 		query.setParameter("tipoDocumento", tipoDocumento.getAbreviatura());
 		query.setParameter("numeroDocumento", numeroDocumento);
 		List<PersonaNaturalEntity> results = query.getResultList();
@@ -78,13 +78,13 @@ public class JpaPersonaNaturalProvider implements PersonaNaturalProvider {
 
 	@Override
 	public long getPersonasNaturalesCount() {
-		Object count = em.createNamedQuery(PersonaNaturalEntity.count).getSingleResult();		
+		Object count = em.createQuery("select count(u) from PersonaNaturalEntity u").getSingleResult();		
 		return (Long) count;
 	}
 
 	@Override
 	public List<PersonaNaturalModel> getPersonasNaturales(int firstResult, int maxResults) {
-		TypedQuery<PersonaNaturalEntity> query = em.createNamedQuery(PersonaNaturalEntity.findAll, PersonaNaturalEntity.class);
+		TypedQuery<PersonaNaturalEntity> query = em.createQuery("SELECT p FROM PersonaNaturalEntity p ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombres, p.id", PersonaNaturalEntity.class);
 		if (firstResult != -1) {
 			query.setFirstResult(firstResult);
 		}
@@ -108,7 +108,7 @@ public class JpaPersonaNaturalProvider implements PersonaNaturalProvider {
 		if (numeroDocumento == null)
 			numeroDocumento = "";
 
-		TypedQuery<PersonaNaturalEntity> query = em.createNamedQuery(PersonaNaturalEntity.findByNumeroDocumento, PersonaNaturalEntity.class);
+		TypedQuery<PersonaNaturalEntity> query = em.createQuery("SELECT p FROM PersonaNaturalEntity p WHERE p.numeroDocumento LIKE :filterText ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombres, p.id", PersonaNaturalEntity.class);
 		query.setParameter("filterText", "%" + numeroDocumento + "%");
 		if (firstResult != -1) {
 			query.setFirstResult(firstResult);
@@ -133,7 +133,7 @@ public class JpaPersonaNaturalProvider implements PersonaNaturalProvider {
 		if (filterText == null)
 			filterText = "";
 
-		TypedQuery<PersonaNaturalEntity> query = em.createNamedQuery(PersonaNaturalEntity.findByFilterText, PersonaNaturalEntity.class);
+		TypedQuery<PersonaNaturalEntity> query = em.createQuery("SELECT p FROM PersonaNaturalEntity p WHERE p.numeroDocumento LIKE :filterText OR UPPER(CONCAT(p.apellidoPaterno,' ', p.apellidoMaterno,' ',p.nombres)) LIKE :filterText ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombres, p.id", PersonaNaturalEntity.class);
 		query.setParameter("filterText", "%" + filterText.toUpperCase() + "%");
 		if (firstResult != -1) {
 			query.setFirstResult(firstResult);

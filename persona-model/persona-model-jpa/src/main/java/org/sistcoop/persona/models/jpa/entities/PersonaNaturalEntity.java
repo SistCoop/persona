@@ -9,31 +9,21 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.NamedQueries;
-import org.hibernate.annotations.NamedQuery;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 import org.sistcoop.persona.models.enums.EstadoCivil;
 import org.sistcoop.persona.models.enums.Sexo;
 
 @Entity
-@Table(name = "PERSONA_NATURAL", indexes = { @Index(columnList = "id")}, uniqueConstraints = {@UniqueConstraint(columnNames={"TIPO_DOCUMENTO", "NUMERO_DOCUMENTO"})})
-@NamedQueries({ 
-		@NamedQuery(name = PersonaNaturalEntity.findAll, query = "SELECT p FROM PersonaNaturalEntity p ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombres, p.id"), 
-		@NamedQuery(name = PersonaNaturalEntity.findByTipoAndNumeroDocumento, query = "SELECT p FROM PersonaNaturalEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento AND p.numeroDocumento = :numeroDocumento "),
-		@NamedQuery(name = PersonaNaturalEntity.findByFilterText, query = "SELECT p FROM PersonaNaturalEntity p WHERE p.numeroDocumento LIKE :filterText OR UPPER(CONCAT(p.apellidoPaterno,' ', p.apellidoMaterno,' ',p.nombres)) LIKE :filterText ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombres, p.id"),
-		@NamedQuery(name = PersonaNaturalEntity.findByNumeroDocumento, query = "SELECT p FROM PersonaNaturalEntity p WHERE p.numeroDocumento LIKE :filterText ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombres, p.id"),
-		@NamedQuery(name = PersonaNaturalEntity.count, query = "select count(u) from PersonaNaturalEntity u") })
+@Table(name = "PERSONA_NATURAL")
 public class PersonaNaturalEntity extends PersonaEntity implements Serializable {
 
 	/**
@@ -41,14 +31,7 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public final static String base = "org.softgreen.sistcoop.persona.ejb.models.jpa.entities.PersonaNatural";
-	public final static String findAll = base + "findAll";
-	public final static String findByTipoAndNumeroDocumento = base + "findByTipoAndNumeroDocumento";
-	public final static String findByFilterText = base + "findByFilterText";
-	public final static String findByNumeroDocumento = base + "findByNumeroDocumento";
-	public final static String count = base + "count";
-
-	private Long id;
+	private String id;
 	private String apellidoPaterno;
 	private String apellidoMaterno;
 	private String nombres;
@@ -63,7 +46,7 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
 		super();
 	}
 
-	public PersonaNaturalEntity(Long id) {
+	public PersonaNaturalEntity(String id) {
 		super();
 		this.id = id;
 	}
@@ -73,21 +56,21 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
 	}
 
 	@Id
-	@GeneratedValue(generator = "SgGenericGenerator")
+	@GeneratedValue(generator = "uuid2")
+	@GenericGenerator(name = "uuid2", strategy = "uuid2")
 	@Column(name = "ID")
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
 	@NotNull
 	@Size(min = 1, max = 50)
-	@NotEmpty
 	@NotBlank
-	@Column(name = "APELLIDO_PATERNO", nullable = false)
+	@Column(name = "APELLIDO_PATERNO")
 	public String getApellidoPaterno() {
 		return apellidoPaterno;
 	}
@@ -98,9 +81,9 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
 
 	@NotNull
 	@Size(min = 1, max = 50)
-	@NotEmpty
+	
 	@NotBlank
-	@Column(name = "APELLIDO_MATERNO", nullable = false)
+	@Column(name = "APELLIDO_MATERNO")
 	public String getApellidoMaterno() {
 		return apellidoMaterno;
 	}
@@ -111,9 +94,8 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
 
 	@NotNull
 	@Size(min = 1, max = 70)
-	@NotEmpty
 	@NotBlank
-	@Column(name = "NOMBRES", nullable = false)
+	@Column(name = "NOMBRES")
 	public String getNombres() {
 		return nombres;
 	}
@@ -125,7 +107,7 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
 	@NotNull
 	@Past
 	@Temporal(TemporalType.DATE)
-	@Column(name = "FECHA_NACIMIENTO", nullable = false)
+	@Column(name = "FECHA_NACIMIENTO")
 	public Date getFechaNacimiento() {
 		return fechaNacimiento;
 	}
@@ -136,7 +118,7 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Column(name = "SEXO", nullable = false)
+	@Column(name = "SEXO")
 	public Sexo getSexo() {
 		return sexo;
 	}
@@ -146,7 +128,7 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
 	}
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "ESTADO_CIVIL", nullable = true)
+	@Column(name = "ESTADO_CIVIL")
 	public EstadoCivil getEstadoCivil() {
 		return estadoCivil;
 	}
@@ -156,7 +138,7 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
 	}
 
 	@Size(min = 0, max = 70)
-	@Column(name = "OCUPACION", nullable = true)
+	@Column(name = "OCUPACION")
 	public String getOcupacion() {
 		return ocupacion;
 	}
@@ -166,7 +148,7 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
 	}
 
 	@URL
-	@Column(name = "URL_FOTO", nullable = true)
+	@Column(name = "URL_FOTO")
 	public String getUrlFoto() {
 		return urlFoto;
 	}
@@ -176,7 +158,7 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
 	}
 
 	@URL
-	@Column(name = "URL_FIRMA", nullable = true)
+	@Column(name = "URL_FIRMA")
 	public String getUrlFirma() {
 		return urlFirma;
 	}

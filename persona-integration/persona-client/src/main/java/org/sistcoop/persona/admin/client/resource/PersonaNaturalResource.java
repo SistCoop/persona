@@ -50,7 +50,7 @@ public interface PersonaNaturalResource {
 	public PersonaNaturalRepresentation findById(
 			@PathParam("id") 
 			@NotNull 
-			@Min(value = 1) Long id);
+			@Size(min = 1) String id);
 
 	@GET
 	@Path("/buscar")
@@ -81,7 +81,7 @@ public interface PersonaNaturalResource {
 	public void update(
 			@PathParam("id") 
 			@NotNull 
-			@Min(value = 1) Long id, 
+			@Size(min = 1) String id, 
 			
 			@NotNull
 			@Valid PersonaNaturalRepresentation personaNaturalRepresentation);
@@ -91,6 +91,6 @@ public interface PersonaNaturalResource {
 	public void remove(
 			@PathParam("id") 
 			@NotNull 
-			@Min(value = 1) Long id);
+			@Size(min = 1) String id);
 
 }

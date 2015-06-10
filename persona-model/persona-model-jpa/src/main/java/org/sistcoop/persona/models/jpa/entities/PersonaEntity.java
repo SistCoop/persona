@@ -15,7 +15,6 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 
 @MappedSuperclass
 public abstract class PersonaEntity implements Serializable {
@@ -62,7 +61,6 @@ public abstract class PersonaEntity implements Serializable {
 
 	@NotNull
 	@Size(min = 1, max = 20)
-	@NotEmpty
 	@NotBlank
 	@Column(name = "NUMERO_DOCUMENTO")
 	public String getNumeroDocumento() {
@@ -75,7 +73,6 @@ public abstract class PersonaEntity implements Serializable {
 
 	@NotNull
 	@Size(min = 3, max = 3)
-	@NotEmpty
 	@NotBlank
 	@Column(name = "CODIGO_PAIS")
 	public String getCodigoPais() {
