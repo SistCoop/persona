@@ -17,7 +17,6 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.sistcoop.persona.models.enums.TipoPersona;
 
 @Entity
@@ -37,10 +36,7 @@ public class TipoDocumentoEntity implements Serializable {
 
 	private Timestamp optlk;
 
-	@NotNull
 	@Size(min = 1, max = 20)
-	@NotBlank
-	@NotEmpty
 	@Id
 	@Column(name = "ABREVIATURA")
 	public String getAbreviatura() {
@@ -54,7 +50,6 @@ public class TipoDocumentoEntity implements Serializable {
 	@NotNull
 	@Size(min = 1, max = 60)
 	@NotBlank
-	@NotEmpty
 	@Column(name = "DENOMINACION")
 	public String getDenominacion() {
 		return denominacion;
@@ -89,6 +84,7 @@ public class TipoDocumentoEntity implements Serializable {
 
 	@NotNull
 	@Type(type = "org.hibernate.type.TrueFalseType")
+	@Column(name = "ESTADO")
 	public boolean isEstado() {
 		return estado;
 	}
