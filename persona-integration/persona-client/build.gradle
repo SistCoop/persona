@@ -5,4 +5,6 @@ dependencies {
     compile "org.jboss.resteasy:resteasy-jaxrs:${libraryVersions.resteasy}"
     compile "org.hibernate:hibernate-validator:${libraryVersions.hibernateValidator}"
 
+	compile 'org.jboss.resteasy:resteasy-multipart-provider:3.0.9.Final'
+	
 }

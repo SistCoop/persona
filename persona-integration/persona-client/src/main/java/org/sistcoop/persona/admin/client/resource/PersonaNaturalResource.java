@@ -19,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.sistcoop.persona.representations.idm.PersonaNaturalRepresentation;
 
 @Path("/personas/naturales")
@@ -93,4 +94,24 @@ public interface PersonaNaturalResource {
 			@NotNull 
 			@Size(min = 1) String id);
 
+	@POST
+	@Path("/{id}/foto")
+	@Consumes("multipart/form-data")
+	public void setFoto(
+			@PathParam("id") 
+			@NotNull 
+			@Size(min = 1) String id, 
+			
+			@NotNull MultipartFormDataInput input);
+	
+	@POST
+	@Path("/{id}/firma")
+	@Consumes("multipart/form-data")
+	public void setFirma(
+			@PathParam("id") 
+			@NotNull 
+			@Size(min = 1) String id, 
+			
+			@NotNull MultipartFormDataInput input);
+	
 }
