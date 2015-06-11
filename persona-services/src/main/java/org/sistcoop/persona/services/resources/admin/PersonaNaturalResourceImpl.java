@@ -168,7 +168,7 @@ public class PersonaNaturalResourceImpl implements PersonaNaturalResource {
 				fos.close();
 				
 				//google drive											
-				String url = googleDriveManager.upload(UPLOAD_FILE, "sistcoop", UUID.randomUUID().toString(), "image/*", "Photo siscoop");														  
+				String url = googleDriveManager.upload(UPLOAD_FILE, UUID.randomUUID().toString(), "image/*", "Photo siscoop", "sistcoop_app", "ventura", "foto");														  
 			    model.setUrlFoto(url);
 			    model.commit();				
 			    			    
