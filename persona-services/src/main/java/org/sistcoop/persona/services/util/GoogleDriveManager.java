@@ -66,7 +66,7 @@ public class GoogleDriveManager {
 		//upload file
 		FileContent mediaContent = new FileContent(mimeType, UPLOAD_FILE);		
 		File file = service.files().insert(body, mediaContent).execute();		
-		return file.getEmbedLink();
+		return file.getWebContentLink();
 	}
 	
 	private Credential authorize() throws IOException {
