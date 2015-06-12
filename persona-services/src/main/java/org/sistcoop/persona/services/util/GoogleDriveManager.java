@@ -8,7 +8,8 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Stateful;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -27,7 +28,8 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.ParentReference;
 
-@Stateful
+@Startup
+@Singleton
 public class GoogleDriveManager {
 
 	private final String APPLICATION_NAME = "sistcoop";
