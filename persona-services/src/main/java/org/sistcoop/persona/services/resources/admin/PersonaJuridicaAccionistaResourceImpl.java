@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.jboss.ejb3.annotation.SecurityDomain;
+import org.sistcoop.persona.Jsend;
 import org.sistcoop.persona.admin.client.Roles;
 import org.sistcoop.persona.admin.client.resource.PersonaJuridicaAccionistaResource;
 import org.sistcoop.persona.models.AccionistaModel;
@@ -73,7 +74,7 @@ public class PersonaJuridicaAccionistaResourceImpl implements PersonaJuridicaAcc
 
 		AccionistaModel accionistaModel = accionistaProvider.addAccionista(personaJuridicaModel, personaNaturalModel, accionistaRepresentation.getPorcentajeParticipacion());		
 		AccionistaRepresentation representation = ModelToRepresentation.toRepresentation(accionistaModel);
-		return Response.created(uriInfo.getAbsolutePathBuilder().path(representation.getId().toString()).build()).header("Access-Control-Expose-Headers", "Location").build();
+		return Response.created(uriInfo.getAbsolutePathBuilder().path(representation.getId()).build()).header("Access-Control-Expose-Headers", "Location").entity(Jsend.getSuccessJSend(representation.getId())).build();
 	}
 
 	@RolesAllowed(Roles.administrar_personas)

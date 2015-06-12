@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.jboss.ejb3.annotation.SecurityDomain;
+import org.sistcoop.persona.Jsend;
 import org.sistcoop.persona.admin.client.Roles;
 import org.sistcoop.persona.admin.client.resource.PersonaJuridicaResource;
 import org.sistcoop.persona.models.AccionistaProvider;
@@ -96,7 +97,7 @@ public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
 		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(personaJuridicaRepresentation.getTipoDocumento());
 		PersonaJuridicaModel personaJuridicaModel = representationToModel.createPersonaJuridica(personaJuridicaRepresentation, tipoDocumentoModel, representanteModel, personaJuridicaProvider);
 		PersonaJuridicaRepresentation result = ModelToRepresentation.toRepresentation(personaJuridicaModel);
-		return Response.created(uriInfo.getAbsolutePathBuilder().path(result.getId().toString()).build()).header("Access-Control-Expose-Headers", "Location").entity(result.getId()).build();
+		return Response.created(uriInfo.getAbsolutePathBuilder().path(result.getId()).build()).header("Access-Control-Expose-Headers", "Location").entity(Jsend.getSuccessJSend(result.getId())).build();
 	}
 
 	@RolesAllowed(Roles.administrar_personas)
