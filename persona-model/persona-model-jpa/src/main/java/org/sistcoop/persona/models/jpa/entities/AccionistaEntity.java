@@ -9,7 +9,6 @@ import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -19,15 +18,16 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.NaturalId;
 
 @Entity
-@Table(name = "ACCIONISTA", indexes = { @Index(columnList = "id") })
+@Table(name = "ACCIONISTA")
 public class AccionistaEntity implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Long id;
+	private String id;
 	private PersonaNaturalEntity personaNatural;
 	private PersonaJuridicaEntity personaJuridica;
 	private BigDecimal porcentajeParticipacion;
@@ -39,20 +39,21 @@ public class AccionistaEntity implements java.io.Serializable {
 	}
 	
 	@Id
-	@GeneratedValue(generator = "SgGenericGenerator")
+	@GeneratedValue(generator = "uuid2")
+	@GenericGenerator(name = "uuid2", strategy = "uuid2")
 	@Column(name = "ID")
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
 	@NotNull
 	@NaturalId
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(foreignKey = @ForeignKey, nullable = false)
+	@JoinColumn(foreignKey = @ForeignKey)
 	public PersonaNaturalEntity getPersonaNatural() {
 		return personaNatural;
 	}

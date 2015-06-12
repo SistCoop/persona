@@ -23,7 +23,7 @@ public class AccionistaResourceImpl implements AccionistaResource {
 
 	@RolesAllowed(Roles.ver_personas)
 	@Override
-	public AccionistaRepresentation findById(Long id) {
+	public AccionistaRepresentation findById(String id) {
 		AccionistaModel model = accionistaProvider.getAccionistaById(id);
 		AccionistaRepresentation rep = ModelToRepresentation.toRepresentation(model);
 		return rep;
@@ -31,7 +31,7 @@ public class AccionistaResourceImpl implements AccionistaResource {
 
 	@RolesAllowed(Roles.administrar_personas)
 	@Override
-	public void updateAccionista(Long id, AccionistaRepresentation accionistaRepresentation) {
+	public void updateAccionista(String id, AccionistaRepresentation accionistaRepresentation) {
 		AccionistaModel accionistaModel = accionistaProvider.getAccionistaById(id);
 		if (accionistaModel == null) {
 			throw new NotFoundException("Accionista not found.");
@@ -42,7 +42,7 @@ public class AccionistaResourceImpl implements AccionistaResource {
 
 	@RolesAllowed(Roles.administrar_personas)
 	@Override
-	public void remove(Long id) {
+	public void delete(String id) {
 		AccionistaModel accionistaModel = accionistaProvider.getAccionistaById(id);
 		boolean result = accionistaProvider.removeAccionista(accionistaModel);
 		if (!result) {

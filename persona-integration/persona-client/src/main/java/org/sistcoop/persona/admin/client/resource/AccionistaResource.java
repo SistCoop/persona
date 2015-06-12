@@ -1,8 +1,8 @@
 package org.sistcoop.persona.admin.client.resource;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -24,7 +24,7 @@ public interface AccionistaResource {
 	public AccionistaRepresentation findById(
 			@PathParam("id") 
 			@NotNull 
-			@Min(value = 1) Long id);
+			@Size(min = 1) String id);
 	
 	@PUT
 	@Path("/{id}")
@@ -33,16 +33,16 @@ public interface AccionistaResource {
 	public void updateAccionista(
 			@PathParam("id") 
 			@NotNull 
-			@Min(value = 1) Long id,					
+			@Size(min = 1) String id,					
 			
 			@NotNull
 			@Valid AccionistaRepresentation accionistaRepresentation);	
 
 	@DELETE
 	@Path("/{id}")
-	public void remove(
+	public void delete(
 			@PathParam("id") 
 			@NotNull 
-			@Min(value = 1) Long id);
+			@Size(min = 1) String id);
 
 }

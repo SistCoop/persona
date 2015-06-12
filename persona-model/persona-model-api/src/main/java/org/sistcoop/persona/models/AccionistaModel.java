@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public interface AccionistaModel extends Model {
 
-	Long getId();
+	String getId();
 
 	PersonaNaturalModel getPersonaNatural();
 

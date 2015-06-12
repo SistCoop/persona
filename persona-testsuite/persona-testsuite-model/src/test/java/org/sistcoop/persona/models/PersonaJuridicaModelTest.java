@@ -126,7 +126,7 @@ public class PersonaJuridicaModelTest {
 				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
 				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
 		
-		Long id = model1.getId();
+		String id = model1.getId();
 		String razonSocialNueva = "SistCoopEE S.A.C";
 		
 		model1.setRazonSocial(razonSocialNueva);;

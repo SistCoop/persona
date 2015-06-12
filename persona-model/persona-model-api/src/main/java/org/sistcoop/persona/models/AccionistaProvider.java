@@ -13,6 +13,6 @@ public interface AccionistaProvider extends Provider {
 
 	boolean removeAccionista(AccionistaModel accionistaModel);
 
-	AccionistaModel getAccionistaById(Long id);
+	AccionistaModel getAccionistaById(String id);
 
 }

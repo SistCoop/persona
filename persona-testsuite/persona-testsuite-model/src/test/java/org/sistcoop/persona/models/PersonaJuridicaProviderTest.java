@@ -133,7 +133,7 @@ public class PersonaJuridicaProviderTest {
 				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
 				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
 			
-		Long id = model1.getId();		
+		String id = model1.getId();		
 		PersonaJuridicaModel model2 = personaJuridicaProvider.getPersonaJuridicaById(id);
 		
 		assertThat(model1, is(equalTo(model2)));
@@ -170,7 +170,7 @@ public class PersonaJuridicaProviderTest {
 				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
 				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);								
 		
-		Long id = model1.getId();		
+		String id = model1.getId();		
 		boolean result = personaJuridicaProvider.removePersonaJuridica(model1);		
 				
 		PersonaJuridicaModel model2 = personaJuridicaProvider.getPersonaJuridicaById(id);

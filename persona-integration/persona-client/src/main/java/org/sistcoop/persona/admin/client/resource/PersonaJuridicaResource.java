@@ -19,7 +19,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.hibernate.validator.constraints.NotBlank;
-import org.sistcoop.persona.representations.idm.AccionistaRepresentation;
 import org.sistcoop.persona.representations.idm.PersonaJuridicaRepresentation;
 
 @Produces(MediaType.APPLICATION_JSON)
@@ -47,7 +46,7 @@ public interface PersonaJuridicaResource {
 	public PersonaJuridicaRepresentation findById(
 			@PathParam("id") 
 			@NotNull 
-			@Min(value = 1) Long id);
+			@Size(min = 1) String id);
 
 	@GET
 	@Path("/buscar")
@@ -72,7 +71,7 @@ public interface PersonaJuridicaResource {
 	public void update(
 			@PathParam("id") 
 			@NotNull 
-			@Min(value = 1) Long id,
+			@Size(min = 1) String id,
 			
 			@NotNull
 			@Valid PersonaJuridicaRepresentation rep);
@@ -82,27 +81,6 @@ public interface PersonaJuridicaResource {
 	public void remove(
 			@PathParam("id") 
 			@NotNull 
-			@Min(value = 1) Long id);
-
-	/**
-	 * ACCIONISTA
-	 */
-
-	@GET
-	@Path("/{id}/accionistas")
-	public List<AccionistaRepresentation> findAllAccionistas(
-			@PathParam("id") 
-			@NotNull 
-			@Min(value = 1) Long id);
-
-	@POST
-	@Path("/{id}/accionistas")
-	public Response addAccionista(
-			@PathParam("id") 
-			@NotNull 
-			@Min(value = 1) Long id,
-			
-			@NotNull
-			@Valid AccionistaRepresentation accionistaRepresentation);	
+			@Size(min = 1) String id);
 
 }

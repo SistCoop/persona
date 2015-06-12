@@ -40,7 +40,7 @@ public class JpaAccionistaProvider implements AccionistaProvider {
 	}
 
 	@Override
-	public AccionistaModel getAccionistaById(Long id) {
+	public AccionistaModel getAccionistaById(String id) {
 		AccionistaEntity accionistaEntity = em.find(AccionistaEntity.class, id);
 		return accionistaEntity != null ? new AccionistaAdapter(em, accionistaEntity) : null;		
 	}

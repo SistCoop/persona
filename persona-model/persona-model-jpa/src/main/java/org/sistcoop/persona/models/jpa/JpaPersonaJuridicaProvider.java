@@ -59,14 +59,14 @@ public class JpaPersonaJuridicaProvider implements PersonaJuridicaProvider {
 	}
 
 	@Override
-	public PersonaJuridicaModel getPersonaJuridicaById(Long id) {	
+	public PersonaJuridicaModel getPersonaJuridicaById(String id) {	
 		PersonaJuridicaEntity personaJuridicaEntity = em.find(PersonaJuridicaEntity.class, id);		
 		return personaJuridicaEntity != null ? new PersonaJuridicaAdapter(em, personaJuridicaEntity) : null;	
 	}
 
 	@Override
 	public PersonaJuridicaModel getPersonaJuridicaByTipoNumeroDoc(TipoDocumentoModel tipoDocumento, String numeroDocumento) {
-		TypedQuery<PersonaJuridicaEntity> query = em.createNamedQuery(PersonaJuridicaEntity.findByTipoAndNumeroDocumento, PersonaJuridicaEntity.class);
+		TypedQuery<PersonaJuridicaEntity> query = em.createQuery("SELECT p FROM PersonaJuridicaEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento AND p.numeroDocumento = :numeroDocumento", PersonaJuridicaEntity.class);
 		query.setParameter("tipoDocumento", tipoDocumento.getAbreviatura());
 		query.setParameter("numeroDocumento", numeroDocumento);
 		List<PersonaJuridicaEntity> results = query.getResultList();
@@ -82,13 +82,13 @@ public class JpaPersonaJuridicaProvider implements PersonaJuridicaProvider {
 
 	@Override
 	public long getPersonasJuridicasCount() {
-		Object count = em.createNamedQuery(PersonaJuridicaEntity.count).getSingleResult();
+		Object count = em.createQuery("select count(u) from PersonaJuridicaEntity u").getSingleResult();
 		return (Long) count;
 	}
 
 	@Override
 	public List<PersonaJuridicaModel> getPersonasJuridicas(int firstResult, int maxResults) {
-		TypedQuery<PersonaJuridicaEntity> query = em.createNamedQuery(PersonaJuridicaEntity.findAll, PersonaJuridicaEntity.class);
+		TypedQuery<PersonaJuridicaEntity> query = em.createQuery("SELECT p FROM PersonaJuridicaEntity p", PersonaJuridicaEntity.class);
 		if (firstResult != -1) {
 			query.setFirstResult(firstResult);
 		}
@@ -109,7 +109,7 @@ public class JpaPersonaJuridicaProvider implements PersonaJuridicaProvider {
 
 	@Override
 	public List<PersonaJuridicaModel> searchForNumeroDocumento(String numeroDocumento, int firstResult, int maxResults) {
-		TypedQuery<PersonaJuridicaEntity> query = em.createNamedQuery(PersonaJuridicaEntity.findByNumeroDocumento, PersonaJuridicaEntity.class);
+		TypedQuery<PersonaJuridicaEntity> query = em.createQuery("SELECT p FROM PersonaJuridicaEntity p WHERE p.numeroDocumento like :numeroDocumento", PersonaJuridicaEntity.class);
 		query.setParameter("numeroDocumento", "%" + numeroDocumento + "%");
 		if (firstResult != -1) {
 			query.setFirstResult(firstResult);
@@ -131,7 +131,7 @@ public class JpaPersonaJuridicaProvider implements PersonaJuridicaProvider {
 
 	@Override
 	public List<PersonaJuridicaModel> searchForFilterText(String filterText, int firstResult, int maxResults) {		
-		TypedQuery<PersonaJuridicaEntity> query = em.createNamedQuery(PersonaJuridicaEntity.findByFilterText, PersonaJuridicaEntity.class);
+		TypedQuery<PersonaJuridicaEntity> query = em.createQuery("SELECT p FROM PersonaJuridicaEntity p WHERE p.numeroDocumento like :filtertext OR UPPER(p.razonSocial) LIKE :filtertext", PersonaJuridicaEntity.class);
 		query.setParameter("filtertext", "%" + filterText.toUpperCase() + "%");
 		if (firstResult != -1) {
 			query.setFirstResult(firstResult);

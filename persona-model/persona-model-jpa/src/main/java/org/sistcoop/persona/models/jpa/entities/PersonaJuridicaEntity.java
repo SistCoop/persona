@@ -13,46 +13,32 @@ import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.NamedQueries;
-import org.hibernate.annotations.NamedQuery;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.sistcoop.persona.models.enums.TipoEmpresa;
 
 @Entity
-@Table(name = "PERSONA_JURIDICA", indexes = { @Index(columnList = "id") }, uniqueConstraints = { @UniqueConstraint(columnNames = { "TIPO_DOCUMENTO", "NUMERO_DOCUMENTO" }) })
-@NamedQueries({ 
-	@NamedQuery(name = PersonaJuridicaEntity.findAll, query = "SELECT p FROM PersonaJuridicaEntity p"), 
-	@NamedQuery(name = PersonaJuridicaEntity.findByNumeroDocumento, query = "SELECT p FROM PersonaJuridicaEntity p WHERE p.numeroDocumento like :numeroDocumento "), @NamedQuery(name = PersonaJuridicaEntity.findByTipoAndNumeroDocumento, query = "SELECT p FROM PersonaJuridicaEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento AND p.numeroDocumento = :numeroDocumento"),		
-	@NamedQuery(name = PersonaJuridicaEntity.findByFilterText, query = "SELECT p FROM PersonaJuridicaEntity p WHERE p.numeroDocumento like :filtertext OR UPPER(p.razonSocial) LIKE :filtertext"), @NamedQuery(name = PersonaJuridicaEntity.count, query = "select count(u) from PersonaJuridicaEntity u") })
-public class PersonaJuridicaEntity extends PersonaEntity implements Serializable {
+@Table(name = "PERSONA_JURIDICA")
+public class PersonaJuridicaEntity extends PersonaEntity implements
+		Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public final static String base = "org.softgreen.persona.entity.PersonaJuridica";
-	public final static String findAll = base + "FindAll";
-	public final static String findByNumeroDocumento = base + "findByNumeroDocumento";
-	public final static String findByTipoAndNumeroDocumento = base + "FindByTipoAndNumeroDocumento";
-	public final static String findByFilterText = base + "FindByFilterText";
-	public final static String count = base + "count";
-
-	private Long id;
+	private String id;
 	private String razonSocial;
 	private String nombreComercial;
 	private Date fechaConstitucion;
@@ -62,25 +48,25 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
 
 	private PersonaNaturalEntity representanteLegal;
 	private Set<AccionistaEntity> accionistas = new HashSet<AccionistaEntity>(0);
-	
+
 	public PersonaJuridicaEntity() {
 		super();
 	}
 
 	@Id
-	@GeneratedValue(generator = "SgGenericGenerator")
+	@GeneratedValue(generator = "uuid2")
+	@GenericGenerator(name = "uuid2", strategy = "uuid2")
 	@Column(name = "ID")
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
 	@NotNull
 	@Size(min = 1, max = 70)
-	@NotEmpty
 	@NotBlank
 	@Column(name = "RAZON_SOCIAL")
 	public String getRazonSocial() {
@@ -92,7 +78,7 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
 	}
 
 	@Size(min = 0, max = 50)
-	@Column(name = "NOMBRE_COMERCIAL", nullable = true)
+	@Column(name = "NOMBRE_COMERCIAL")
 	public String getNombreComercial() {
 		return nombreComercial;
 	}
@@ -114,7 +100,7 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
 	}
 
 	@Size(min = 0, max = 70)
-	@Column(name = "ACTIVIDAD_PRINCIPAL", nullable = true)
+	@Column(name = "ACTIVIDAD_PRINCIPAL")
 	public String getActividadPrincipal() {
 		return actividadPrincipal;
 	}
@@ -156,7 +142,7 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
 		this.representanteLegal = representanteLegal;
 	}
 
-	@OneToMany(mappedBy = "personaJuridica", fetch = FetchType.LAZY)	
+	@OneToMany(mappedBy = "personaJuridica", fetch = FetchType.LAZY)
 	public Set<AccionistaEntity> getAccionistas() {
 		return accionistas;
 	}
@@ -169,8 +155,10 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((numeroDocumento == null) ? 0 : numeroDocumento.hashCode());
-		result = prime * result + ((tipoDocumento == null) ? 0 : tipoDocumento.hashCode());
+		result = prime * result
+				+ ((numeroDocumento == null) ? 0 : numeroDocumento.hashCode());
+		result = prime * result
+				+ ((tipoDocumento == null) ? 0 : tipoDocumento.hashCode());
 		return result;
 	}
 
@@ -195,5 +183,5 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
 			return false;
 		return true;
 	}
-	
+
 }

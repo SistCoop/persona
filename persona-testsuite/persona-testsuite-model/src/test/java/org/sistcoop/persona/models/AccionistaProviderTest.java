@@ -153,7 +153,7 @@ public class AccionistaProviderTest {
 		
 		AccionistaModel model1 =  accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);
 		
-		Long id = model1.getId();		
+		String id = model1.getId();		
 		AccionistaModel model2 = accionistaProvider.getAccionistaById(id);
 		
 		assertThat(model1, is(equalTo(model2)));
@@ -174,7 +174,7 @@ public class AccionistaProviderTest {
 		
 		AccionistaModel model1 =  accionistaProvider.addAccionista(personaJuridicaModel, representanteLegalModel, BigDecimal.TEN);		
 		
-		Long id = model1.getId();		
+		String id = model1.getId();		
 		boolean result = accionistaProvider.removeAccionista(model1);
 		
 		AccionistaModel model2 = accionistaProvider.getAccionistaById(id);

@@ -37,7 +37,7 @@ public class PersonaJuridicaAdapter implements PersonaJuridicaModel {
 	}
 
 	@Override
-	public Long getId() {
+	public String getId() {
 		return personaJuridicaEntity.getId();
 	}
 

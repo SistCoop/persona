@@ -22,7 +22,7 @@ public interface PersonaJuridicaProvider extends Provider {
 	
 	boolean removePersonaJuridica(PersonaJuridicaModel personaJuridicaModel);
 
-	PersonaJuridicaModel getPersonaJuridicaById(Long id);
+	PersonaJuridicaModel getPersonaJuridicaById(String id);
 
 	PersonaJuridicaModel getPersonaJuridicaByTipoNumeroDoc(TipoDocumentoModel tipoDocumento, String numeroDocumento);
 

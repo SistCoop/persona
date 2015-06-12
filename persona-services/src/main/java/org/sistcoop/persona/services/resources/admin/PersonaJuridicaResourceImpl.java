@@ -14,7 +14,6 @@ import javax.ws.rs.core.UriInfo;
 import org.jboss.ejb3.annotation.SecurityDomain;
 import org.sistcoop.persona.admin.client.Roles;
 import org.sistcoop.persona.admin.client.resource.PersonaJuridicaResource;
-import org.sistcoop.persona.models.AccionistaModel;
 import org.sistcoop.persona.models.AccionistaProvider;
 import org.sistcoop.persona.models.PersonaJuridicaModel;
 import org.sistcoop.persona.models.PersonaJuridicaProvider;
@@ -25,7 +24,6 @@ import org.sistcoop.persona.models.TipoDocumentoProvider;
 import org.sistcoop.persona.models.enums.TipoEmpresa;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.models.utils.RepresentationToModel;
-import org.sistcoop.persona.representations.idm.AccionistaRepresentation;
 import org.sistcoop.persona.representations.idm.PersonaJuridicaRepresentation;
 
 @Stateless
@@ -74,7 +72,7 @@ public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
 	
 	@RolesAllowed(Roles.ver_personas)
 	@Override
-	public PersonaJuridicaRepresentation findById(Long id) {
+	public PersonaJuridicaRepresentation findById(String id) {
 		PersonaJuridicaModel model = personaJuridicaProvider.getPersonaJuridicaById(id);
 		PersonaJuridicaRepresentation rep = ModelToRepresentation.toRepresentation(model);
 		return rep;
@@ -103,7 +101,7 @@ public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
 
 	@RolesAllowed(Roles.administrar_personas)
 	@Override
-	public void update(Long id, PersonaJuridicaRepresentation rep) {
+	public void update(String id, PersonaJuridicaRepresentation rep) {
 		PersonaJuridicaModel model = personaJuridicaProvider.getPersonaJuridicaById(id);
 		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(rep.getTipoDocumento());
 
@@ -129,44 +127,12 @@ public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
 
 	@RolesAllowed(Roles.eliminar_personas)
 	@Override
-	public void remove(Long id) {
+	public void remove(String id) {
 		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.getPersonaJuridicaById(id);
 		boolean removed = personaJuridicaProvider.removePersonaJuridica(personaJuridicaModel);
 		if (!removed) {
 			throw new InternalServerErrorException("No se pudo eliminar el elemento");
 		}
-	}
-
-	/**
-	 * Accionistas
-	 */
-
-	@RolesAllowed(Roles.ver_personas)
-	@Override
-	public List<AccionistaRepresentation> findAllAccionistas(Long id) {
-		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.getPersonaJuridicaById(id);
-		List<AccionistaModel> list = personaJuridicaModel.getAccionistas();
-		List<AccionistaRepresentation> result = new ArrayList<AccionistaRepresentation>();
-		for (AccionistaModel model : list) {
-			result.add(ModelToRepresentation.toRepresentation(model));
-		}
-		return result;
-	}
-
-	@RolesAllowed(Roles.administrar_personas)
-	@Override
-	public Response addAccionista(Long id, AccionistaRepresentation accionistaRepresentation) {
-		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.getPersonaJuridicaById(id);
-		if (personaJuridicaModel == null) {
-			return Response.status(Response.Status.NOT_FOUND).build();
-		}
-
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(accionistaRepresentation.getPersonaNatural().getTipoDocumento());
-		PersonaNaturalModel personaNaturalModel = personaNaturalProvider.getPersonaNaturalByTipoNumeroDoc(tipoDocumentoModel, accionistaRepresentation.getPersonaNatural().getNumeroDocumento());
-
-		AccionistaModel accionistaModel = accionistaProvider.addAccionista(personaJuridicaModel, personaNaturalModel, accionistaRepresentation.getPorcentajeParticipacion());		
-		AccionistaRepresentation representation = ModelToRepresentation.toRepresentation(accionistaModel);
-		return Response.created(uriInfo.getAbsolutePathBuilder().path(representation.getId().toString()).build()).header("Access-Control-Expose-Headers", "Location").build();
 	}
 
 }

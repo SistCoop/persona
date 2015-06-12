@@ -7,7 +7,7 @@ import org.sistcoop.persona.models.enums.TipoEmpresa;
 
 public interface PersonaJuridicaModel extends Model {
 
-	Long getId();
+	String getId();
 
 	PersonaNaturalModel getRepresentanteLegal();
 

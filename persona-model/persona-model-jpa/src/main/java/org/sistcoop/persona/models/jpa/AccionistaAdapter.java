@@ -31,7 +31,7 @@ public class AccionistaAdapter implements AccionistaModel {
 	}
 
 	@Override
-	public Long getId() {
+	public String getId() {
 		return accionistaEntity.getId();
 	}
 
