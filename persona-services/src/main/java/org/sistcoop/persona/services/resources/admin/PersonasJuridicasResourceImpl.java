@@ -12,7 +12,6 @@ import javax.ws.rs.core.UriInfo;
 import org.sistcoop.persona.Jsend;
 import org.sistcoop.persona.admin.client.resource.PersonaJuridicaResource;
 import org.sistcoop.persona.admin.client.resource.PersonasJuridicasResource;
-import org.sistcoop.persona.models.AccionistaProvider;
 import org.sistcoop.persona.models.PersonaJuridicaModel;
 import org.sistcoop.persona.models.PersonaJuridicaProvider;
 import org.sistcoop.persona.models.PersonaNaturalModel;
@@ -23,7 +22,7 @@ import org.sistcoop.persona.models.search.PagingModel;
 import org.sistcoop.persona.models.search.SearchCriteriaFilterOperator;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
-import org.sistcoop.persona.models.search.util.ProductoModelAtribute;
+import org.sistcoop.persona.models.search.util.PersonaModelAtribute;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.models.utils.RepresentationToModel;
 import org.sistcoop.persona.representations.idm.PersonaJuridicaRepresentation;
@@ -34,16 +33,13 @@ import org.sistcoop.producto.representations.idm.search.SearchResultsRepresentat
 public class PersonasJuridicasResourceImpl implements PersonasJuridicasResource {
 
     @Inject
-    protected PersonaJuridicaProvider personaJuridicaProvider;
+    private TipoDocumentoProvider tipoDocumentoProvider;
 
     @Inject
-    protected PersonaNaturalProvider personaNaturalProvider;
+    private PersonaJuridicaProvider personaJuridicaProvider;
 
     @Inject
-    protected TipoDocumentoProvider tipoDocumentoProvider;
-
-    @Inject
-    protected AccionistaProvider accionistaProvider;
+    private PersonaNaturalProvider personaNaturalProvider;
 
     @Inject
     private RepresentationToModel representationToModel;
@@ -83,9 +79,9 @@ public class PersonasJuridicasResourceImpl implements PersonasJuridicasResource 
         SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
 
         // add filters
-        searchCriteriaBean
-                .addFilter(ProductoModelAtribute.estado, documento, SearchCriteriaFilterOperator.eq);
-        searchCriteriaBean.addFilter(ProductoModelAtribute.estado, numero, SearchCriteriaFilterOperator.eq);
+        searchCriteriaBean.addFilter(PersonaModelAtribute.documento, documento,
+                SearchCriteriaFilterOperator.eq);
+        searchCriteriaBean.addFilter(PersonaModelAtribute.numero, numero, SearchCriteriaFilterOperator.eq);
 
         // search
         SearchResultsModel<PersonaJuridicaModel> results = personaJuridicaProvider.search(searchCriteriaBean);
@@ -111,14 +107,12 @@ public class PersonasJuridicasResourceImpl implements PersonasJuridicasResource 
         searchCriteriaBean.setPaging(paging);
 
         // add filters
-        searchCriteriaBean.addFilter(ProductoModelAtribute.estado, filterText,
-                SearchCriteriaFilterOperator.eq);
-        searchCriteriaBean.addFilter(ProductoModelAtribute.estado, filterText,
-                SearchCriteriaFilterOperator.eq);
-        searchCriteriaBean.addFilter(ProductoModelAtribute.estado, filterText,
-                SearchCriteriaFilterOperator.eq);
-        searchCriteriaBean.addFilter(ProductoModelAtribute.estado, filterText,
-                SearchCriteriaFilterOperator.eq);
+        searchCriteriaBean.addFilter(PersonaModelAtribute.documento, filterText,
+                SearchCriteriaFilterOperator.like);
+        searchCriteriaBean.addFilter(PersonaModelAtribute.numero, filterText,
+                SearchCriteriaFilterOperator.like);
+        searchCriteriaBean.addFilter(PersonaModelAtribute.razonSocial, filterText,
+                SearchCriteriaFilterOperator.like);
 
         // search
         SearchResultsModel<PersonaJuridicaModel> results = personaJuridicaProvider.search(searchCriteriaBean);

@@ -18,7 +18,7 @@ import org.sistcoop.persona.models.enums.TipoPersona;
 import org.sistcoop.persona.models.search.SearchCriteriaFilterOperator;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
-import org.sistcoop.persona.models.search.util.ProductoModelAtribute;
+import org.sistcoop.persona.models.search.util.TipoDocumentoModelAtribute;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.models.utils.RepresentationToModel;
 import org.sistcoop.persona.representations.idm.TipoDocumentoRepresentation;
@@ -60,11 +60,11 @@ public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
 
         // add filters
         if (tipoPersona != null) {
-            searchCriteriaBean.addFilter(ProductoModelAtribute.tipoCuenta,
+            searchCriteriaBean.addFilter(TipoDocumentoModelAtribute.tipoPersona,
                     TipoPersona.valueOf(tipoPersona.toUpperCase()).toString(),
                     SearchCriteriaFilterOperator.eq);
         }
-        searchCriteriaBean.addFilter(ProductoModelAtribute.estado, estado ? "true" : "false",
+        searchCriteriaBean.addFilter(TipoDocumentoModelAtribute.estado, estado ? "true" : "false",
                 SearchCriteriaFilterOperator.bool_eq);
 
         // search

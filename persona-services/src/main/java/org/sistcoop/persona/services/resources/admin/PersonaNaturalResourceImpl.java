@@ -10,8 +10,8 @@ import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.PathParam;
 
 import org.apache.commons.io.IOUtils;
@@ -23,6 +23,7 @@ import org.sistcoop.persona.models.PersonaNaturalProvider;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.representations.idm.PersonaNaturalRepresentation;
 import org.sistcoop.persona.services.managers.PersonaNaturalManager;
+import org.sistcoop.persona.services.messages.Messages;
 import org.sistcoop.persona.services.util.GoogleDriveManager;
 
 @Stateless
@@ -46,7 +47,12 @@ public class PersonaNaturalResourceImpl implements PersonaNaturalResource {
 
     @Override
     public PersonaNaturalRepresentation persona() {
-        return ModelToRepresentation.toRepresentation(getPersonaNaturalModel());
+        PersonaNaturalRepresentation rep = ModelToRepresentation.toRepresentation(getPersonaNaturalModel());
+        if (rep != null) {
+            return rep;
+        } else {
+            throw new NotFoundException();
+        }
     }
 
     @Override
@@ -120,14 +126,14 @@ public class PersonaNaturalResourceImpl implements PersonaNaturalResource {
 
     @Override
     public void disable() {
-        throw new BadRequestException();
+        throw new NotFoundException();
     }
 
     @Override
     public void remove() {
         boolean result = personaNaturalProvider.remove(getPersonaNaturalModel());
         if (!result) {
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(Messages.ERROR);
         }
     }
 
