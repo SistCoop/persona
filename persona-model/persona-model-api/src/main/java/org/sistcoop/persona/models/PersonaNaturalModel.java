@@ -7,78 +7,74 @@ import org.sistcoop.persona.models.enums.Sexo;
 
 public interface PersonaNaturalModel extends Model {
 
-	String getId();
+    String getId();
 
-	String getCodigoPais();
+    String getCodigoPais();
 
-	void setCodigoPais(String codigoPais);
+    void setCodigoPais(String codigoPais);
 
-	TipoDocumentoModel getTipoDocumento();
+    TipoDocumentoModel getTipoDocumento();
 
-	void setTipoDocumento(TipoDocumentoModel tipoDocumento);
+    String getNumeroDocumento();
 
-	String getNumeroDocumento();
+    String getApellidoPaterno();
 
-	void setNumeroDocumento(String numeroDocumento);
+    void setApellidoPaterno(String apellidoPaterno);
 
-	String getApellidoPaterno();
+    String getApellidoMaterno();
 
-	void setApellidoPaterno(String apellidoPaterno);
+    void setApellidoMaterno(String apellidoMaterno);
 
-	String getApellidoMaterno();
+    String getNombres();
 
-	void setApellidoMaterno(String apellidoMaterno);
+    void setNombres(String nombres);
 
-	String getNombres();
+    Date getFechaNacimiento();
 
-	void setNombres(String nombres);
+    void setFechaNacimiento(Date fechaNacimiento);
 
-	Date getFechaNacimiento();
+    Sexo getSexo();
 
-	void setFechaNacimiento(Date fechaNacimiento);
+    void setSexo(Sexo sexo);
 
-	Sexo getSexo();
+    EstadoCivil getEstadoCivil();
 
-	void setSexo(Sexo sexo);
+    void setEstadoCivil(EstadoCivil estadoCivil);
 
-	EstadoCivil getEstadoCivil();
+    String getOcupacion();
 
-	void setEstadoCivil(EstadoCivil estadoCivil);
+    void setOcupacion(String ocupacion);
 
-	String getOcupacion();
+    String getUrlFoto();
 
-	void setOcupacion(String ocupacion);
+    void setUrlFoto(String urlFoto);
 
-	String getUrlFoto();
+    String getUrlFirma();
 
-	void setUrlFoto(String urlFoto);
+    void setUrlFirma(String urlFirma);
 
-	String getUrlFirma();
+    String getUbigeo();
 
-	void setUrlFirma(String urlFirma);
+    void setUbigeo(String ubigeo);
 
-	String getUbigeo();
+    String getDireccion();
 
-	void setUbigeo(String ubigeo);
+    void setDireccion(String direccion);
 
-	String getDireccion();
+    String getReferencia();
 
-	void setDireccion(String direccion);
+    void setReferencia(String referencia);
 
-	String getReferencia();
+    String getTelefono();
 
-	void setReferencia(String referencia);
+    void setTelefono(String telefono);
 
-	String getTelefono();
+    String getCelular();
 
-	void setTelefono(String telefono);
+    void setCelular(String celular);
 
-	String getCelular();
+    String getEmail();
 
-	void setCelular(String celular);
-
-	String getEmail();
-
-	void setEmail(String email);
+    void setEmail(String email);
 
 }

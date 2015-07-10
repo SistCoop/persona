@@ -122,7 +122,7 @@ public class PersonaJuridicaModelTest {
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);				
 		
-		PersonaJuridicaModel model1 = personaJuridicaProvider.addPersonaJuridica(
+		PersonaJuridicaModel model1 = personaJuridicaProvider.create(
 				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
 				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
 		
@@ -132,7 +132,7 @@ public class PersonaJuridicaModelTest {
 		model1.setRazonSocial(razonSocialNueva);;
 		model1.commit();	
 
-		PersonaJuridicaModel model2 = personaJuridicaProvider.getPersonaJuridicaById(id);
+		PersonaJuridicaModel model2 = personaJuridicaProvider.findById(id);
 				
 		assertThat(model2.getRazonSocial(), is(equalTo(razonSocialNueva)));
 	}	
@@ -149,7 +149,7 @@ public class PersonaJuridicaModelTest {
 				"PER", tipoDocumentoModel, "00000000", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);
 		
-		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.addPersonaJuridica(
+		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.create(
 				representanteLegalModel, "PER", tipoDocumentoModel, "10467793549", 
 				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
 					

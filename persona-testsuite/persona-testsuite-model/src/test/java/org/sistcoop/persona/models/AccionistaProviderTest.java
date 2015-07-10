@@ -124,7 +124,7 @@ public class AccionistaProviderTest {
 				"PER", tipoDocumentoModel1, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);
 		
-		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.addPersonaJuridica(
+		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.create(
 				representanteLegalModel, "PER", tipoDocumentoModel2, "10467793549", 
 				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
 		
@@ -147,7 +147,7 @@ public class AccionistaProviderTest {
 				"PER", tipoDocumentoModel1, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);
 		
-		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.addPersonaJuridica(
+		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.create(
 				representanteLegalModel, "PER", tipoDocumentoModel2, "10467793549", 
 				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
 		
@@ -168,7 +168,7 @@ public class AccionistaProviderTest {
 				"PER", tipoDocumentoModel1, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);
 		
-		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.addPersonaJuridica(
+		PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.create(
 				representanteLegalModel, "PER", tipoDocumentoModel2, "10467793549", 
 				"Softgreen S.A.C.", date, TipoEmpresa.PRIVADA, true);
 		

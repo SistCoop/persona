@@ -32,7 +32,7 @@ public class JpaPersonaJuridicaProvider implements PersonaJuridicaProvider {
 	protected EntityManager em;
 
 	@Override
-	public PersonaJuridicaModel addPersonaJuridica(PersonaNaturalModel representanteLegal, String codigoPais, TipoDocumentoModel tipoDocumentoModel, String numeroDocumento, String razonSocial, Date fechaConstitucion, TipoEmpresa tipoEmpresa, boolean finLucro) {
+	public PersonaJuridicaModel create(PersonaNaturalModel representanteLegal, String codigoPais, TipoDocumentoModel tipoDocumentoModel, String numeroDocumento, String razonSocial, Date fechaConstitucion, TipoEmpresa tipoEmpresa, boolean finLucro) {
 		TipoDocumentoEntity tipoDocumentoEntity = TipoDocumentoAdapter.toTipoDocumentoEntity(tipoDocumentoModel, em);
 		PersonaNaturalEntity personaNaturalEntity = PersonaNaturalAdapter.toPersonaNaturalEntity(representanteLegal, em);
 
@@ -51,7 +51,7 @@ public class JpaPersonaJuridicaProvider implements PersonaJuridicaProvider {
 	}
 
 	@Override
-	public boolean removePersonaJuridica(PersonaJuridicaModel personaJuridicaModel) {
+	public boolean remove(PersonaJuridicaModel personaJuridicaModel) {
 		PersonaJuridicaEntity personaJuridicaEntity = em.find(PersonaJuridicaEntity.class, personaJuridicaModel.getId());
 		if (personaJuridicaEntity == null) return false;
         em.remove(personaJuridicaEntity);
@@ -59,13 +59,13 @@ public class JpaPersonaJuridicaProvider implements PersonaJuridicaProvider {
 	}
 
 	@Override
-	public PersonaJuridicaModel getPersonaJuridicaById(String id) {	
+	public PersonaJuridicaModel findById(String id) {	
 		PersonaJuridicaEntity personaJuridicaEntity = em.find(PersonaJuridicaEntity.class, id);		
 		return personaJuridicaEntity != null ? new PersonaJuridicaAdapter(em, personaJuridicaEntity) : null;	
 	}
 
 	@Override
-	public PersonaJuridicaModel getPersonaJuridicaByTipoNumeroDoc(TipoDocumentoModel tipoDocumento, String numeroDocumento) {
+	public PersonaJuridicaModel findByTipoNumeroDocumento(TipoDocumentoModel tipoDocumento, String numeroDocumento) {
 		TypedQuery<PersonaJuridicaEntity> query = em.createQuery("SELECT p FROM PersonaJuridicaEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento AND p.numeroDocumento = :numeroDocumento", PersonaJuridicaEntity.class);
 		query.setParameter("tipoDocumento", tipoDocumento.getAbreviatura());
 		query.setParameter("numeroDocumento", numeroDocumento);

@@ -10,48 +10,65 @@ import org.sistcoop.persona.models.enums.EstadoCivil;
 import org.sistcoop.persona.models.enums.Sexo;
 import org.sistcoop.persona.models.enums.TipoEmpresa;
 import org.sistcoop.persona.models.enums.TipoPersona;
-import org.sistcoop.persona.representations.idm.EstadoCivilRepresentation;
-import org.sistcoop.persona.representations.idm.SexoRepresentation;
-import org.sistcoop.persona.representations.idm.TipoEmpresaRepresentation;
-import org.sistcoop.persona.representations.idm.TipoPersonaRepresentation;
+import org.sistcoop.producto.representations.idm.search.SearchResultsRepresentation;
 
 @Stateless
 public class MaestroResourceImpl implements MaestroResource {
 
-	public List<TipoPersonaRepresentation> getTipoPersonas() {
-		TipoPersona[] s = TipoPersona.values();
-		List<TipoPersonaRepresentation> list = new ArrayList<TipoPersonaRepresentation>();
-		for (int i = 0; i < s.length; i++) {
-			list.add(new TipoPersonaRepresentation(s[i].toString()));
-		}
-		return list;
-	}
+    @Override
+    public SearchResultsRepresentation<String> getTipoPersonas() {
+        TipoPersona[] enums = TipoPersona.values();
 
-	public List<EstadoCivilRepresentation> getEstadosCiviles() {
-		EstadoCivil[] e = EstadoCivil.values();
-		List<EstadoCivilRepresentation> list = new ArrayList<EstadoCivilRepresentation>();
-		for (int i = 0; i < e.length; i++) {
-			list.add(new EstadoCivilRepresentation(e[i].toString()));
-		}
-		return list;
-	}
+        SearchResultsRepresentation<String> rep = new SearchResultsRepresentation<>();
+        List<String> representations = new ArrayList<>();
+        for (int i = 0; i < enums.length; i++) {
+            representations.add(enums[i].toString());
+        }
+        rep.setTotalSize(representations.size());
+        rep.setItems(representations);
+        return rep;
+    }
 
-	public List<SexoRepresentation> getSexos() {
-		Sexo[] s = Sexo.values();
-		List<SexoRepresentation> list = new ArrayList<SexoRepresentation>();
-		for (int i = 0; i < s.length; i++) {
-			list.add(new SexoRepresentation(s[i].toString()));
-		}
-		return list;
-	}
+    @Override
+    public SearchResultsRepresentation<String> getEstadosCiviles() {
+        EstadoCivil[] enums = EstadoCivil.values();
 
-	public List<TipoEmpresaRepresentation> getTiposEmpresa() {
-		TipoEmpresa[] s = TipoEmpresa.values();
-		List<TipoEmpresaRepresentation> list = new ArrayList<TipoEmpresaRepresentation>();
-		for (int i = 0; i < s.length; i++) {
-			list.add(new TipoEmpresaRepresentation(s[i].toString()));
-		}
-		return list;
-	}
+        SearchResultsRepresentation<String> rep = new SearchResultsRepresentation<>();
+        List<String> representations = new ArrayList<>();
+        for (int i = 0; i < enums.length; i++) {
+            representations.add(enums[i].toString());
+        }
+        rep.setTotalSize(representations.size());
+        rep.setItems(representations);
+        return rep;
+    }
+
+    @Override
+    public SearchResultsRepresentation<String> getSexos() {
+        Sexo[] enums = Sexo.values();
+
+        SearchResultsRepresentation<String> rep = new SearchResultsRepresentation<>();
+        List<String> representations = new ArrayList<>();
+        for (int i = 0; i < enums.length; i++) {
+            representations.add(enums[i].toString());
+        }
+        rep.setTotalSize(representations.size());
+        rep.setItems(representations);
+        return rep;
+    }
+
+    @Override
+    public SearchResultsRepresentation<String> getTiposEmpresa() {
+        TipoEmpresa[] enums = TipoEmpresa.values();
+
+        SearchResultsRepresentation<String> rep = new SearchResultsRepresentation<>();
+        List<String> representations = new ArrayList<>();
+        for (int i = 0; i < enums.length; i++) {
+            representations.add(enums[i].toString());
+        }
+        rep.setTotalSize(representations.size());
+        rep.setItems(representations);
+        return rep;
+    }
 
 }

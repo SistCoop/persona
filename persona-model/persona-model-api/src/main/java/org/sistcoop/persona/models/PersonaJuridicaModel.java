@@ -7,72 +7,68 @@ import org.sistcoop.persona.models.enums.TipoEmpresa;
 
 public interface PersonaJuridicaModel extends Model {
 
-	String getId();
+    String getId();
 
-	PersonaNaturalModel getRepresentanteLegal();
+    PersonaNaturalModel getRepresentanteLegal();
 
-	void setRepresentanteLegal(PersonaNaturalModel representanteLegal);
+    void setRepresentanteLegal(PersonaNaturalModel representanteLegal);
 
-	List<AccionistaModel> getAccionistas();
+    List<AccionistaModel> getAccionistas();
 
-	String getCodigoPais();
+    String getCodigoPais();
 
-	void setCodigoPais(String codigoPais);
+    void setCodigoPais(String codigoPais);
 
-	TipoDocumentoModel getTipoDocumento();
+    TipoDocumentoModel getTipoDocumento();
 
-	void setTipoDocumento(TipoDocumentoModel tipoDocumento);
+    String getNumeroDocumento();
 
-	String getNumeroDocumento();
+    String getRazonSocial();
 
-	void setNumeroDocumento(String numeroDocumento);
+    void setRazonSocial(String razonSocial);
 
-	String getRazonSocial();
+    String getNombreComercial();
 
-	void setRazonSocial(String razonSocial);
+    void setNombreComercial(String nombreComercial);
 
-	String getNombreComercial();
+    Date getFechaConstitucion();
 
-	void setNombreComercial(String nombreComercial);
+    void setFechaConstitucion(Date fechaConstitucion);
 
-	Date getFechaConstitucion();
+    String getActividadPrincipal();
 
-	void setFechaConstitucion(Date fechaConstitucion);
+    void setActividadPrincipal(String actividadPrincipal);
 
-	String getActividadPrincipal();
+    TipoEmpresa getTipoEmpresa();
 
-	void setActividadPrincipal(String actividadPrincipal);
+    void setTipoEmpresa(TipoEmpresa tipoEmpresa);
 
-	TipoEmpresa getTipoEmpresa();
+    boolean isFinLucro();
 
-	void setTipoEmpresa(TipoEmpresa tipoEmpresa);
+    void setFinLucro(boolean finLucro);
 
-	boolean isFinLucro();
+    String getUbigeo();
 
-	void setFinLucro(boolean finLucro);
+    void setUbigeo(String ubigeo);
 
-	String getUbigeo();
+    String getDireccion();
 
-	void setUbigeo(String ubigeo);
+    void setDireccion(String direccion);
 
-	String getDireccion();
+    String getReferencia();
 
-	void setDireccion(String direccion);
+    void setReferencia(String referencia);
 
-	String getReferencia();
+    String getTelefono();
 
-	void setReferencia(String referencia);
+    void setTelefono(String telefono);
 
-	String getTelefono();
+    String getCelular();
 
-	void setTelefono(String telefono);
+    void setCelular(String celular);
 
-	String getCelular();
+    String getEmail();
 
-	void setCelular(String celular);
-
-	String getEmail();
-
-	void setEmail(String email);
+    void setEmail(String email);
 
 }

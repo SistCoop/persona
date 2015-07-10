@@ -4,6 +4,8 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
+import org.sistcoop.persona.models.AccionistaModel;
+import org.sistcoop.persona.models.AccionistaProvider;
 import org.sistcoop.persona.models.PersonaJuridicaModel;
 import org.sistcoop.persona.models.PersonaJuridicaProvider;
 import org.sistcoop.persona.models.PersonaNaturalModel;
@@ -14,6 +16,7 @@ import org.sistcoop.persona.models.enums.EstadoCivil;
 import org.sistcoop.persona.models.enums.Sexo;
 import org.sistcoop.persona.models.enums.TipoEmpresa;
 import org.sistcoop.persona.models.enums.TipoPersona;
+import org.sistcoop.persona.representations.idm.AccionistaRepresentation;
 import org.sistcoop.persona.representations.idm.PersonaJuridicaRepresentation;
 import org.sistcoop.persona.representations.idm.PersonaNaturalRepresentation;
 import org.sistcoop.persona.representations.idm.TipoDocumentoRepresentation;
@@ -21,74 +24,74 @@ import org.sistcoop.persona.representations.idm.TipoDocumentoRepresentation;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class RepresentationToModel {
-		
-	public TipoDocumentoModel createTipoDocumento(TipoDocumentoRepresentation rep, TipoDocumentoProvider provider) {
-		TipoDocumentoModel model = provider.create(
-				rep.getAbreviatura(), 
-				rep.getDenominacion(), 
-				rep.getCantidadCaracteres(), 
-				TipoPersona.valueOf(rep.getTipoPersona()));	
-		return model;
-	}
-		
-	public PersonaNaturalModel createPersonaNatural(
-			PersonaNaturalRepresentation rep, 
-			TipoDocumentoModel tipoDocumentoModel, 
-			PersonaNaturalProvider personaNaturalProvider) {		
 
-		PersonaNaturalModel model = personaNaturalProvider.create(
-				rep.getCodigoPais(), 
-				tipoDocumentoModel, 
-				rep.getNumeroDocumento(), 
-				rep.getApellidoPaterno(), 
-				rep.getApellidoMaterno(), 
-				rep.getNombres(), 
-				rep.getFechaNacimiento(), 
-				Sexo.valueOf(rep.getSexo().toUpperCase()));		
+    public TipoDocumentoModel createTipoDocumento(TipoDocumentoRepresentation rep,
+            TipoDocumentoProvider provider) {
+        TipoDocumentoModel model = provider.create(rep.getAbreviatura(), rep.getDenominacion(),
+                rep.getCantidadCaracteres(), TipoPersona.valueOf(rep.getTipoPersona()));
+        return model;
+    }
 
-		model.setEstadoCivil(rep.getEstadoCivil() != null ? EstadoCivil.valueOf(rep.getEstadoCivil().toUpperCase()) : null);		
-		model.setOcupacion(rep.getOcupacion());
-		model.setUrlFoto(rep.getUrlFoto());
-		model.setUrlFirma(rep.getUrlFirma());
-		model.setUbigeo(rep.getUbigeo());
-		model.setDireccion(rep.getDireccion());
-		model.setReferencia(rep.getReferencia());
-		model.setTelefono(rep.getTelefono());
-		model.setCelular(rep.getCelular());
-		model.setEmail(rep.getEmail());
+    public PersonaNaturalModel createPersonaNatural(PersonaNaturalRepresentation rep,
+            TipoDocumentoModel tipoDocumentoModel, PersonaNaturalProvider personaNaturalProvider) {
 
-		model.commit();
-		return model;
-	}
-	
-	public PersonaJuridicaModel createPersonaJuridica(
-			PersonaJuridicaRepresentation rep, 			
-			TipoDocumentoModel tipoDocumentoModel, 
-			PersonaNaturalModel representanteLegal, 
-			PersonaJuridicaProvider personaJuridicaProvider) {
+        PersonaNaturalModel model = personaNaturalProvider.create(rep.getCodigoPais(), tipoDocumentoModel,
+                rep.getNumeroDocumento(), rep.getApellidoPaterno(), rep.getApellidoMaterno(),
+                rep.getNombres(), rep.getFechaNacimiento(), Sexo.valueOf(rep.getSexo().toUpperCase()));
 
-		PersonaJuridicaModel model = personaJuridicaProvider.addPersonaJuridica(
-				representanteLegal, 
-				rep.getCodigoPais(), 
-				tipoDocumentoModel, 
-				rep.getNumeroDocumento(), 
-				rep.getRazonSocial(), 
-				rep.getFechaConstitucion(), 
-				TipoEmpresa.valueOf(rep.getTipoEmpresa().toUpperCase()),
-				rep.isFinLucro());
-		
-		model.setActividadPrincipal(rep.getActividadPrincipal());
-		model.setNombreComercial(rep.getNombreComercial());
-		
-		model.setUbigeo(rep.getUbigeo());
-		model.setDireccion(rep.getDireccion());
-		model.setReferencia(rep.getReferencia());
-		model.setTelefono(rep.getTelefono());
-		model.setCelular(rep.getCelular());
-		model.setEmail(rep.getEmail());
+        model.setEstadoCivil(rep.getEstadoCivil() != null ? EstadoCivil.valueOf(rep.getEstadoCivil()
+                .toUpperCase()) : null);
+        model.setOcupacion(rep.getOcupacion());
+        model.setUrlFoto(rep.getUrlFoto());
+        model.setUrlFirma(rep.getUrlFirma());
+        model.setUbigeo(rep.getUbigeo());
+        model.setDireccion(rep.getDireccion());
+        model.setReferencia(rep.getReferencia());
+        model.setTelefono(rep.getTelefono());
+        model.setCelular(rep.getCelular());
+        model.setEmail(rep.getEmail());
 
-		model.commit();		
-		return model;
-	}
+        model.commit();
+        return model;
+    }
 
+    public PersonaJuridicaModel createPersonaJuridica(PersonaJuridicaRepresentation rep,
+            TipoDocumentoModel tipoDocumentoModel, PersonaNaturalModel representanteLegal,
+            PersonaJuridicaProvider personaJuridicaProvider) {
+
+        PersonaJuridicaModel model = personaJuridicaProvider.create(representanteLegal, rep.getCodigoPais(),
+                tipoDocumentoModel, rep.getNumeroDocumento(), rep.getRazonSocial(),
+                rep.getFechaConstitucion(), TipoEmpresa.valueOf(rep.getTipoEmpresa().toUpperCase()),
+                rep.isFinLucro());
+
+        model.setActividadPrincipal(rep.getActividadPrincipal());
+        model.setNombreComercial(rep.getNombreComercial());
+
+        model.setUbigeo(rep.getUbigeo());
+        model.setDireccion(rep.getDireccion());
+        model.setReferencia(rep.getReferencia());
+        model.setTelefono(rep.getTelefono());
+        model.setCelular(rep.getCelular());
+        model.setEmail(rep.getEmail());
+
+        model.commit();
+        return model;
+    }
+
+    public AccionistaModel createAccionista(AccionistaRepresentation representation,
+            PersonaJuridicaModel personaJuridicaModel, TipoDocumentoProvider tipoDocumentoProvider,
+            PersonaNaturalProvider personaNaturalProvider, AccionistaProvider accionistaProvider) {
+
+        PersonaNaturalRepresentation personaNaturalRepresentation = representation.getPersonaNatural();
+
+        TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider
+                .findByAbreviatura(personaNaturalRepresentation.getTipoDocumento());
+        PersonaNaturalModel personaNaturalModel = personaNaturalProvider.findByTipoNumeroDocumento(
+                tipoDocumentoModel, personaNaturalRepresentation.getNumeroDocumento());
+
+        AccionistaModel model = accionistaProvider.create(personaJuridicaModel, personaNaturalModel,
+                representation.getPorcentajeParticipacion());
+
+        return model;
+    }
 }

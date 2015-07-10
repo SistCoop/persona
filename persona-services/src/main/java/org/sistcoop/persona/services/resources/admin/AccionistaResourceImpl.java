@@ -1,53 +1,61 @@
 package org.sistcoop.persona.services.resources.admin;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.PathParam;
 
-import org.jboss.ejb3.annotation.SecurityDomain;
-import org.sistcoop.persona.admin.client.Roles;
 import org.sistcoop.persona.admin.client.resource.AccionistaResource;
 import org.sistcoop.persona.models.AccionistaModel;
 import org.sistcoop.persona.models.AccionistaProvider;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.representations.idm.AccionistaRepresentation;
+import org.sistcoop.persona.services.managers.AccionistaManager;
+import org.sistcoop.persona.services.messages.Messages;
 
 @Stateless
-@SecurityDomain("keycloak")
 public class AccionistaResourceImpl implements AccionistaResource {
-	
-	@Inject
-	protected AccionistaProvider accionistaProvider;
 
-	@RolesAllowed(Roles.ver_personas)
-	@Override
-	public AccionistaRepresentation findById(String id) {
-		AccionistaModel model = accionistaProvider.getAccionistaById(id);
-		AccionistaRepresentation rep = ModelToRepresentation.toRepresentation(model);
-		return rep;
-	}
+    @PathParam("accionista")
+    private String accionista;
 
-	@RolesAllowed(Roles.administrar_personas)
-	@Override
-	public void updateAccionista(String id, AccionistaRepresentation accionistaRepresentation) {
-		AccionistaModel accionistaModel = accionistaProvider.getAccionistaById(id);
-		if (accionistaModel == null) {
-			throw new NotFoundException("Accionista not found.");
-		}
-		accionistaModel.setPorcentajeParticipacion(accionistaRepresentation.getPorcentajeParticipacion());
-		accionistaModel.commit();
-	}
+    @Inject
+    private AccionistaProvider accionistaProvider;
 
-	@RolesAllowed(Roles.administrar_personas)
-	@Override
-	public void delete(String id) {
-		AccionistaModel accionistaModel = accionistaProvider.getAccionistaById(id);
-		boolean result = accionistaProvider.removeAccionista(accionistaModel);
-		if (!result) {
-			throw new InternalServerErrorException("No se pudo eliminar el elemento");
-		}
-	}
+    @Inject
+    private AccionistaManager accionistaManager;
+
+    private AccionistaModel getAccionistaModel() {
+        return accionistaProvider.findById(accionista);
+    }
+
+    @Override
+    public AccionistaRepresentation accionista() {
+        AccionistaRepresentation rep = ModelToRepresentation.toRepresentation(getAccionistaModel());
+        if (rep != null) {
+            return rep;
+        } else {
+            throw new NotFoundException();
+        }
+    }
+
+    @Override
+    public void update(AccionistaRepresentation representation) {
+        accionistaManager.update(getAccionistaModel(), representation);
+    }
+
+    @Override
+    public void disable() {
+        throw new NotFoundException();
+    }
+
+    @Override
+    public void remove() {
+        boolean result = accionistaProvider.remove(getAccionistaModel());
+        if (!result) {
+            throw new InternalServerErrorException(Messages.ERROR);
+        }
+    }
 
 }

@@ -4,15 +4,19 @@ import java.math.BigDecimal;
 
 import javax.ejb.Local;
 
+import org.sistcoop.persona.models.search.SearchResultsModel;
 import org.sistcoop.persona.provider.Provider;
 
 @Local
 public interface AccionistaProvider extends Provider {
 
-	AccionistaModel addAccionista(PersonaJuridicaModel pjModel, PersonaNaturalModel pnModel, BigDecimal porcentaje);
+    AccionistaModel findById(String id);
 
-	boolean removeAccionista(AccionistaModel accionistaModel);
+    AccionistaModel create(PersonaJuridicaModel personaJuridicaModel,
+            PersonaNaturalModel personaNaturalModel, BigDecimal porcentaje);
 
-	AccionistaModel getAccionistaById(String id);
+    boolean remove(AccionistaModel accionistaModel);
+
+    SearchResultsModel<AccionistaModel> search(PersonaJuridicaModel personaJuridicaModel);
 
 }
