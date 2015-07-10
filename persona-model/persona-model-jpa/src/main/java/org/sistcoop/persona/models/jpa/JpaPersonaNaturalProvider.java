@@ -19,139 +19,113 @@ import org.sistcoop.persona.models.TipoDocumentoModel;
 import org.sistcoop.persona.models.enums.Sexo;
 import org.sistcoop.persona.models.jpa.entities.PersonaNaturalEntity;
 import org.sistcoop.persona.models.jpa.entities.TipoDocumentoEntity;
+import org.sistcoop.persona.models.search.SearchCriteriaModel;
+import org.sistcoop.persona.models.search.SearchResultsModel;
 
 @Named
 @Stateless
 @Local(PersonaNaturalProvider.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class JpaPersonaNaturalProvider implements PersonaNaturalProvider {
+public class JpaPersonaNaturalProvider extends AbstractJpaStorage implements PersonaNaturalProvider {
 
-	@PersistenceContext
-	protected EntityManager em;
+    @PersistenceContext
+    private EntityManager em;
 
-	@Override
-	public PersonaNaturalModel create(String codigoPais, TipoDocumentoModel tipoDocumentoModel, String numeroDocumento, String apellidoPaterno, String apellidoMaterno, String nombres, Date fechaNacimiento, Sexo sexo) {
-		TipoDocumentoEntity tipoDocumentoEntity = TipoDocumentoAdapter.toTipoDocumentoEntity(tipoDocumentoModel, em);
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.em;
+    }
 
-		PersonaNaturalEntity personaNaturalEntity = new PersonaNaturalEntity();
-		personaNaturalEntity.setCodigoPais(codigoPais);
-		personaNaturalEntity.setTipoDocumento(tipoDocumentoEntity);
-		personaNaturalEntity.setNumeroDocumento(numeroDocumento);
-		personaNaturalEntity.setApellidoPaterno(apellidoPaterno);
-		personaNaturalEntity.setApellidoMaterno(apellidoMaterno);
-		personaNaturalEntity.setNombres(nombres);
-		personaNaturalEntity.setFechaNacimiento(fechaNacimiento);
-		personaNaturalEntity.setSexo(sexo);
-		em.persist(personaNaturalEntity);
-		return new PersonaNaturalAdapter(em, personaNaturalEntity);
-	}
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+    }
 
-	@Override
-	public boolean remove(PersonaNaturalModel personaNaturalModel) {
-		PersonaNaturalEntity personaNaturalEntity = em.find(PersonaNaturalEntity.class, personaNaturalModel.getId());
-		if (personaNaturalEntity == null) return false;
+    @Override
+    public PersonaNaturalModel create(String codigoPais, TipoDocumentoModel tipoDocumentoModel,
+            String numeroDocumento, String apellidoPaterno, String apellidoMaterno, String nombres,
+            Date fechaNacimiento, Sexo sexo) {
+        TipoDocumentoEntity tipoDocumentoEntity = TipoDocumentoAdapter.toTipoDocumentoEntity(
+                tipoDocumentoModel, em);
+
+        PersonaNaturalEntity personaNaturalEntity = new PersonaNaturalEntity();
+        personaNaturalEntity.setCodigoPais(codigoPais);
+        personaNaturalEntity.setTipoDocumento(tipoDocumentoEntity);
+        personaNaturalEntity.setNumeroDocumento(numeroDocumento);
+        personaNaturalEntity.setApellidoPaterno(apellidoPaterno);
+        personaNaturalEntity.setApellidoMaterno(apellidoMaterno);
+        personaNaturalEntity.setNombres(nombres);
+        personaNaturalEntity.setFechaNacimiento(fechaNacimiento);
+        personaNaturalEntity.setSexo(sexo);
+        em.persist(personaNaturalEntity);
+        return new PersonaNaturalAdapter(em, personaNaturalEntity);
+    }
+
+    @Override
+    public boolean remove(PersonaNaturalModel personaNaturalModel) {
+        PersonaNaturalEntity personaNaturalEntity = em.find(PersonaNaturalEntity.class,
+                personaNaturalModel.getId());
+        if (personaNaturalEntity == null)
+            return false;
         em.remove(personaNaturalEntity);
         return true;
-	}	
+    }
 
-	@Override
-	public PersonaNaturalModel findById(String id) {
-		PersonaNaturalEntity personaNaturalEntity = this.em.find(PersonaNaturalEntity.class, id);
-		return personaNaturalEntity != null ? new PersonaNaturalAdapter(em, personaNaturalEntity) : null;
-	}
+    @Override
+    public PersonaNaturalModel findById(String id) {
+        PersonaNaturalEntity personaNaturalEntity = this.em.find(PersonaNaturalEntity.class, id);
+        return personaNaturalEntity != null ? new PersonaNaturalAdapter(em, personaNaturalEntity) : null;
+    }
 
-	@Override
-	public PersonaNaturalModel findByTipoNumeroDocumento(TipoDocumentoModel tipoDocumento, String numeroDocumento) {
-		TypedQuery<PersonaNaturalEntity> query = em.createQuery("SELECT p FROM PersonaNaturalEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento AND p.numeroDocumento = :numeroDocumento", PersonaNaturalEntity.class);
-		query.setParameter("tipoDocumento", tipoDocumento.getAbreviatura());
-		query.setParameter("numeroDocumento", numeroDocumento);
-		List<PersonaNaturalEntity> results = query.getResultList();
-		if (results.size() == 0)
-			return null;
-		return new PersonaNaturalAdapter(em, results.get(0));
-	}
+    @Override
+    public PersonaNaturalModel findByTipoNumeroDocumento(TipoDocumentoModel tipoDocumento,
+            String numeroDocumento) {
+        TypedQuery<PersonaNaturalEntity> query = em.createNamedQuery(
+                "PersonaNaturalEntity.findByTipoNumeroDocumento", PersonaNaturalEntity.class);
+        query.setParameter("tipoDocumento", tipoDocumento.getAbreviatura());
+        query.setParameter("numeroDocumento", numeroDocumento);
+        List<PersonaNaturalEntity> results = query.getResultList();
+        if (results.size() == 0)
+            return null;
+        return new PersonaNaturalAdapter(em, results.get(0));
+    }
 
-	@Override
-	public List<PersonaNaturalModel> getPersonasNaturales() {
-		return getPersonasNaturales(-1, -1);
-	}
+    @Override
+    public SearchResultsModel<PersonaNaturalModel> search() {
+        TypedQuery<PersonaNaturalEntity> query = em.createNamedQuery("PersonaNaturalEntity.findAll",
+                PersonaNaturalEntity.class);
 
-	@Override
-	public long getPersonasNaturalesCount() {
-		Object count = em.createQuery("select count(u) from PersonaNaturalEntity u").getSingleResult();		
-		return (Long) count;
-	}
+        List<PersonaNaturalEntity> entities = query.getResultList();
+        List<PersonaNaturalModel> models = new ArrayList<PersonaNaturalModel>();
+        for (PersonaNaturalEntity personaNaturalEntity : entities) {
+            models.add(new PersonaNaturalAdapter(em, personaNaturalEntity));
+        }
 
-	@Override
-	public List<PersonaNaturalModel> getPersonasNaturales(int firstResult, int maxResults) {
-		TypedQuery<PersonaNaturalEntity> query = em.createQuery("SELECT p FROM PersonaNaturalEntity p ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombres, p.id", PersonaNaturalEntity.class);
-		if (firstResult != -1) {
-			query.setFirstResult(firstResult);
-		}
-		if (maxResults != -1) {
-			query.setMaxResults(maxResults);
-		}
-		List<PersonaNaturalEntity> results = query.getResultList();
-		List<PersonaNaturalModel> users = new ArrayList<PersonaNaturalModel>();
-		for (PersonaNaturalEntity entity : results)
-			users.add(new PersonaNaturalAdapter(em, entity));
-		return users;
-	}
+        SearchResultsModel<PersonaNaturalModel> result = new SearchResultsModel<>();
+        result.setModels(models);
+        result.setTotalSize(models.size());
+        return result;
+    }
 
-	@Override
-	public List<PersonaNaturalModel> searchForNumeroDocumento(String numeroDocumento) {
-		return searchForNumeroDocumento(numeroDocumento, -1, -1);
-	}
+    @Override
+    public SearchResultsModel<PersonaNaturalModel> search(SearchCriteriaModel criteria) {
+        SearchResultsModel<PersonaNaturalEntity> entityResult = find(criteria, PersonaNaturalEntity.class);
 
-	@Override
-	public List<PersonaNaturalModel> searchForNumeroDocumento(String numeroDocumento, int firstResult, int maxResults) {
-		if (numeroDocumento == null)
-			numeroDocumento = "";
+        SearchResultsModel<PersonaNaturalModel> modelResult = new SearchResultsModel<>();
+        List<PersonaNaturalModel> list = new ArrayList<>();
+        for (PersonaNaturalEntity entity : entityResult.getModels()) {
+            list.add(new PersonaNaturalAdapter(em, entity));
+        }
+        modelResult.setTotalSize(entityResult.getTotalSize());
+        modelResult.setModels(list);
+        return modelResult;
+    }
 
-		TypedQuery<PersonaNaturalEntity> query = em.createQuery("SELECT p FROM PersonaNaturalEntity p WHERE p.numeroDocumento LIKE :filterText ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombres, p.id", PersonaNaturalEntity.class);
-		query.setParameter("filterText", "%" + numeroDocumento + "%");
-		if (firstResult != -1) {
-			query.setFirstResult(firstResult);
-		}
-		if (maxResults != -1) {
-			query.setMaxResults(maxResults);
-		}
-		List<PersonaNaturalEntity> results = query.getResultList();
-		List<PersonaNaturalModel> users = new ArrayList<PersonaNaturalModel>();
-		for (PersonaNaturalEntity entity : results)
-			users.add(new PersonaNaturalAdapter(em, entity));
-		return users;
-	}
-
-	@Override
-	public List<PersonaNaturalModel> searchForFilterText(String filterText) {
-		return searchForFilterText(filterText, -1, -1);
-	}
-
-	@Override
-	public List<PersonaNaturalModel> searchForFilterText(String filterText, int firstResult, int maxResults) {
-		if (filterText == null)
-			filterText = "";
-
-		TypedQuery<PersonaNaturalEntity> query = em.createQuery("SELECT p FROM PersonaNaturalEntity p WHERE p.numeroDocumento LIKE :filterText OR UPPER(CONCAT(p.apellidoPaterno,' ', p.apellidoMaterno,' ',p.nombres)) LIKE :filterText ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombres, p.id", PersonaNaturalEntity.class);
-		query.setParameter("filterText", "%" + filterText.toUpperCase() + "%");
-		if (firstResult != -1) {
-			query.setFirstResult(firstResult);
-		}
-		if (maxResults != -1) {
-			query.setMaxResults(maxResults);
-		}
-		List<PersonaNaturalEntity> results = query.getResultList();
-		List<PersonaNaturalModel> users = new ArrayList<PersonaNaturalModel>();
-		for (PersonaNaturalEntity entity : results)
-			users.add(new PersonaNaturalAdapter(em, entity));
-		return users;
-	}
-
-	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-
-	}
+    @Override
+    public SearchResultsModel<PersonaNaturalModel> search(SearchCriteriaModel searchCriteriaBean,
+            String filterText) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

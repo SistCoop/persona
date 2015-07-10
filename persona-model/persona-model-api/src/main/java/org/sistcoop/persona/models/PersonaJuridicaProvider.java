@@ -22,5 +22,10 @@ public interface PersonaJuridicaProvider extends Provider {
 
     boolean remove(PersonaJuridicaModel personaJuridicaModel);
 
-    SearchResultsModel<PersonaJuridicaModel> search(SearchCriteriaModel searchCriteriaBean);
+    SearchResultsModel<PersonaJuridicaModel> search();
+
+    SearchResultsModel<PersonaJuridicaModel> search(SearchCriteriaModel criteria);
+
+    SearchResultsModel<PersonaJuridicaModel> search(SearchCriteriaModel criteria, String filterText);
+
 }

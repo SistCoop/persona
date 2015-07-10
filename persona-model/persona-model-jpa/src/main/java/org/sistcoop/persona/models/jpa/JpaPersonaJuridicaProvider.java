@@ -21,134 +21,116 @@ import org.sistcoop.persona.models.enums.TipoEmpresa;
 import org.sistcoop.persona.models.jpa.entities.PersonaJuridicaEntity;
 import org.sistcoop.persona.models.jpa.entities.PersonaNaturalEntity;
 import org.sistcoop.persona.models.jpa.entities.TipoDocumentoEntity;
+import org.sistcoop.persona.models.search.SearchCriteriaModel;
+import org.sistcoop.persona.models.search.SearchResultsModel;
 
 @Named
 @Stateless
 @Local(PersonaJuridicaProvider.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class JpaPersonaJuridicaProvider implements PersonaJuridicaProvider {
+public class JpaPersonaJuridicaProvider extends AbstractJpaStorage implements PersonaJuridicaProvider {
 
-	@PersistenceContext
-	protected EntityManager em;
+    @PersistenceContext
+    private EntityManager em;
 
-	@Override
-	public PersonaJuridicaModel create(PersonaNaturalModel representanteLegal, String codigoPais, TipoDocumentoModel tipoDocumentoModel, String numeroDocumento, String razonSocial, Date fechaConstitucion, TipoEmpresa tipoEmpresa, boolean finLucro) {
-		TipoDocumentoEntity tipoDocumentoEntity = TipoDocumentoAdapter.toTipoDocumentoEntity(tipoDocumentoModel, em);
-		PersonaNaturalEntity personaNaturalEntity = PersonaNaturalAdapter.toPersonaNaturalEntity(representanteLegal, em);
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.em;
+    }
 
-		PersonaJuridicaEntity personaJuridicaEntity = new PersonaJuridicaEntity();
-		personaJuridicaEntity.setRepresentanteLegal(personaNaturalEntity);
-		personaJuridicaEntity.setCodigoPais(codigoPais);
-		personaJuridicaEntity.setTipoDocumento(tipoDocumentoEntity);
-		personaJuridicaEntity.setNumeroDocumento(numeroDocumento);
-		personaJuridicaEntity.setRazonSocial(razonSocial);
-		personaJuridicaEntity.setFechaConstitucion(fechaConstitucion);
-		personaJuridicaEntity.setTipoEmpresa(tipoEmpresa);
-		personaJuridicaEntity.setFinLucro(finLucro);
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+    }
 
-		em.persist(personaJuridicaEntity);
-		return new PersonaJuridicaAdapter(em, personaJuridicaEntity);
-	}
+    @Override
+    public PersonaJuridicaModel create(PersonaNaturalModel representanteLegal, String codigoPais,
+            TipoDocumentoModel tipoDocumentoModel, String numeroDocumento, String razonSocial,
+            Date fechaConstitucion, TipoEmpresa tipoEmpresa, boolean finLucro) {
+        TipoDocumentoEntity tipoDocumentoEntity = TipoDocumentoAdapter.toTipoDocumentoEntity(
+                tipoDocumentoModel, em);
+        PersonaNaturalEntity personaNaturalEntity = PersonaNaturalAdapter.toPersonaNaturalEntity(
+                representanteLegal, em);
 
-	@Override
-	public boolean remove(PersonaJuridicaModel personaJuridicaModel) {
-		PersonaJuridicaEntity personaJuridicaEntity = em.find(PersonaJuridicaEntity.class, personaJuridicaModel.getId());
-		if (personaJuridicaEntity == null) return false;
+        PersonaJuridicaEntity personaJuridicaEntity = new PersonaJuridicaEntity();
+        personaJuridicaEntity.setRepresentanteLegal(personaNaturalEntity);
+        personaJuridicaEntity.setCodigoPais(codigoPais);
+        personaJuridicaEntity.setTipoDocumento(tipoDocumentoEntity);
+        personaJuridicaEntity.setNumeroDocumento(numeroDocumento);
+        personaJuridicaEntity.setRazonSocial(razonSocial);
+        personaJuridicaEntity.setFechaConstitucion(fechaConstitucion);
+        personaJuridicaEntity.setTipoEmpresa(tipoEmpresa);
+        personaJuridicaEntity.setFinLucro(finLucro);
+
+        em.persist(personaJuridicaEntity);
+        return new PersonaJuridicaAdapter(em, personaJuridicaEntity);
+    }
+
+    @Override
+    public boolean remove(PersonaJuridicaModel personaJuridicaModel) {
+        PersonaJuridicaEntity personaJuridicaEntity = em.find(PersonaJuridicaEntity.class,
+                personaJuridicaModel.getId());
+        if (personaJuridicaEntity == null) {
+            return false;
+        }
         em.remove(personaJuridicaEntity);
         return true;
-	}
+    }
 
-	@Override
-	public PersonaJuridicaModel findById(String id) {	
-		PersonaJuridicaEntity personaJuridicaEntity = em.find(PersonaJuridicaEntity.class, id);		
-		return personaJuridicaEntity != null ? new PersonaJuridicaAdapter(em, personaJuridicaEntity) : null;	
-	}
+    @Override
+    public PersonaJuridicaModel findById(String id) {
+        PersonaJuridicaEntity personaJuridicaEntity = em.find(PersonaJuridicaEntity.class, id);
+        return personaJuridicaEntity != null ? new PersonaJuridicaAdapter(em, personaJuridicaEntity) : null;
+    }
 
-	@Override
-	public PersonaJuridicaModel findByTipoNumeroDocumento(TipoDocumentoModel tipoDocumento, String numeroDocumento) {
-		TypedQuery<PersonaJuridicaEntity> query = em.createQuery("SELECT p FROM PersonaJuridicaEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento AND p.numeroDocumento = :numeroDocumento", PersonaJuridicaEntity.class);
-		query.setParameter("tipoDocumento", tipoDocumento.getAbreviatura());
-		query.setParameter("numeroDocumento", numeroDocumento);
-		List<PersonaJuridicaEntity> results = query.getResultList();
-		if (results.size() == 0)
-			return null;
-		return new PersonaJuridicaAdapter(em, results.get(0));
-	}
+    @Override
+    public PersonaJuridicaModel findByTipoNumeroDocumento(TipoDocumentoModel tipoDocumento,
+            String numeroDocumento) {
+        TypedQuery<PersonaJuridicaEntity> query = em.createNamedQuery(
+                "PersonaJuridicaEntity.findByTipoNumeroDocumento", PersonaJuridicaEntity.class);
+        query.setParameter("tipoDocumento", tipoDocumento.getAbreviatura());
+        query.setParameter("numeroDocumento", numeroDocumento);
+        List<PersonaJuridicaEntity> results = query.getResultList();
+        if (results.size() == 0)
+            return null;
+        return new PersonaJuridicaAdapter(em, results.get(0));
+    }
 
-	@Override
-	public List<PersonaJuridicaModel> getPersonasJuridicas() {
-		return getPersonasJuridicas(-1, -1);
-	}
+    @Override
+    public SearchResultsModel<PersonaJuridicaModel> search() {
+        TypedQuery<PersonaJuridicaEntity> query = em.createNamedQuery("PersonaJuridicaEntity.findAll",
+                PersonaJuridicaEntity.class);
 
-	@Override
-	public long getPersonasJuridicasCount() {
-		Object count = em.createQuery("select count(u) from PersonaJuridicaEntity u").getSingleResult();
-		return (Long) count;
-	}
+        List<PersonaJuridicaEntity> entities = query.getResultList();
+        List<PersonaJuridicaModel> models = new ArrayList<PersonaJuridicaModel>();
+        for (PersonaJuridicaEntity personaJuridicaEntity : entities) {
+            models.add(new PersonaJuridicaAdapter(em, personaJuridicaEntity));
+        }
 
-	@Override
-	public List<PersonaJuridicaModel> getPersonasJuridicas(int firstResult, int maxResults) {
-		TypedQuery<PersonaJuridicaEntity> query = em.createQuery("SELECT p FROM PersonaJuridicaEntity p", PersonaJuridicaEntity.class);
-		if (firstResult != -1) {
-			query.setFirstResult(firstResult);
-		}
-		if (maxResults != -1) {
-			query.setMaxResults(maxResults);
-		}
-		List<PersonaJuridicaEntity> results = query.getResultList();
-		List<PersonaJuridicaModel> users = new ArrayList<PersonaJuridicaModel>();
-		for (PersonaJuridicaEntity entity : results)
-			users.add(new PersonaJuridicaAdapter(em, entity));
-		return users;
-	}
+        SearchResultsModel<PersonaJuridicaModel> result = new SearchResultsModel<>();
+        result.setModels(models);
+        result.setTotalSize(models.size());
+        return result;
+    }
 
-	@Override
-	public List<PersonaJuridicaModel> searchForNumeroDocumento(String numeroDocumento) {
-		return searchForNumeroDocumento(numeroDocumento, -1, -1);
-	}
+    @Override
+    public SearchResultsModel<PersonaJuridicaModel> search(SearchCriteriaModel criteria) {
+        SearchResultsModel<PersonaJuridicaEntity> entityResult = find(criteria, PersonaJuridicaEntity.class);
 
-	@Override
-	public List<PersonaJuridicaModel> searchForNumeroDocumento(String numeroDocumento, int firstResult, int maxResults) {
-		TypedQuery<PersonaJuridicaEntity> query = em.createQuery("SELECT p FROM PersonaJuridicaEntity p WHERE p.numeroDocumento like :numeroDocumento", PersonaJuridicaEntity.class);
-		query.setParameter("numeroDocumento", "%" + numeroDocumento + "%");
-		if (firstResult != -1) {
-			query.setFirstResult(firstResult);
-		}
-		if (maxResults != -1) {
-			query.setMaxResults(maxResults);
-		}
-		List<PersonaJuridicaEntity> results = query.getResultList();
-		List<PersonaJuridicaModel> users = new ArrayList<PersonaJuridicaModel>();
-		for (PersonaJuridicaEntity entity : results)
-			users.add(new PersonaJuridicaAdapter(em, entity));
-		return users;
-	}
+        SearchResultsModel<PersonaJuridicaModel> modelResult = new SearchResultsModel<>();
+        List<PersonaJuridicaModel> list = new ArrayList<>();
+        for (PersonaJuridicaEntity entity : entityResult.getModels()) {
+            list.add(new PersonaJuridicaAdapter(em, entity));
+        }
+        modelResult.setTotalSize(entityResult.getTotalSize());
+        modelResult.setModels(list);
+        return modelResult;
+    }
 
-	@Override
-	public List<PersonaJuridicaModel> searchForFilterText(String filterText) {
-		return searchForFilterText(filterText, -1, -1);
-	}
-
-	@Override
-	public List<PersonaJuridicaModel> searchForFilterText(String filterText, int firstResult, int maxResults) {		
-		TypedQuery<PersonaJuridicaEntity> query = em.createQuery("SELECT p FROM PersonaJuridicaEntity p WHERE p.numeroDocumento like :filtertext OR UPPER(p.razonSocial) LIKE :filtertext", PersonaJuridicaEntity.class);
-		query.setParameter("filtertext", "%" + filterText.toUpperCase() + "%");
-		if (firstResult != -1) {
-			query.setFirstResult(firstResult);
-		}
-		if (maxResults != -1) {
-			query.setMaxResults(maxResults);
-		}
-		List<PersonaJuridicaEntity> results = query.getResultList();
-		List<PersonaJuridicaModel> users = new ArrayList<PersonaJuridicaModel>();
-		for (PersonaJuridicaEntity entity : results)
-			users.add(new PersonaJuridicaAdapter(em, entity));
-		return users;
-	}
-
-	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-	}
+    @Override
+    public SearchResultsModel<PersonaJuridicaModel> search(SearchCriteriaModel criteria, String filterText) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

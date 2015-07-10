@@ -16,15 +16,27 @@ import org.sistcoop.persona.models.TipoDocumentoModel;
 import org.sistcoop.persona.models.TipoDocumentoProvider;
 import org.sistcoop.persona.models.enums.TipoPersona;
 import org.sistcoop.persona.models.jpa.entities.TipoDocumentoEntity;
+import org.sistcoop.persona.models.search.SearchCriteriaModel;
+import org.sistcoop.persona.models.search.SearchResultsModel;
 
 @Named
 @Stateless
 @Local(TipoDocumentoProvider.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class JpaTipoDocumentoProvider implements TipoDocumentoProvider {
+public class JpaTipoDocumentoProvider extends AbstractJpaStorage implements TipoDocumentoProvider {
 
     @PersistenceContext
-    protected EntityManager em;
+    private EntityManager em;
+
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.em;
+    }
+
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+    }
 
     @Override
     public TipoDocumentoModel create(String abreviatura, String denominacion, int cantidadCaracteres,
@@ -41,72 +53,13 @@ public class JpaTipoDocumentoProvider implements TipoDocumentoProvider {
 
     @Override
     public TipoDocumentoModel findByAbreviatura(String abreviatura) {
-        TypedQuery<TipoDocumentoEntity> query = em.createQuery(
-                "SELECT t FROM TipoDocumentoEntity t WHERE UPPER(t.abreviatura) = UPPER(:abreviatura)",
+        TypedQuery<TipoDocumentoEntity> query = em.createNamedQuery("TipoDocumentoEntity.findByAbreviatura",
                 TipoDocumentoEntity.class);
         query.setParameter("abreviatura", abreviatura);
         List<TipoDocumentoEntity> results = query.getResultList();
         if (results.size() == 0)
             return null;
         return new TipoDocumentoAdapter(em, results.get(0));
-    }
-
-    @Override
-    public List<TipoDocumentoModel> getTiposDocumento() {
-        TypedQuery<TipoDocumentoEntity> query = em.createQuery("Select t from TipoDocumentoEntity t",
-                TipoDocumentoEntity.class);
-        List<TipoDocumentoEntity> list = query.getResultList();
-        List<TipoDocumentoModel> results = new ArrayList<TipoDocumentoModel>();
-        for (TipoDocumentoEntity entity : list) {
-            if (entity.isEstado()) {
-                results.add(new TipoDocumentoAdapter(em, entity));
-            }
-        }
-        return results;
-    }
-
-    @Override
-    public List<TipoDocumentoModel> getTiposDocumento(TipoPersona tipoPersona) {
-        TypedQuery<TipoDocumentoEntity> query = em.createQuery(
-                "SELECT t FROM TipoDocumentoEntity t WHERE t.tipoPersona = :tipoPersona",
-                TipoDocumentoEntity.class);
-        query.setParameter("tipoPersona", tipoPersona);
-        List<TipoDocumentoEntity> list = query.getResultList();
-        List<TipoDocumentoModel> results = new ArrayList<TipoDocumentoModel>();
-        for (TipoDocumentoEntity entity : list) {
-            if (entity.isEstado()) {
-                results.add(new TipoDocumentoAdapter(em, entity));
-            }
-        }
-        return results;
-    }
-
-    @Override
-    public List<TipoDocumentoModel> getTiposDocumento(boolean estado) {
-        TypedQuery<TipoDocumentoEntity> query = em.createQuery("Select t from TipoDocumentoEntity t",
-                TipoDocumentoEntity.class);
-        List<TipoDocumentoEntity> list = query.getResultList();
-        List<TipoDocumentoModel> results = new ArrayList<TipoDocumentoModel>();
-        for (TipoDocumentoEntity entity : list) {
-            if (entity.isEstado() == estado)
-                results.add(new TipoDocumentoAdapter(em, entity));
-        }
-        return results;
-    }
-
-    @Override
-    public List<TipoDocumentoModel> getTiposDocumento(TipoPersona tipoPersona, boolean estado) {
-        TypedQuery<TipoDocumentoEntity> query = em.createQuery(
-                "SELECT t FROM TipoDocumentoEntity t WHERE t.tipoPersona = :tipoPersona",
-                TipoDocumentoEntity.class);
-        query.setParameter("tipoPersona", tipoPersona);
-        List<TipoDocumentoEntity> list = query.getResultList();
-        List<TipoDocumentoModel> results = new ArrayList<TipoDocumentoModel>();
-        for (TipoDocumentoEntity entity : list) {
-            if (entity.isEstado() == estado)
-                results.add(new TipoDocumentoAdapter(em, entity));
-        }
-        return results;
     }
 
     @Override
@@ -120,8 +73,42 @@ public class JpaTipoDocumentoProvider implements TipoDocumentoProvider {
     }
 
     @Override
-    public void close() {
+    public SearchResultsModel<TipoDocumentoModel> search() {
+        TypedQuery<TipoDocumentoEntity> query = em.createNamedQuery("TipoDocumentoEntity.findAll",
+                TipoDocumentoEntity.class);
+
+        List<TipoDocumentoEntity> entities = query.getResultList();
+        List<TipoDocumentoModel> models = new ArrayList<TipoDocumentoModel>();
+        for (TipoDocumentoEntity tipoDocumentoEntity : entities) {
+            if (tipoDocumentoEntity.isEstado()) {
+                models.add(new TipoDocumentoAdapter(em, tipoDocumentoEntity));
+            }
+        }
+
+        SearchResultsModel<TipoDocumentoModel> result = new SearchResultsModel<>();
+        result.setModels(models);
+        result.setTotalSize(models.size());
+        return result;
+    }
+
+    @Override
+    public SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria) {
+        SearchResultsModel<TipoDocumentoEntity> entityResult = find(criteria, TipoDocumentoEntity.class);
+
+        SearchResultsModel<TipoDocumentoModel> modelResult = new SearchResultsModel<>();
+        List<TipoDocumentoModel> list = new ArrayList<>();
+        for (TipoDocumentoEntity entity : entityResult.getModels()) {
+            list.add(new TipoDocumentoAdapter(em, entity));
+        }
+        modelResult.setTotalSize(entityResult.getTotalSize());
+        modelResult.setModels(list);
+        return modelResult;
+    }
+
+    @Override
+    public SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria, String filterText) {
         // TODO Auto-generated method stub
+        return null;
     }
 
 }

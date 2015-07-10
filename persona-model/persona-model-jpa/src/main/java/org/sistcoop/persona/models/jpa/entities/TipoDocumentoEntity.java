@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
@@ -16,115 +18,126 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.sistcoop.persona.models.enums.TipoPersona;
 
 @Entity
+@Indexed
 @Table(name = "TIPO_DOCUMENTO")
+@NamedQueries(value = {
+        @NamedQuery(name = "TipoDocumentoEntity.findAll", query = "SELECT t FROM TipoDocumentoEntity"),
+        @NamedQuery(name = "TipoDocumentoEntity.findByAbreviatura", query = "SELECT t FROM TipoDocumentoEntity t WHERE t.abreviatura = :abreviatura") })
 public class TipoDocumentoEntity implements Serializable {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-	
-	private String abreviatura;
-	private String denominacion;
-	private int cantidadCaracteres;
-	private TipoPersona tipoPersona;
-	private boolean estado;
+    private static final long serialVersionUID = 1L;
 
-	private Timestamp optlk;
+    private String abreviatura;
+    private String denominacion;
+    private int cantidadCaracteres;
+    private TipoPersona tipoPersona;
+    private boolean estado;
 
-	@Size(min = 1, max = 20)
-	@Id
-	@Column(name = "ABREVIATURA")
-	public String getAbreviatura() {
-		return abreviatura;
-	}
+    private Timestamp optlk;
 
-	public void setAbreviatura(String abreviatura) {
-		this.abreviatura = abreviatura;
-	}
+    @Size(min = 1, max = 20)
+    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Id
+    @Column(name = "ABREVIATURA")
+    public String getAbreviatura() {
+        return abreviatura;
+    }
 
-	@NotNull
-	@Size(min = 1, max = 60)
-	@NotBlank
-	@Column(name = "DENOMINACION")
-	public String getDenominacion() {
-		return denominacion;
-	}
+    public void setAbreviatura(String abreviatura) {
+        this.abreviatura = abreviatura;
+    }
 
-	public void setDenominacion(String denominacion) {
-		this.denominacion = denominacion;
-	}
+    @NotNull
+    @Size(min = 1, max = 60)
+    @NotBlank
+    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Column(name = "DENOMINACION")
+    public String getDenominacion() {
+        return denominacion;
+    }
 
-	@NotNull
-	@Min(value = 1)
-	@Max(value = 20)
-	@Column(name = "CANTIDAD_CARACTERES")
-	public int getCantidadCaracteres() {
-		return cantidadCaracteres;
-	}
+    public void setDenominacion(String denominacion) {
+        this.denominacion = denominacion;
+    }
 
-	public void setCantidadCaracteres(int cantidadCaracteres) {
-		this.cantidadCaracteres = cantidadCaracteres;
-	}
+    @NotNull
+    @Min(value = 1)
+    @Max(value = 20)
+    @Column(name = "CANTIDAD_CARACTERES")
+    public int getCantidadCaracteres() {
+        return cantidadCaracteres;
+    }
 
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_PERSONA")
-	public TipoPersona getTipoPersona() {
-		return tipoPersona;
-	}
+    public void setCantidadCaracteres(int cantidadCaracteres) {
+        this.cantidadCaracteres = cantidadCaracteres;
+    }
 
-	public void setTipoPersona(TipoPersona tipoPersona) {
-		this.tipoPersona = tipoPersona;
-	}
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TIPO_PERSONA")
+    public TipoPersona getTipoPersona() {
+        return tipoPersona;
+    }
 
-	@NotNull
-	@Type(type = "org.hibernate.type.TrueFalseType")
-	@Column(name = "ESTADO")
-	public boolean isEstado() {
-		return estado;
-	}
+    public void setTipoPersona(TipoPersona tipoPersona) {
+        this.tipoPersona = tipoPersona;
+    }
 
-	public void setEstado(boolean estado) {
-		this.estado = estado;
-	}
+    @NotNull
+    @Type(type = "org.hibernate.type.TrueFalseType")
+    @Column(name = "ESTADO")
+    public boolean isEstado() {
+        return estado;
+    }
 
-	@Version
-	public Timestamp getOptlk() {
-		return optlk;
-	}
+    public void setEstado(boolean estado) {
+        this.estado = estado;
+    }
 
-	public void setOptlk(Timestamp optlk) {
-		this.optlk = optlk;
-	}
+    @Version
+    public Timestamp getOptlk() {
+        return optlk;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((abreviatura == null) ? 0 : abreviatura.hashCode());
-		return result;
-	}
+    public void setOptlk(Timestamp optlk) {
+        this.optlk = optlk;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof TipoDocumentoEntity))
-			return false;
-		TipoDocumentoEntity other = (TipoDocumentoEntity) obj;
-		if (abreviatura == null) {
-			if (other.abreviatura != null)
-				return false;
-		} else if (!abreviatura.equals(other.abreviatura))
-			return false;
-		return true;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((abreviatura == null) ? 0 : abreviatura.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof TipoDocumentoEntity))
+            return false;
+        TipoDocumentoEntity other = (TipoDocumentoEntity) obj;
+        if (abreviatura == null) {
+            if (other.abreviatura != null)
+                return false;
+        } else if (!abreviatura.equals(other.abreviatura))
+            return false;
+        return true;
+    }
 
 }

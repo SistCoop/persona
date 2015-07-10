@@ -24,6 +24,8 @@ public interface PersonaNaturalProvider extends Provider {
 
     SearchResultsModel<PersonaNaturalModel> search();
 
-    SearchResultsModel<PersonaNaturalModel> search(SearchCriteriaModel searchCriteriaBean);
+    SearchResultsModel<PersonaNaturalModel> search(SearchCriteriaModel criteria);
+
+    SearchResultsModel<PersonaNaturalModel> search(SearchCriteriaModel criteria, String filterText);
 
 }
