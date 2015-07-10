@@ -82,7 +82,7 @@ public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
 	@RolesAllowed(Roles.ver_personas)
 	@Override
 	public PersonaJuridicaRepresentation findByTipoNumeroDocumento(String tipoDocumento, String numeroDocumento) {
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(tipoDocumento);
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.findByAbreviatura(tipoDocumento);
 		PersonaJuridicaModel model = personaJuridicaProvider.getPersonaJuridicaByTipoNumeroDoc(tipoDocumentoModel, numeroDocumento);
 		PersonaJuridicaRepresentation rep = ModelToRepresentation.toRepresentation(model);
 		return rep;
@@ -91,10 +91,10 @@ public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
 	@RolesAllowed(Roles.administrar_personas)
 	@Override
 	public Response create(PersonaJuridicaRepresentation personaJuridicaRepresentation) {
-		TipoDocumentoModel representanteTipoDocumentoModel = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(personaJuridicaRepresentation.getRepresentanteLegal().getTipoDocumento());
-		PersonaNaturalModel representanteModel = personaNaturalProvider.getPersonaNaturalByTipoNumeroDoc(representanteTipoDocumentoModel, personaJuridicaRepresentation.getRepresentanteLegal().getNumeroDocumento());
+		TipoDocumentoModel representanteTipoDocumentoModel = tipoDocumentoProvider.findByAbreviatura(personaJuridicaRepresentation.getRepresentanteLegal().getTipoDocumento());
+		PersonaNaturalModel representanteModel = personaNaturalProvider.findByTipoNumeroDocumento(representanteTipoDocumentoModel, personaJuridicaRepresentation.getRepresentanteLegal().getNumeroDocumento());
 
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(personaJuridicaRepresentation.getTipoDocumento());
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.findByAbreviatura(personaJuridicaRepresentation.getTipoDocumento());
 		PersonaJuridicaModel personaJuridicaModel = representationToModel.createPersonaJuridica(personaJuridicaRepresentation, tipoDocumentoModel, representanteModel, personaJuridicaProvider);
 		PersonaJuridicaRepresentation result = ModelToRepresentation.toRepresentation(personaJuridicaModel);
 		return Response.created(uriInfo.getAbsolutePathBuilder().path(result.getId()).build()).header("Access-Control-Expose-Headers", "Location").entity(Jsend.getSuccessJSend(result.getId())).build();
@@ -104,7 +104,7 @@ public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
 	@Override
 	public void update(String id, PersonaJuridicaRepresentation rep) {
 		PersonaJuridicaModel model = personaJuridicaProvider.getPersonaJuridicaById(id);
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(rep.getTipoDocumento());
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.findByAbreviatura(rep.getTipoDocumento());
 
 		model.setCodigoPais(rep.getCodigoPais());
 		model.setTipoDocumento(tipoDocumentoModel);

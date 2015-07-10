@@ -23,7 +23,7 @@ import org.sistcoop.persona.representations.idm.TipoDocumentoRepresentation;
 public class RepresentationToModel {
 		
 	public TipoDocumentoModel createTipoDocumento(TipoDocumentoRepresentation rep, TipoDocumentoProvider provider) {
-		TipoDocumentoModel model = provider.addTipoDocumento(
+		TipoDocumentoModel model = provider.create(
 				rep.getAbreviatura(), 
 				rep.getDenominacion(), 
 				rep.getCantidadCaracteres(), 
@@ -36,7 +36,7 @@ public class RepresentationToModel {
 			TipoDocumentoModel tipoDocumentoModel, 
 			PersonaNaturalProvider personaNaturalProvider) {		
 
-		PersonaNaturalModel model = personaNaturalProvider.addPersonaNatural(
+		PersonaNaturalModel model = personaNaturalProvider.create(
 				rep.getCodigoPais(), 
 				tipoDocumentoModel, 
 				rep.getNumeroDocumento(), 

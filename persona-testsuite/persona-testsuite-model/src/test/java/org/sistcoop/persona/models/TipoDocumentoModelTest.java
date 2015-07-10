@@ -70,7 +70,7 @@ public class TipoDocumentoModelTest {
 	
 	@Test
 	public void commit() {
-		TipoDocumentoModel model1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);		
+		TipoDocumentoModel model1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);		
 		
 		String abreviatura = model1.getAbreviatura();
 		String denominacionNueva = "Otra denominacion";
@@ -78,7 +78,7 @@ public class TipoDocumentoModelTest {
 		model1.setDenominacion(denominacionNueva);
 		model1.commit();	
 						
-		TipoDocumentoModel model2 = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(abreviatura);
+		TipoDocumentoModel model2 = tipoDocumentoProvider.findByAbreviatura(abreviatura);
 		
 		assertThat(model2.getDenominacion(), is(equalTo(denominacionNueva)));
 	}	

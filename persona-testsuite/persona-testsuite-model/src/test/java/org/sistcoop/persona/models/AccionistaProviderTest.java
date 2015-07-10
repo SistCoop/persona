@@ -117,10 +117,10 @@ public class AccionistaProviderTest {
 	   
 	@Test
 	public void addAccionista() {
-		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
-		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
+		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
 				
-		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.addPersonaNatural(
+		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.create(
 				"PER", tipoDocumentoModel1, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);
 		
@@ -140,10 +140,10 @@ public class AccionistaProviderTest {
 	
 	@Test
 	public void getAccionistaById()  {		
-		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
-		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
+		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
 				
-		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.addPersonaNatural(
+		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.create(
 				"PER", tipoDocumentoModel1, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);
 		
@@ -161,10 +161,10 @@ public class AccionistaProviderTest {
 	
 	@Test
 	public void removeAccionista()  {	
-		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
-		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
+		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
 				
-		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.addPersonaNatural(
+		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.create(
 				"PER", tipoDocumentoModel1, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);
 		

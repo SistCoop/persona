@@ -27,7 +27,7 @@ public class JpaTipoDocumentoProvider implements TipoDocumentoProvider {
 	protected EntityManager em;
 
 	@Override
-	public TipoDocumentoModel addTipoDocumento(String abreviatura, String denominacion, int cantidadCaracteres, TipoPersona tipoPersona) {
+	public TipoDocumentoModel create(String abreviatura, String denominacion, int cantidadCaracteres, TipoPersona tipoPersona) {
 		TipoDocumentoEntity tipoDocumentoEntity = new TipoDocumentoEntity();
 		tipoDocumentoEntity.setAbreviatura(abreviatura);
 		tipoDocumentoEntity.setDenominacion(denominacion);
@@ -39,7 +39,7 @@ public class JpaTipoDocumentoProvider implements TipoDocumentoProvider {
 	}
 
 	@Override
-	public TipoDocumentoModel getTipoDocumentoByAbreviatura(String abreviatura) {
+	public TipoDocumentoModel findByAbreviatura(String abreviatura) {
 		TypedQuery<TipoDocumentoEntity> query = em.createQuery("SELECT t FROM TipoDocumentoEntity t WHERE UPPER(t.abreviatura) = UPPER(:abreviatura)", TipoDocumentoEntity.class);
 		query.setParameter("abreviatura", abreviatura);
 		List<TipoDocumentoEntity> results = query.getResultList();
@@ -101,7 +101,7 @@ public class JpaTipoDocumentoProvider implements TipoDocumentoProvider {
 	}
 	
 	@Override
-	public boolean removeTipoDocumento(TipoDocumentoModel tipoDocumentoModel) {		
+	public boolean remove(TipoDocumentoModel tipoDocumentoModel) {		
 		TipoDocumentoEntity tipoDocumentoEntity = em.find(TipoDocumentoEntity.class, tipoDocumentoModel.getAbreviatura());
 		if (tipoDocumentoEntity == null) return false;
         em.remove(tipoDocumentoEntity);

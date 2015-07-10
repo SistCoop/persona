@@ -105,9 +105,9 @@ public class PersonaJuridicaProviderTest {
 	
 	@Test
 	public void addPersonaJuridica()  {		
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);
 		
-		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.addPersonaNatural(
+		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.create(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);				
 		
@@ -123,9 +123,9 @@ public class PersonaJuridicaProviderTest {
 	
 	@Test
 	public void getPersonaJuridicaById()  {
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);
 		
-		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.addPersonaNatural(
+		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.create(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);
 		
@@ -141,9 +141,9 @@ public class PersonaJuridicaProviderTest {
 	
 	@Test
 	public void getPersonaJuridicaByTipoNumeroDoc()  {	
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);
 		
-		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.addPersonaNatural(
+		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.create(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);
 		
@@ -160,9 +160,9 @@ public class PersonaJuridicaProviderTest {
 	
 	@Test
 	public void removePersonaJuridica()  {	
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);
 		
-		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.addPersonaNatural(
+		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.create(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);
 		

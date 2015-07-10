@@ -30,7 +30,7 @@ public class JpaPersonaNaturalProvider implements PersonaNaturalProvider {
 	protected EntityManager em;
 
 	@Override
-	public PersonaNaturalModel addPersonaNatural(String codigoPais, TipoDocumentoModel tipoDocumentoModel, String numeroDocumento, String apellidoPaterno, String apellidoMaterno, String nombres, Date fechaNacimiento, Sexo sexo) {
+	public PersonaNaturalModel create(String codigoPais, TipoDocumentoModel tipoDocumentoModel, String numeroDocumento, String apellidoPaterno, String apellidoMaterno, String nombres, Date fechaNacimiento, Sexo sexo) {
 		TipoDocumentoEntity tipoDocumentoEntity = TipoDocumentoAdapter.toTipoDocumentoEntity(tipoDocumentoModel, em);
 
 		PersonaNaturalEntity personaNaturalEntity = new PersonaNaturalEntity();
@@ -47,7 +47,7 @@ public class JpaPersonaNaturalProvider implements PersonaNaturalProvider {
 	}
 
 	@Override
-	public boolean removePersonaNatural(PersonaNaturalModel personaNaturalModel) {
+	public boolean remove(PersonaNaturalModel personaNaturalModel) {
 		PersonaNaturalEntity personaNaturalEntity = em.find(PersonaNaturalEntity.class, personaNaturalModel.getId());
 		if (personaNaturalEntity == null) return false;
         em.remove(personaNaturalEntity);
@@ -55,13 +55,13 @@ public class JpaPersonaNaturalProvider implements PersonaNaturalProvider {
 	}	
 
 	@Override
-	public PersonaNaturalModel getPersonaNaturalById(String id) {
+	public PersonaNaturalModel findById(String id) {
 		PersonaNaturalEntity personaNaturalEntity = this.em.find(PersonaNaturalEntity.class, id);
 		return personaNaturalEntity != null ? new PersonaNaturalAdapter(em, personaNaturalEntity) : null;
 	}
 
 	@Override
-	public PersonaNaturalModel getPersonaNaturalByTipoNumeroDoc(TipoDocumentoModel tipoDocumento, String numeroDocumento) {
+	public PersonaNaturalModel findByTipoNumeroDocumento(TipoDocumentoModel tipoDocumento, String numeroDocumento) {
 		TypedQuery<PersonaNaturalEntity> query = em.createQuery("SELECT p FROM PersonaNaturalEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento AND p.numeroDocumento = :numeroDocumento", PersonaNaturalEntity.class);
 		query.setParameter("tipoDocumento", tipoDocumento.getAbreviatura());
 		query.setParameter("numeroDocumento", numeroDocumento);

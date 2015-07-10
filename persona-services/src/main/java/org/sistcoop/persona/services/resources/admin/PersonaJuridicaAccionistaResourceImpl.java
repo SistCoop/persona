@@ -14,7 +14,7 @@ import javax.ws.rs.core.UriInfo;
 import org.jboss.ejb3.annotation.SecurityDomain;
 import org.sistcoop.persona.Jsend;
 import org.sistcoop.persona.admin.client.Roles;
-import org.sistcoop.persona.admin.client.resource.PersonaJuridicaAccionistaResource;
+import org.sistcoop.persona.admin.client.resource.AccionistasResource;
 import org.sistcoop.persona.models.AccionistaModel;
 import org.sistcoop.persona.models.AccionistaProvider;
 import org.sistcoop.persona.models.PersonaJuridicaModel;
@@ -29,7 +29,7 @@ import org.sistcoop.persona.representations.idm.AccionistaRepresentation;
 
 @Stateless
 @SecurityDomain("keycloak")
-public class PersonaJuridicaAccionistaResourceImpl implements PersonaJuridicaAccionistaResource {
+public class PersonaJuridicaAccionistaResourceImpl implements AccionistasResource {
 
 	@Inject
 	protected PersonaJuridicaProvider personaJuridicaProvider;
@@ -69,8 +69,8 @@ public class PersonaJuridicaAccionistaResourceImpl implements PersonaJuridicaAcc
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(accionistaRepresentation.getPersonaNatural().getTipoDocumento());
-		PersonaNaturalModel personaNaturalModel = personaNaturalProvider.getPersonaNaturalByTipoNumeroDoc(tipoDocumentoModel, accionistaRepresentation.getPersonaNatural().getNumeroDocumento());
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.findByAbreviatura(accionistaRepresentation.getPersonaNatural().getTipoDocumento());
+		PersonaNaturalModel personaNaturalModel = personaNaturalProvider.findByTipoNumeroDocumento(tipoDocumentoModel, accionistaRepresentation.getPersonaNatural().getNumeroDocumento());
 
 		AccionistaModel accionistaModel = accionistaProvider.addAccionista(personaJuridicaModel, personaNaturalModel, accionistaRepresentation.getPorcentajeParticipacion());		
 		AccionistaRepresentation representation = ModelToRepresentation.toRepresentation(accionistaModel);

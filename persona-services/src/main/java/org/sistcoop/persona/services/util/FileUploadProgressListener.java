@@ -15,7 +15,7 @@ public class FileUploadProgressListener implements MediaHttpUploaderProgressList
 
   @Override
   public void progressChanged(MediaHttpUploader uploader) throws IOException {
-    switch (uploader.getUploadState()) {
+        switch (uploader.getUploadState()) {
       case INITIATION_STARTED:
         View.header2("Upload Initiation has started.");
         break;
@@ -28,6 +28,8 @@ public class FileUploadProgressListener implements MediaHttpUploaderProgressList
         break;
       case MEDIA_COMPLETE:
         View.header2("Upload is Complete!");
+        break;
+    default:
         break;
     }
   }

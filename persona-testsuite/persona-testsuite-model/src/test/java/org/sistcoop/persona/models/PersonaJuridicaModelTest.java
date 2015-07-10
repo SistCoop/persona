@@ -116,9 +116,9 @@ public class PersonaJuridicaModelTest {
 		
 	@Test
 	public void commit() {
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);		
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);		
 		
-		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.addPersonaNatural(
+		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.create(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);				
 		
@@ -139,13 +139,13 @@ public class PersonaJuridicaModelTest {
 	
 	@Test
 	public void getAccionistas() {
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);		
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente", 8, TipoPersona.JURIDICA);		
 		
-		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.addPersonaNatural(
+		PersonaNaturalModel representanteLegalModel = personaNaturalProvider.create(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);				
 		
-		PersonaNaturalModel personaNaturalAccionistaModel = personaNaturalProvider.addPersonaNatural(
+		PersonaNaturalModel personaNaturalAccionistaModel = personaNaturalProvider.create(
 				"PER", tipoDocumentoModel, "00000000", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);
 		

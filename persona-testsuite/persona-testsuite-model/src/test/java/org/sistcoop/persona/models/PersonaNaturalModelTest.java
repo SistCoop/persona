@@ -87,9 +87,9 @@ public class PersonaNaturalModelTest {
 	   
 	@Test
 	public void commit() {
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
 		
-		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
+		PersonaNaturalModel model1 = personaNaturalProvider.create(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);
 		
@@ -99,7 +99,7 @@ public class PersonaNaturalModelTest {
 		model1.setNombres(nombreNuevo);
 		model1.commit();	
 
-		PersonaNaturalModel model2 = personaNaturalProvider.getPersonaNaturalById(id);
+		PersonaNaturalModel model2 = personaNaturalProvider.findById(id);
 				
 		assertThat(model2.getNombres(), is(equalTo(nombreNuevo)));
 	}	

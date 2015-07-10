@@ -5,23 +5,23 @@ import java.util.List;
 import javax.ejb.Local;
 
 import org.sistcoop.persona.models.enums.TipoPersona;
+import org.sistcoop.persona.models.search.SearchCriteriaModel;
+import org.sistcoop.persona.models.search.SearchResultsModel;
 import org.sistcoop.persona.provider.Provider;
 
 @Local
 public interface TipoDocumentoProvider extends Provider {
+    TipoDocumentoModel findByAbreviatura(String abreviatura);
 
-	TipoDocumentoModel addTipoDocumento(String abreviatura, String denominacion, int cantidadCaracteres, TipoPersona tipoPersona);	
-	
-	boolean removeTipoDocumento(TipoDocumentoModel tipoDocumentoModel);
+    TipoDocumentoModel create(String abreviatura, String denominacion, int cantidadCaracteres,
+            TipoPersona tipoPersona);
 
-	TipoDocumentoModel getTipoDocumentoByAbreviatura(String abreviatura);
+    boolean remove(TipoDocumentoModel tipoDocumentoModel);
 
-	List<TipoDocumentoModel> getTiposDocumento();
+    List<TipoDocumentoModel> getTiposDocumento(TipoPersona tipoPersona, boolean estado);
 
-	List<TipoDocumentoModel> getTiposDocumento(TipoPersona tipoPersona);
+    SearchResultsModel<TipoDocumentoModel> search();
 
-	List<TipoDocumentoModel> getTiposDocumento(boolean estado);
-
-	List<TipoDocumentoModel> getTiposDocumento(TipoPersona tipoPersona, boolean estado);
+    SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria);
 
 }

@@ -70,7 +70,7 @@ public class TipoDocumentoProviderTest {
 	   
 	@Test
 	public void addTipoDocumento() {
-		TipoDocumentoModel model = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);		
+		TipoDocumentoModel model = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);		
 		
 		assertThat("model no debe ser null", model, is(notNullValue()));			
 		assertThat("estado debe ser true", model.getEstado(), is(true));	
@@ -78,10 +78,10 @@ public class TipoDocumentoProviderTest {
 
 	@Test
 	public void getTipoDocumentoByAbreviatura() {
-		TipoDocumentoModel model1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);						
+		TipoDocumentoModel model1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);						
 		
 		String abreviatura = model1.getAbreviatura();		
-		TipoDocumentoModel model2 = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(abreviatura);
+		TipoDocumentoModel model2 = tipoDocumentoProvider.findByAbreviatura(abreviatura);
 				
 		assertThat("model1 debe ser igual a model2", model1, is(equalTo(model2)));
 	}
@@ -89,7 +89,7 @@ public class TipoDocumentoProviderTest {
 
 	@Test
 	public void getTiposDocumento() {	
-		tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
 		
 		List<TipoDocumentoModel> models = tipoDocumentoProvider.getTiposDocumento();
 		for (TipoDocumentoModel tipoDocumentoModel : models) {			
@@ -101,8 +101,8 @@ public class TipoDocumentoProviderTest {
 	
 	@Test
 	public void getTiposDocumentoByTipoPersona() {		
-		tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
-		tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
+		tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
 		
 		List<TipoDocumentoModel> modelsNatural = tipoDocumentoProvider.getTiposDocumento(TipoPersona.NATURAL);
 		for (TipoDocumentoModel tipoDocumentoModel : modelsNatural) {			
@@ -123,8 +123,8 @@ public class TipoDocumentoProviderTest {
 	@Test
 	public void getTiposDocumentoByEstado() {	
 		@SuppressWarnings("unused")
-		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
-		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
+		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
 		
 		tipoDocumentoModel2.setEstado(false);
 		tipoDocumentoModel2.commit();		
@@ -146,12 +146,12 @@ public class TipoDocumentoProviderTest {
 	@Test
 	public void getTiposDocumentoByTipoPersonaAndEstado()  {	
 		@SuppressWarnings("unused")
-		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
-		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.addTipoDocumento("Partida nacimiento", "Partida de nacimiento", 8, TipoPersona.NATURAL);
+		TipoDocumentoModel tipoDocumentoModel1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		TipoDocumentoModel tipoDocumentoModel2 = tipoDocumentoProvider.create("Partida nacimiento", "Partida de nacimiento", 8, TipoPersona.NATURAL);
 		
 		@SuppressWarnings("unused")
-		TipoDocumentoModel tipoDocumentoModel3 = tipoDocumentoProvider.addTipoDocumento("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
-		TipoDocumentoModel tipoDocumentoModel4 = tipoDocumentoProvider.addTipoDocumento("RRR", "Registro registral restricto", 11, TipoPersona.JURIDICA);
+		TipoDocumentoModel tipoDocumentoModel3 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente", 11, TipoPersona.JURIDICA);
+		TipoDocumentoModel tipoDocumentoModel4 = tipoDocumentoProvider.create("RRR", "Registro registral restricto", 11, TipoPersona.JURIDICA);
 		
 		tipoDocumentoModel2.setEstado(false);
 		tipoDocumentoModel4.setEstado(false);
@@ -190,12 +190,12 @@ public class TipoDocumentoProviderTest {
 	
 	@Test
 	public void removeTipoDocumento()  {			
-		TipoDocumentoModel model1 = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);				
+		TipoDocumentoModel model1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);				
 		
 		String abreviatura = model1.getAbreviatura();
-		boolean result = tipoDocumentoProvider.removeTipoDocumento(model1);
+		boolean result = tipoDocumentoProvider.remove(model1);
 		
-		TipoDocumentoModel model2 = tipoDocumentoProvider.getTipoDocumentoByAbreviatura(abreviatura);			
+		TipoDocumentoModel model2 = tipoDocumentoProvider.findByAbreviatura(abreviatura);			
 		
 		assertThat(result, is(true));
 		assertThat(model2, is(nullValue()));	

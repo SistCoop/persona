@@ -94,9 +94,9 @@ public class PersonaNaturalProviderTest {
 	   
 	@Test
 	public void addPersonaNatural() {
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
 		
-		PersonaNaturalModel model = personaNaturalProvider.addPersonaNatural(
+		PersonaNaturalModel model = personaNaturalProvider.create(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);
 		
@@ -108,29 +108,29 @@ public class PersonaNaturalProviderTest {
 
 	@Test
 	public void getPersonaNaturalById()  {
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
 		
-		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
+		PersonaNaturalModel model1 = personaNaturalProvider.create(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);		
 		
 		String id = model1.getId();		
-		PersonaNaturalModel model2 = personaNaturalProvider.getPersonaNaturalById(id);
+		PersonaNaturalModel model2 = personaNaturalProvider.findById(id);
 		
 		assertThat(model1, is(equalTo(model2)));
 	}
 	
 	@Test
 	public void getPersonaNaturalByTipoNumeroDoc()  {
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
 		
-		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
+		PersonaNaturalModel model1 = personaNaturalProvider.create(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);	
 		
 		TipoDocumentoModel tipoDocumento = model1.getTipoDocumento();
 		String numeroDocumento = model1.getNumeroDocumento();		
-		PersonaNaturalModel model2 = personaNaturalProvider.getPersonaNaturalByTipoNumeroDoc(tipoDocumento, numeroDocumento);
+		PersonaNaturalModel model2 = personaNaturalProvider.findByTipoNumeroDocumento(tipoDocumento, numeroDocumento);
 		
 		assertThat(model1, is(equalTo(model2)));
 	}
@@ -169,16 +169,16 @@ public class PersonaNaturalProviderTest {
 	
 	@Test
 	public void removePersonaNatural()  {	
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.addTipoDocumento("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
+		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8, TipoPersona.NATURAL);
 		
-		PersonaNaturalModel model1 = personaNaturalProvider.addPersonaNatural(
+		PersonaNaturalModel model1 = personaNaturalProvider.create(
 				"PER", tipoDocumentoModel, "12345678", "Flores", "Huertas", "Jhon wilber", 
 				date, Sexo.MASCULINO);				
 		
 		String id = model1.getId();		
-		boolean result = personaNaturalProvider.removePersonaNatural(model1);
+		boolean result = personaNaturalProvider.remove(model1);
 		
-		PersonaNaturalModel model2 = personaNaturalProvider.getPersonaNaturalById(id);
+		PersonaNaturalModel model2 = personaNaturalProvider.findById(id);
 		
 		assertThat(result, is(true));
 		assertThat(model2, is(nullValue()));				
