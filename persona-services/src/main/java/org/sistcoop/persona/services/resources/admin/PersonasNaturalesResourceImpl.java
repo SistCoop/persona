@@ -20,7 +20,7 @@ import org.sistcoop.persona.models.search.PagingModel;
 import org.sistcoop.persona.models.search.SearchCriteriaFilterOperator;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
-import org.sistcoop.persona.models.search.util.PersonaModelAtribute;
+import org.sistcoop.persona.models.search.filters.PersonaNaturalFilterProvider;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.models.utils.RepresentationToModel;
 import org.sistcoop.persona.representations.idm.PersonaNaturalRepresentation;
@@ -38,11 +38,14 @@ public class PersonasNaturalesResourceImpl implements PersonasNaturalesResource 
     @Inject
     private RepresentationToModel representationToModel;
 
-    @Context
-    private UriInfo uriInfo;
+    @Inject
+    private PersonaNaturalFilterProvider personaNaturalFilterProvider;
 
     @Inject
     private PersonaNaturalResource personaNaturalResource;
+
+    @Context
+    private UriInfo uriInfo;
 
     @Override
     public PersonaNaturalResource persona(String persona) {
@@ -63,13 +66,16 @@ public class PersonasNaturalesResourceImpl implements PersonasNaturalesResource 
 
     @Override
     public SearchResultsRepresentation<PersonaNaturalRepresentation> search(String documento, String numero) {
-
         SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
 
         // add filters
-        searchCriteriaBean.addFilter(PersonaModelAtribute.documento, documento,
+        searchCriteriaBean.addFilter(personaNaturalFilterProvider.getTipoDocumentoFilter(), documento,
                 SearchCriteriaFilterOperator.eq);
-        searchCriteriaBean.addFilter(PersonaModelAtribute.numero, numero, SearchCriteriaFilterOperator.eq);
+        searchCriteriaBean.addFilter(personaNaturalFilterProvider.getNumeroDocumentoFilter(), numero,
+                SearchCriteriaFilterOperator.eq);
+
+        // add ordery by
+        searchCriteriaBean.setOrder(personaNaturalFilterProvider.getApellidoPaternoFilter(), true);
 
         // search
         SearchResultsModel<PersonaNaturalModel> results = personaNaturalProvider.search(searchCriteriaBean);
@@ -94,21 +100,12 @@ public class PersonasNaturalesResourceImpl implements PersonasNaturalesResource 
         SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
         searchCriteriaBean.setPaging(paging);
 
-        // add filters
-        // add filters
-        searchCriteriaBean.addFilter(PersonaModelAtribute.documento, filterText,
-                SearchCriteriaFilterOperator.like);
-        searchCriteriaBean.addFilter(PersonaModelAtribute.numero, filterText,
-                SearchCriteriaFilterOperator.like);
-        searchCriteriaBean.addFilter(PersonaModelAtribute.apellidoPaterno, filterText,
-                SearchCriteriaFilterOperator.like);
-        searchCriteriaBean.addFilter(PersonaModelAtribute.apellidoMaterno, filterText,
-                SearchCriteriaFilterOperator.like);
-        searchCriteriaBean.addFilter(PersonaModelAtribute.nombres, filterText,
-                SearchCriteriaFilterOperator.like);
+        // add ordery by
+        searchCriteriaBean.setOrder(personaNaturalFilterProvider.getApellidoPaternoFilter(), true);
 
         // search
-        SearchResultsModel<PersonaNaturalModel> results = personaNaturalProvider.search(searchCriteriaBean);
+        SearchResultsModel<PersonaNaturalModel> results = personaNaturalProvider.search(searchCriteriaBean,
+                filterText);
         SearchResultsRepresentation<PersonaNaturalRepresentation> rep = new SearchResultsRepresentation<>();
         List<PersonaNaturalRepresentation> representations = new ArrayList<>();
         for (PersonaNaturalModel model : results.getModels()) {

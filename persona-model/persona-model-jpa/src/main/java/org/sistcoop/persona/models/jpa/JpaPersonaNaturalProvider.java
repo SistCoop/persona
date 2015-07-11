@@ -124,7 +124,27 @@ public class JpaPersonaNaturalProvider extends AbstractJpaStorage implements Per
     @Override
     public SearchResultsModel<PersonaNaturalModel> search(SearchCriteriaModel searchCriteriaBean,
             String filterText) {
-        // TODO Auto-generated method stub
+
+        /*
+         * FullTextEntityManager fullTextEntityManager =
+         * org.hibernate.search.jpa.Search .getFullTextEntityManager(em);
+         * 
+         * QueryBuilder qb =
+         * fullTextEntityManager.getSearchFactory().buildQueryBuilder()
+         * .forEntity(PersonaNaturalEntity.class).get();
+         * 
+         * org.apache.lucene.search.Query query = qb.keyword().onFields("title",
+         * "subtitle", "authors.name") .matching(filterText).createQuery();
+         * 
+         * // wrap Lucene query in a javax.persistence.Query
+         * javax.persistence.Query persistenceQuery =
+         * fullTextEntityManager.createFullTextQuery(query,
+         * PersonaNaturalEntity.class);
+         * 
+         * // execute search List result = persistenceQuery.getResultList();
+         * 
+         * return null;
+         */
         return null;
     }
 

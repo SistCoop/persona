@@ -7,3 +7,5 @@ include "persona-model:persona-model-mongo"
 include "persona-integration:persona-client"
 include "persona-testsuite:persona-testsuite-model"
 include "persona-testsuite:persona-testsuite-client"
+include 'persona-web'
+

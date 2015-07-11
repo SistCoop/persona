@@ -1,0 +1,37 @@
+apply plugin: 'war'
+apply plugin: 'jetty'
+apply from: "$rootDir/gradle/functionalTest.gradle"
+apply from: "$rootDir/gradle/publishMaven.gradle"
+//apply from: "$rootDir/gradle/sshDeploy.gradle"
+//apply from: "$rootDir/gradle/smokeTest.gradle"
+
+dependencies {
+    compile project(":persona-core")
+    compile project(":persona-core-jaxrs")
+    compile project(":persona-integration:persona-client")
+    compile project(":persona-services")
+    compile project(":persona-model:persona-model-api")
+    compile project(":persona-model:persona-model-jpa")
+}
+
+task createBuildInfoFile << {
+    def buildInfoFile = new File("$buildDir/build-info.properties")
+    Properties props = new Properties()
+    props.setProperty('version', project.version.toString())
+    props.setProperty('timestamp', project.buildTimestamp)
+    props.store(buildInfoFile.newWriter(), null)
+}
+
+war {
+    dependsOn createBuildInfoFile
+    baseName = 'persona'
+
+    from(buildDir) {
+        include 'build-info.properties'
+        into('WEB-INF/classes')
+    }
+}
+
+jettyRun {
+    contextPath = 'persona'
+}

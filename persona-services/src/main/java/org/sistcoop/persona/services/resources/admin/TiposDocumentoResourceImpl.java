@@ -14,11 +14,10 @@ import org.sistcoop.persona.admin.client.resource.TipoDocumentoResource;
 import org.sistcoop.persona.admin.client.resource.TiposDocumentoResource;
 import org.sistcoop.persona.models.TipoDocumentoModel;
 import org.sistcoop.persona.models.TipoDocumentoProvider;
-import org.sistcoop.persona.models.enums.TipoPersona;
 import org.sistcoop.persona.models.search.SearchCriteriaFilterOperator;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
-import org.sistcoop.persona.models.search.util.TipoDocumentoModelAtribute;
+import org.sistcoop.persona.models.search.filters.TipoDocumentoFilterProvider;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.models.utils.RepresentationToModel;
 import org.sistcoop.persona.representations.idm.TipoDocumentoRepresentation;
@@ -29,6 +28,9 @@ public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
 
     @Inject
     private TipoDocumentoProvider tipoDocumentoProvider;
+
+    @Inject
+    private TipoDocumentoFilterProvider tipoDocumentoFilterProvider;
 
     @Inject
     private RepresentationToModel representationToModel;
@@ -60,12 +62,11 @@ public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
 
         // add filters
         if (tipoPersona != null) {
-            searchCriteriaBean.addFilter(TipoDocumentoModelAtribute.tipoPersona,
-                    TipoPersona.valueOf(tipoPersona.toUpperCase()).toString(),
+            searchCriteriaBean.addFilter(tipoDocumentoFilterProvider.getTipoPersonaFilter(), tipoPersona,
                     SearchCriteriaFilterOperator.eq);
         }
-        searchCriteriaBean.addFilter(TipoDocumentoModelAtribute.estado, estado ? "true" : "false",
-                SearchCriteriaFilterOperator.bool_eq);
+        searchCriteriaBean.addFilter(tipoDocumentoFilterProvider.getEstadoFilter(),
+                estado ? "true" : "false", SearchCriteriaFilterOperator.bool_eq);
 
         // search
         SearchResultsModel<TipoDocumentoModel> results = tipoDocumentoProvider.search(searchCriteriaBean);

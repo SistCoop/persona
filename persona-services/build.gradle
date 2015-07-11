@@ -1,14 +1,5 @@
 dependencies {
-	compile project(':persona-integration:persona-client')
-	compile project(':persona-model:persona-model-api')
-	compile project(':persona-model:persona-model-jpa')	
-	
-	compile 'org.jboss.ejb3:jboss-ejb3-ext-api:2.1.0'
-
-	compile 'commons-io:commons-io:2.4'
-
-	compile 'com.google.apis:google-api-services-drive:v2-rev173-1.20.0'
-	compile 'com.google.oauth-client:google-oauth-client-java6:1.20.0'
-	compile 'com.google.oauth-client:google-oauth-client-jetty:1.20.0'
-	
+	compile project(":persona-integration:persona-client")
+	compile project(":persona-model:persona-model-api")
+	compile project(":persona-model:persona-model-jpa")
 }

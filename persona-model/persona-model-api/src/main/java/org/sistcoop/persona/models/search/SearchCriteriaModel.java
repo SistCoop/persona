@@ -57,6 +57,16 @@ public class SearchCriteriaModel implements Serializable {
     }
 
     /**
+     * Adds a single filter to the criteria.
+     * 
+     * @param filter
+     *            the filter object
+     */
+    public void addFilter(SearchCriteriaFilterModel filter) {
+        filters.add(filter);
+    }
+
+    /**
      * @param page
      *            the page
      */

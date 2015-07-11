@@ -1,6 +1,3 @@
 dependencies {
-    compile project(':persona-core')
-
-    compile "javax.ejb:javax.ejb-api:${libraryVersions.javaxEjbApi}"
-
+    compile project(":persona-core")
 }
