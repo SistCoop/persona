@@ -148,7 +148,7 @@ public class TipoDocumentoProviderTest extends AbstractTest {
         criteria.addFilter(tipoDocumentoFilterProvider.getEstadoFilter(), "true",
                 SearchCriteriaFilterOperator.bool_eq);
 
-        SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria, "dni");
+        SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria, "DNI");
 
         assertThat(searched, is(notNullValue()));
         assertThat(searched.getTotalSize(), is(1));

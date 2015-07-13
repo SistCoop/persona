@@ -7,11 +7,14 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.apache.lucene.search.Query;
+import org.hibernate.Criteria;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
@@ -21,6 +24,7 @@ import org.sistcoop.persona.models.enums.TipoPersona;
 import org.sistcoop.persona.models.jpa.entities.TipoDocumentoEntity;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
+import org.sistcoop.persona.models.search.filters.TipoDocumentoFilterProvider;
 
 @Named
 @Stateless
@@ -30,6 +34,9 @@ public class JpaTipoDocumentoProvider extends AbstractJpaStorage implements Tipo
 
     @PersistenceContext
     private EntityManager em;
+
+    @Inject
+    private TipoDocumentoFilterProvider filterProvider;
 
     @Override
     protected EntityManager getEntityManager() {
@@ -111,21 +118,22 @@ public class JpaTipoDocumentoProvider extends AbstractJpaStorage implements Tipo
     @Override
     public SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria, String filterText) {
 
+        // Hibernate Search
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
-
         QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder()
                 .forEntity(TipoDocumentoEntity.class).get();
 
-        org.apache.lucene.search.Query query = qb.keyword().onFields("abreviatura").matching(filterText)
-                .createQuery();
+        Query query = qb.keyword()
+                .onFields(filterProvider.getAbreviaturaFilter(), filterProvider.getDenominacionFilter())
+                .matching(filterText).createQuery();
 
         // wrap Lucene query in a javax.persistence.Query
         javax.persistence.Query persistenceQuery = fullTextEntityManager.createFullTextQuery(query,
-                TipoDocumentoEntity.class);
+                TipoDocumentoEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
         // execute search
-        @SuppressWarnings("rawtypes")
-        List resultQuery = persistenceQuery.getResultList();
+        @SuppressWarnings("unchecked")
+        List<TipoDocumentoEntity> resultQuery = persistenceQuery.getResultList();
 
         List<TipoDocumentoModel> models = new ArrayList<>();
         for (Object object : resultQuery) {
@@ -139,5 +147,4 @@ public class JpaTipoDocumentoProvider extends AbstractJpaStorage implements Tipo
 
         return result;
     }
-
 }

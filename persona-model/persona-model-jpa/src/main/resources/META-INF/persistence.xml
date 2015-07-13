@@ -5,6 +5,7 @@
 
 	<persistence-unit name="personaPU">
 		<jta-data-source>java:jboss/datasources/personaDS</jta-data-source>
+		<shared-cache-mode>DISABLE_SELECTIVE</shared-cache-mode>
 		<properties>
 			<!-- Properties for Hibernate -->
 			<property name="hibernate.hbm2ddl.auto" value="update" />

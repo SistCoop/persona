@@ -10,6 +10,8 @@ public interface TipoDocumentoFilterProvider extends Provider {
     String getAbreviaturaFilter();
 
     String getTipoPersonaFilter();
+    
+    String getDenominacionFilter();
 
     String getEstadoFilter();
 

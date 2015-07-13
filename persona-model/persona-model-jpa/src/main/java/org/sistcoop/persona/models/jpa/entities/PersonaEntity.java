@@ -52,8 +52,7 @@ public abstract class PersonaEntity implements Serializable {
         this.numeroDocumento = numeroDocumento;
     }
 
-    @NotNull
-    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @NotNull    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TIPO_DOCUMENTO", foreignKey = @ForeignKey)
     public TipoDocumentoEntity getTipoDocumento() {

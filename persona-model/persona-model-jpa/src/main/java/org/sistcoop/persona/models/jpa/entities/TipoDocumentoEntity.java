@@ -3,6 +3,7 @@ package org.sistcoop.persona.models.jpa.entities;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -26,6 +27,7 @@ import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.sistcoop.persona.models.enums.TipoPersona;
 
+@Cacheable
 @Entity
 @Indexed
 @Table(name = "TIPO_DOCUMENTO")
@@ -49,6 +51,7 @@ public class TipoDocumentoEntity implements Serializable {
 
     @Size(min = 1, max = 20)
     @Id
+    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     @Column(name = "ABREVIATURA")
     public String getAbreviatura() {
         return abreviatura;

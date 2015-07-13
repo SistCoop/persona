@@ -15,6 +15,7 @@ import org.sistcoop.persona.models.search.filters.TipoDocumentoFilterProvider;
 public class JpaTipoDocumentoFilterProvider implements TipoDocumentoFilterProvider {
 
     private final String abreviatura = "abreviatura";
+    private final String denominacion = "denominacion";
     private final String tipoPersona = "tipoPersona";
     private final String estado = "estado";
 
@@ -36,6 +37,11 @@ public class JpaTipoDocumentoFilterProvider implements TipoDocumentoFilterProvid
     @Override
     public String getEstadoFilter() {
         return this.estado;
+    }
+
+    @Override
+    public String getDenominacionFilter() {
+        return this.denominacion;
     }
 
 }
