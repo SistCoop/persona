@@ -30,7 +30,7 @@ import org.sistcoop.persona.models.enums.TipoPersona;
 @Indexed
 @Table(name = "TIPO_DOCUMENTO")
 @NamedQueries(value = {
-        @NamedQuery(name = "TipoDocumentoEntity.findAll", query = "SELECT t FROM TipoDocumentoEntity"),
+        @NamedQuery(name = "TipoDocumentoEntity.findAll", query = "SELECT t FROM TipoDocumentoEntity t"),
         @NamedQuery(name = "TipoDocumentoEntity.findByAbreviatura", query = "SELECT t FROM TipoDocumentoEntity t WHERE t.abreviatura = :abreviatura") })
 public class TipoDocumentoEntity implements Serializable {
 
@@ -48,7 +48,6 @@ public class TipoDocumentoEntity implements Serializable {
     private Timestamp optlk;
 
     @Size(min = 1, max = 20)
-    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     @Id
     @Column(name = "ABREVIATURA")
     public String getAbreviatura() {

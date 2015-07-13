@@ -13,6 +13,10 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sistcoop.persona.models.enums.TipoPersona;
+import org.sistcoop.persona.models.search.SearchCriteriaFilterOperator;
+import org.sistcoop.persona.models.search.SearchCriteriaModel;
+import org.sistcoop.persona.models.search.SearchResultsModel;
+import org.sistcoop.persona.models.search.filters.TipoDocumentoFilterProvider;
 
 @RunWith(Arquillian.class)
 @UsingDataSet("empty.xml")
@@ -21,14 +25,8 @@ public class TipoDocumentoProviderTest extends AbstractTest {
     @Inject
     private TipoDocumentoProvider tipoDocumentoProvider;
 
-    @Test
-    public void create() {
-        TipoDocumentoModel model = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8,
-                TipoPersona.NATURAL);
-
-        assertThat("model no debe ser null", model, is(notNullValue()));
-        assertThat("estado debe ser true", model.getEstado(), is(true));
-    }
+    @Inject
+    private TipoDocumentoFilterProvider tipoDocumentoFilterProvider;
 
     @Test
     public void findByAbreviatura() {
@@ -42,7 +40,16 @@ public class TipoDocumentoProviderTest extends AbstractTest {
     }
 
     @Test
-    public void removeTipoDocumento() {
+    public void create() {
+        TipoDocumentoModel model = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8,
+                TipoPersona.NATURAL);
+
+        assertThat("model no debe ser null", model, is(notNullValue()));
+        assertThat("estado debe ser true", model.getEstado(), is(true));
+    }
+
+    @Test
+    public void remove() {
         TipoDocumentoModel model1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8,
                 TipoPersona.NATURAL);
 
@@ -53,6 +60,99 @@ public class TipoDocumentoProviderTest extends AbstractTest {
 
         assertThat(result, is(true));
         assertThat(model2, is(nullValue()));
+    }
+
+    @Test
+    public void search1() {
+        @SuppressWarnings("unused")
+        TipoDocumentoModel model1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8,
+                TipoPersona.NATURAL);
+        @SuppressWarnings("unused")
+        TipoDocumentoModel model2 = tipoDocumentoProvider.create("P.NAC", "Partida de nacimiento", 11,
+                TipoPersona.NATURAL);
+
+        SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search();
+
+        assertThat(searched, is(notNullValue()));
+        assertThat(searched.getTotalSize(), is(2));
+        assertThat(searched.getModels().size(), is(2));
+    }
+
+    @Test
+    public void search2() {
+        TipoDocumentoModel model1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8,
+                TipoPersona.NATURAL);
+        @SuppressWarnings("unused")
+        TipoDocumentoModel model2 = tipoDocumentoProvider.create("P.NAC", "Partida de nacimiento", 11,
+                TipoPersona.NATURAL);
+
+        model1.setEstado(false);
+        model1.commit();
+
+        SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search();
+
+        assertThat(searched, is(notNullValue()));
+        assertThat(searched.getTotalSize(), is(1));
+        assertThat(searched.getModels().size(), is(1));
+    }
+
+    @Test
+    public void search3() {
+        TipoDocumentoModel model1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8,
+                TipoPersona.NATURAL);
+        @SuppressWarnings("unused")
+        TipoDocumentoModel model2 = tipoDocumentoProvider.create("P.NAC", "Partida de nacimiento", 11,
+                TipoPersona.NATURAL);
+        @SuppressWarnings("unused")
+        TipoDocumentoModel model3 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente",
+                11, TipoPersona.JURIDICA);
+
+        model1.setEstado(false);
+        model1.commit();
+
+        // add filters
+        SearchCriteriaModel criteria = new SearchCriteriaModel();
+        criteria.addFilter(tipoDocumentoFilterProvider.getTipoPersonaFilter(), "NATURAL",
+                SearchCriteriaFilterOperator.eq);
+        criteria.addFilter(tipoDocumentoFilterProvider.getEstadoFilter(), "true",
+                SearchCriteriaFilterOperator.bool_eq);
+
+        SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria);
+
+        assertThat(searched, is(notNullValue()));
+        assertThat(searched.getTotalSize(), is(1));
+        assertThat(searched.getModels().size(), is(1));
+    }
+
+    @Test
+    public void search4() {
+        TipoDocumentoModel model1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8,
+                TipoPersona.NATURAL);
+        @SuppressWarnings("unused")
+        TipoDocumentoModel model2 = tipoDocumentoProvider.create("P.NAC", "Partida de nacimiento", 11,
+                TipoPersona.NATURAL);
+        @SuppressWarnings("unused")
+        TipoDocumentoModel model3 = tipoDocumentoProvider.create("Pasaporte", "Pasaporte", 11,
+                TipoPersona.NATURAL);
+        @SuppressWarnings("unused")
+        TipoDocumentoModel model4 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente",
+                11, TipoPersona.JURIDICA);
+
+        model1.setEstado(false);
+        model1.commit();
+
+        // add filters
+        SearchCriteriaModel criteria = new SearchCriteriaModel();
+        criteria.addFilter(tipoDocumentoFilterProvider.getTipoPersonaFilter(), "NATURAL",
+                SearchCriteriaFilterOperator.eq);
+        criteria.addFilter(tipoDocumentoFilterProvider.getEstadoFilter(), "true",
+                SearchCriteriaFilterOperator.bool_eq);
+
+        SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria, "dni");
+
+        assertThat(searched, is(notNullValue()));
+        assertThat(searched.getTotalSize(), is(1));
+        assertThat(searched.getModels().size(), is(1));
     }
 
 }

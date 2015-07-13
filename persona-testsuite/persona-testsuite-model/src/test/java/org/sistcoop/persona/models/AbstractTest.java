@@ -48,13 +48,12 @@ public abstract class AbstractTest {
                 .addPackage(TipoDocumentoEntity.class.getPackage())
 
                 .addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
-                .addAsResource("META-INF/test-jboss-deployment-structure.xml",
-                        "META-INF/jboss-deployment-structure.xml")
+                .addAsManifestResource("META-INF/test-jboss-deployment-structure.xml",
+                        "jboss-deployment-structure.xml")
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml").addAsWebInfResource("test-ds.xml");
 
         war.addAsLibraries(dependencies);
 
         return war;
     }
-
 }

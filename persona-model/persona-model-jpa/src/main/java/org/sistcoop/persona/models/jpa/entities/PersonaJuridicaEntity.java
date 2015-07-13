@@ -39,7 +39,7 @@ import org.sistcoop.persona.models.enums.TipoEmpresa;
 @Indexed
 @Table(name = "PERSONA_JURIDICA")
 @NamedQueries(value = {
-        @NamedQuery(name = "PersonaJuridicaEntity.findAll", query = "SELECT p FROM PersonaJuridicaEntity"),
+        @NamedQuery(name = "PersonaJuridicaEntity.findAll", query = "SELECT p FROM PersonaJuridicaEntity p"),
         @NamedQuery(name = "PersonaJuridicaEntity.findByTipoNumeroDocumento", query = "SELECT p FROM PersonaJuridicaEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento AND p.numeroDocumento = :numeroDocumento") })
 public class PersonaJuridicaEntity extends PersonaEntity implements Serializable {
 
