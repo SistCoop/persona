@@ -15,6 +15,7 @@ import javax.persistence.TypedQuery;
 
 import org.apache.lucene.search.Query;
 import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
@@ -22,6 +23,7 @@ import org.sistcoop.persona.models.TipoDocumentoModel;
 import org.sistcoop.persona.models.TipoDocumentoProvider;
 import org.sistcoop.persona.models.enums.TipoPersona;
 import org.sistcoop.persona.models.jpa.entities.TipoDocumentoEntity;
+import org.sistcoop.persona.models.search.PagingModel;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
 import org.sistcoop.persona.models.search.filters.TipoDocumentoFilterProvider;
@@ -118,6 +120,9 @@ public class JpaTipoDocumentoProvider extends AbstractJpaStorage implements Tipo
     @Override
     public SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria, String filterText) {
 
+        SearchResultsModel<TipoDocumentoEntity> entityResult = findFullText(criteria,
+                TipoDocumentoEntity.class, filterText);
+
         // Hibernate Search
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(em);
         QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder()
@@ -127,9 +132,32 @@ public class JpaTipoDocumentoProvider extends AbstractJpaStorage implements Tipo
                 .onFields(filterProvider.getAbreviaturaFilter(), filterProvider.getDenominacionFilter())
                 .matching(filterText).createQuery();
 
+        // set criteria
+        Session session = em.unwrap(Session.class);
+        // Criteria criteriaHibernate =
+        // session.createCriteria(TipoDocumentoEntity.class).set;
+
         // wrap Lucene query in a javax.persistence.Query
         javax.persistence.Query persistenceQuery = fullTextEntityManager.createFullTextQuery(query,
-                TipoDocumentoEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                TipoDocumentoEntity.class)/*
+                                           * .setCriteriaQuery(criteriaHibernate)
+                                           */
+        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+        // paging
+        PagingModel paging = criteria.getPaging();
+        if (paging == null) {
+            paging = new PagingModel();
+            paging.setPage(1);
+            paging.setPageSize(20);
+        }
+        int page = paging.getPage();
+        int pageSize = paging.getPageSize();
+        int start = (page - 1) * pageSize;
+        persistenceQuery.setFirstResult(start);
+        persistenceQuery.setMaxResults(pageSize + 1);
+
+        // sorting
 
         // execute search
         @SuppressWarnings("unchecked")
@@ -147,4 +175,5 @@ public class JpaTipoDocumentoProvider extends AbstractJpaStorage implements Tipo
 
         return result;
     }
+
 }

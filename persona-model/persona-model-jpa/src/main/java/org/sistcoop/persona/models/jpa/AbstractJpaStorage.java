@@ -12,6 +12,12 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.lucene.search.Query;
+import org.hibernate.Criteria;
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.Search;
+import org.hibernate.search.query.dsl.QueryBuilder;
+import org.sistcoop.persona.models.jpa.entities.TipoDocumentoEntity;
 import org.sistcoop.persona.models.search.OrderByModel;
 import org.sistcoop.persona.models.search.PagingModel;
 import org.sistcoop.persona.models.search.SearchCriteriaFilterModel;
@@ -34,6 +40,63 @@ public abstract class AbstractJpaStorage {
     }
 
     protected abstract EntityManager getEntityManager();
+
+    protected <T> SearchResultsModel<T> findFullText(SearchCriteriaModel criteria, Class<T> type,
+            String filterText) {
+        SearchResultsModel<T> results = new SearchResultsModel<>();
+        EntityManager entityManager = getEntityManager();
+
+        // Set some default in the case that paging information was not
+        // included in the request.
+        PagingModel paging = criteria.getPaging();
+        if (paging == null) {
+            paging = new PagingModel();
+            paging.setPage(1);
+            paging.setPageSize(20);
+        }
+        int page = paging.getPage();
+        int pageSize = paging.getPageSize();
+        int start = (page - 1) * pageSize;
+
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = builder.createQuery(type);
+        Root<T> from = criteriaQuery.from(type);
+        applySearchCriteriaToQuery(criteria, builder, criteriaQuery, from, false);
+        TypedQuery<T> typedQuery = entityManager.createQuery(criteriaQuery);
+        typedQuery.setFirstResult(start);
+        typedQuery.setMaxResults(pageSize + 1);
+        boolean hasMore = false;
+
+        FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+        QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(type).get();
+        Query query = qb.keyword().onFields("").matching(filterText).createQuery();
+        javax.persistence.Query persistenceQuery = fullTextEntityManager.createFullTextQuery(query, type)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        persistenceQuery.setFirstResult(start);
+        persistenceQuery.setMaxResults(pageSize + 1);
+        boolean hasMore = false;
+        
+        // Now query for the actual results
+        @SuppressWarnings("unchecked")
+        List<T> resultList = persistenceQuery.getResultList();
+
+        // Check if we got back more than we actually needed.
+        if (resultList.size() > pageSize) {
+            resultList.remove(resultList.size() - 1);
+            hasMore = true;
+        }
+
+        // If there are more results than we needed, then we will need to do
+        // another
+        // query to determine how many rows there are in total
+        int totalSize = start + resultList.size();
+        if (hasMore) {
+            totalSize = executeCountQuery(criteria, entityManager, type);
+        }
+        results.setTotalSize(totalSize);
+        results.setModels(resultList);
+        return results;
+    }
 
     /**
      * Get a list of entities based on the provided criteria and entity type.
