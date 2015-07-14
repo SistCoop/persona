@@ -50,8 +50,7 @@ public class TipoDocumentoEntity implements Serializable {
     private Timestamp optlk;
 
     @Size(min = 1, max = 20)
-    @Id
-    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Id   
     @Column(name = "ABREVIATURA")
     public String getAbreviatura() {
         return abreviatura;

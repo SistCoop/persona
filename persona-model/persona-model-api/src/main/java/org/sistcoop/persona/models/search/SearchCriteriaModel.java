@@ -48,7 +48,7 @@ public class SearchCriteriaModel implements Serializable {
      * @param operator
      *            the operator type
      */
-    public void addFilter(String name, String value, SearchCriteriaFilterOperator operator) {
+    public void addFilter(String name, Object value, SearchCriteriaFilterOperator operator) {
         SearchCriteriaFilterModel filter = new SearchCriteriaFilterModel();
         filter.setName(name);
         filter.setValue(value);

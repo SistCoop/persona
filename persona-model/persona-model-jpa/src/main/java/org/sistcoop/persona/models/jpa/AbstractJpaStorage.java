@@ -14,10 +14,14 @@ import javax.persistence.criteria.Root;
 
 import org.apache.lucene.search.Query;
 import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
-import org.sistcoop.persona.models.jpa.entities.TipoDocumentoEntity;
 import org.sistcoop.persona.models.search.OrderByModel;
 import org.sistcoop.persona.models.search.PagingModel;
 import org.sistcoop.persona.models.search.SearchCriteriaFilterModel;
@@ -41,8 +45,12 @@ public abstract class AbstractJpaStorage {
 
     protected abstract EntityManager getEntityManager();
 
+    protected Session getSession() {
+        return getEntityManager().unwrap(Session.class);
+    }
+
     protected <T> SearchResultsModel<T> findFullText(SearchCriteriaModel criteria, Class<T> type,
-            String filterText) {
+            String filterText, String... field) {
         SearchResultsModel<T> results = new SearchResultsModel<>();
         EntityManager entityManager = getEntityManager();
 
@@ -58,27 +66,18 @@ public abstract class AbstractJpaStorage {
         int pageSize = paging.getPageSize();
         int start = (page - 1) * pageSize;
 
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> criteriaQuery = builder.createQuery(type);
-        Root<T> from = criteriaQuery.from(type);
-        applySearchCriteriaToQuery(criteria, builder, criteriaQuery, from, false);
-        TypedQuery<T> typedQuery = entityManager.createQuery(criteriaQuery);
-        typedQuery.setFirstResult(start);
-        typedQuery.setMaxResults(pageSize + 1);
-        boolean hasMore = false;
-
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
         QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(type).get();
-        Query query = qb.keyword().onFields("").matching(filterText).createQuery();
-        javax.persistence.Query persistenceQuery = fullTextEntityManager.createFullTextQuery(query, type)
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        persistenceQuery.setFirstResult(start);
-        persistenceQuery.setMaxResults(pageSize + 1);
+        Query query = qb.keyword().onFields(field).matching(filterText).createQuery();
+        FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(query, type);
+        applySearchCriteriaToQuery(criteria, type, fullTextQuery, false);
+        fullTextQuery.setFirstResult(start);
+        fullTextQuery.setMaxResults(pageSize + 1);
         boolean hasMore = false;
-        
+
         // Now query for the actual results
         @SuppressWarnings("unchecked")
-        List<T> resultList = persistenceQuery.getResultList();
+        List<T> resultList = fullTextQuery.getResultList();
 
         // Check if we got back more than we actually needed.
         if (resultList.size() > pageSize) {
@@ -91,11 +90,51 @@ public abstract class AbstractJpaStorage {
         // query to determine how many rows there are in total
         int totalSize = start + resultList.size();
         if (hasMore) {
-            totalSize = executeCountQuery(criteria, entityManager, type);
+            totalSize = fullTextQuery.getResultSize();
         }
         results.setTotalSize(totalSize);
         results.setModels(resultList);
+
         return results;
+    }
+
+    protected <T> void applySearchCriteriaToQuery(SearchCriteriaModel criteria, Class<T> type,
+            FullTextQuery fullTextQuery, boolean countOnly) {
+        Session session = getSession();
+        Criteria criteriaQuery = session.createCriteria(type);
+
+        List<SearchCriteriaFilterModel> filters = criteria.getFilters();
+        if (filters != null && !filters.isEmpty()) {
+            for (SearchCriteriaFilterModel filter : filters) {
+                if (filter.getOperator() == SearchCriteriaFilterOperator.eq) {
+                    criteriaQuery.add(Restrictions.eq(filter.getName(), filter.getValue()));
+                } else if (filter.getOperator() == SearchCriteriaFilterOperator.bool_eq) {
+                    criteriaQuery.add(Restrictions.eq(filter.getName(), filter.getValue()));
+                } else if (filter.getOperator() == SearchCriteriaFilterOperator.gt) {
+                    criteriaQuery.add(Restrictions.gt(filter.getName(), filter.getValue()));
+                } else if (filter.getOperator() == SearchCriteriaFilterOperator.gte) {
+                    criteriaQuery.add(Restrictions.ge(filter.getName(), filter.getValue()));
+                } else if (filter.getOperator() == SearchCriteriaFilterOperator.lt) {
+                    criteriaQuery.add(Restrictions.lt(filter.getName(), filter.getValue()));
+                } else if (filter.getOperator() == SearchCriteriaFilterOperator.lte) {
+                    criteriaQuery.add(Restrictions.le(filter.getName(), filter.getValue()));
+                } else if (filter.getOperator() == SearchCriteriaFilterOperator.neq) {
+                    criteriaQuery.add(Restrictions.ne(filter.getName(), filter.getValue()));
+                } else if (filter.getOperator() == SearchCriteriaFilterOperator.like) {
+                    criteriaQuery.add(Restrictions.like(filter.getName(), (String) filter.getValue(),
+                            MatchMode.ANYWHERE));
+                }
+            }
+        }
+        OrderByModel orderBy = criteria.getOrderBy();
+        if (orderBy != null && !countOnly) {
+            if (orderBy.isAscending()) {
+                criteriaQuery.addOrder(Order.asc(orderBy.getName()));
+            } else {
+                criteriaQuery.addOrder(Order.desc(orderBy.getName()));
+            }
+        }
+        fullTextQuery.setCriteriaQuery(criteriaQuery);
     }
 
     /**
@@ -179,7 +218,7 @@ public abstract class AbstractJpaStorage {
      * @param query
      * @param from
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    // @SuppressWarnings({ "unchecked", "rawtypes" })
     protected <T> void applySearchCriteriaToQuery(SearchCriteriaModel criteria, CriteriaBuilder builder,
             CriteriaQuery<?> query, Root<T> from, boolean countOnly) {
 
@@ -193,30 +232,29 @@ public abstract class AbstractJpaStorage {
                     if (pathc.isAssignableFrom(String.class)) {
                         predicates.add(builder.equal(path, filter.getValue()));
                     } else if (pathc.isEnum()) {
-                        predicates.add(builder.equal(path, Enum.valueOf((Class) pathc, filter.getValue())));
+                        predicates.add(builder.equal(path, filter.getValue()));
                     } else if (pathc.isAssignableFrom(Date.class)) {
                         predicates.add(builder.equal(from.<Date> get(filter.getName()), filter.getValue()));
                     }
                 } else if (filter.getOperator() == SearchCriteriaFilterOperator.bool_eq) {
-                    predicates.add(builder.equal(from.<Boolean> get(filter.getName()),
-                            Boolean.valueOf(filter.getValue())));
+                    predicates.add(builder.equal(from.<Boolean> get(filter.getName()), filter.getValue()));
                 } else if (filter.getOperator() == SearchCriteriaFilterOperator.gt) {
                     predicates.add(builder.greaterThan(from.<Long> get(filter.getName()),
-                            new Long(filter.getValue())));
+                            (Long) filter.getValue()));
                 } else if (filter.getOperator() == SearchCriteriaFilterOperator.gte) {
-                    predicates.add(builder.greaterThanOrEqualTo(from.<Long> get(filter.getName()), new Long(
-                            filter.getValue())));
+                    predicates.add(builder.greaterThanOrEqualTo(from.<Long> get(filter.getName()),
+                            (Long) filter.getValue()));
                 } else if (filter.getOperator() == SearchCriteriaFilterOperator.lt) {
                     predicates.add(builder.lessThan(from.<Long> get(filter.getName()),
-                            new Long(filter.getValue())));
+                            (Long) filter.getValue()));
                 } else if (filter.getOperator() == SearchCriteriaFilterOperator.lte) {
-                    predicates.add(builder.lessThanOrEqualTo(from.<Long> get(filter.getName()), new Long(
-                            filter.getValue())));
+                    predicates.add(builder.lessThanOrEqualTo(from.<Long> get(filter.getName()),
+                            (Long) filter.getValue()));
                 } else if (filter.getOperator() == SearchCriteriaFilterOperator.neq) {
                     predicates.add(builder.notEqual(from.get(filter.getName()), filter.getValue()));
                 } else if (filter.getOperator() == SearchCriteriaFilterOperator.like) {
-                    predicates.add(builder.like(builder.upper(from.<String> get(filter.getName())), filter
-                            .getValue().toUpperCase().replace('*', '%')));
+                    predicates.add(builder.like(builder.upper(from.<String> get(filter.getName())),
+                            ((String) filter.getValue()).toUpperCase().replace('*', '%')));
                 }
             }
             query.where(predicates.toArray(new Predicate[predicates.size()]));

@@ -28,7 +28,7 @@ public class SearchCriteriaFilterModel implements Serializable {
     private static final long serialVersionUID = -1199180207971619165L;
 
     private String name;
-    private String value;
+    private Object value;
     private SearchCriteriaFilterOperator operator;
 
     /**
@@ -55,7 +55,7 @@ public class SearchCriteriaFilterModel implements Serializable {
     /**
      * @return the value
      */
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 
@@ -63,7 +63,7 @@ public class SearchCriteriaFilterModel implements Serializable {
      * @param value
      *            the value to set
      */
-    public void setValue(String value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 
