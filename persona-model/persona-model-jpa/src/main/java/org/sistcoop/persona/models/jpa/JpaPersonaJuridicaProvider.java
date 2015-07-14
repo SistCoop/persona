@@ -8,6 +8,7 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -23,6 +24,7 @@ import org.sistcoop.persona.models.jpa.entities.PersonaNaturalEntity;
 import org.sistcoop.persona.models.jpa.entities.TipoDocumentoEntity;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
+import org.sistcoop.persona.models.search.filters.PersonaJuridicaFilterProvider;
 
 @Named
 @Stateless
@@ -32,6 +34,9 @@ public class JpaPersonaJuridicaProvider extends AbstractJpaStorage implements Pe
 
     @PersistenceContext
     private EntityManager em;
+
+    @Inject
+    private PersonaJuridicaFilterProvider filterProvider;
 
     @Override
     protected EntityManager getEntityManager() {
@@ -47,10 +52,11 @@ public class JpaPersonaJuridicaProvider extends AbstractJpaStorage implements Pe
     public PersonaJuridicaModel create(PersonaNaturalModel representanteLegal, String codigoPais,
             TipoDocumentoModel tipoDocumentoModel, String numeroDocumento, String razonSocial,
             Date fechaConstitucion, TipoEmpresa tipoEmpresa, boolean finLucro) {
-        TipoDocumentoEntity tipoDocumentoEntity = TipoDocumentoAdapter.toTipoDocumentoEntity(
-                tipoDocumentoModel, em);
-        PersonaNaturalEntity personaNaturalEntity = PersonaNaturalAdapter.toPersonaNaturalEntity(
-                representanteLegal, em);
+
+        TipoDocumentoEntity tipoDocumentoEntity = em.find(TipoDocumentoEntity.class,
+                tipoDocumentoModel.getAbreviatura());
+        PersonaNaturalEntity personaNaturalEntity = em.find(PersonaNaturalEntity.class,
+                representanteLegal.getId());
 
         PersonaJuridicaEntity personaJuridicaEntity = new PersonaJuridicaEntity();
         personaJuridicaEntity.setRepresentanteLegal(personaNaturalEntity);
@@ -91,8 +97,9 @@ public class JpaPersonaJuridicaProvider extends AbstractJpaStorage implements Pe
         query.setParameter("tipoDocumento", tipoDocumento.getAbreviatura());
         query.setParameter("numeroDocumento", numeroDocumento);
         List<PersonaJuridicaEntity> results = query.getResultList();
-        if (results.size() == 0)
+        if (results.size() == 0) {
             return null;
+        }
         return new PersonaJuridicaAdapter(em, results.get(0));
     }
 
@@ -129,8 +136,18 @@ public class JpaPersonaJuridicaProvider extends AbstractJpaStorage implements Pe
 
     @Override
     public SearchResultsModel<PersonaJuridicaModel> search(SearchCriteriaModel criteria, String filterText) {
-        // TODO Auto-generated method stub
-        return null;
+        SearchResultsModel<PersonaJuridicaEntity> entityResult = findFullText(criteria,
+                PersonaJuridicaEntity.class, filterText, filterProvider.getNumeroDocumentoFilter(),
+                filterProvider.getRazonSocialFilter());
+
+        SearchResultsModel<PersonaJuridicaModel> modelResult = new SearchResultsModel<>();
+        List<PersonaJuridicaModel> list = new ArrayList<>();
+        for (PersonaJuridicaEntity entity : entityResult.getModels()) {
+            list.add(new PersonaJuridicaAdapter(em, entity));
+        }
+        modelResult.setTotalSize(entityResult.getTotalSize());
+        modelResult.setModels(list);
+        return modelResult;
     }
 
 }

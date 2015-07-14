@@ -97,7 +97,7 @@ public class TipoDocumentoProviderTest extends AbstractTest {
     }
 
     @Test
-    public void searchA() {
+    public void searchCriteria1() {
         TipoDocumentoModel model1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8,
                 TipoPersona.NATURAL);
         @SuppressWarnings("unused")
@@ -123,7 +123,7 @@ public class TipoDocumentoProviderTest extends AbstractTest {
     }
 
     @Test
-    public void searchB() {
+    public void searchCriteria2() {
         TipoDocumentoModel model1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8,
                 TipoPersona.NATURAL);
         @SuppressWarnings("unused")
@@ -149,7 +149,7 @@ public class TipoDocumentoProviderTest extends AbstractTest {
     }
 
     @Test
-    public void searchC() {
+    public void searchCriteria3() {
         TipoDocumentoModel model1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8,
                 TipoPersona.NATURAL);
         @SuppressWarnings("unused")
@@ -177,7 +177,7 @@ public class TipoDocumentoProviderTest extends AbstractTest {
     }
 
     @Test
-    public void searchX() {
+    public void searchCriteriaFiltertext1() {
         @SuppressWarnings("unused")
         TipoDocumentoModel model1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8,
                 TipoPersona.NATURAL);
@@ -191,8 +191,66 @@ public class TipoDocumentoProviderTest extends AbstractTest {
         TipoDocumentoModel model4 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente",
                 11, TipoPersona.JURIDICA);
 
+        SearchCriteriaModel criteria = new SearchCriteriaModel();
+        SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria, "dni");
+
+        assertThat(searched, is(notNullValue()));
+        assertThat(searched.getTotalSize(), is(1));
+        assertThat(searched.getModels().size(), is(1));
+    }
+
+    @Test
+    public void searchCriteriaFiltertext2() {
+        TipoDocumentoModel model1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8,
+                TipoPersona.NATURAL);
+        @SuppressWarnings("unused")
+        TipoDocumentoModel model2 = tipoDocumentoProvider.create("P.NAC", "Partida de nacimiento", 11,
+                TipoPersona.NATURAL);
+        @SuppressWarnings("unused")
+        TipoDocumentoModel model3 = tipoDocumentoProvider.create("Pasaporte", "Pasaporte", 11,
+                TipoPersona.NATURAL);
+        @SuppressWarnings("unused")
+        TipoDocumentoModel model4 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente",
+                11, TipoPersona.JURIDICA);
+
+        model1.setEstado(false);
+        model1.commit();
+
         // add filters
         SearchCriteriaModel criteria = new SearchCriteriaModel();
+        criteria.addFilter(tipoDocumentoFilterProvider.getEstadoFilter(), true,
+                SearchCriteriaFilterOperator.bool_eq);
+
+        SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria, "dni");
+
+        assertThat(searched, is(notNullValue()));
+        assertThat(searched.getTotalSize(), is(0));
+        assertThat(searched.getModels().size(), is(0));
+    }
+
+    @Test
+    public void searchCriteriaFiltertext3() {
+        @SuppressWarnings("unused")
+        TipoDocumentoModel model1 = tipoDocumentoProvider.create("DNI", "Documento nacional de identidad", 8,
+                TipoPersona.NATURAL);
+        TipoDocumentoModel model2 = tipoDocumentoProvider.create("P.NAC", "Partida de nacimiento", 11,
+                TipoPersona.NATURAL);
+        @SuppressWarnings("unused")
+        TipoDocumentoModel model3 = tipoDocumentoProvider.create("Pasaporte", "Pasaporte", 11,
+                TipoPersona.NATURAL);
+        @SuppressWarnings("unused")
+        TipoDocumentoModel model4 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente",
+                11, TipoPersona.JURIDICA);
+
+        model2.setEstado(false);
+        model2.commit();
+
+        // add filters
+        SearchCriteriaModel criteria = new SearchCriteriaModel();
+        criteria.addFilter(tipoDocumentoFilterProvider.getTipoPersonaFilter(), TipoPersona.NATURAL,
+                SearchCriteriaFilterOperator.eq);
+        criteria.addFilter(tipoDocumentoFilterProvider.getEstadoFilter(), true,
+                SearchCriteriaFilterOperator.bool_eq);
 
         SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria, "dni");
 

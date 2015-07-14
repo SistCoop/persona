@@ -1,1 +1,4 @@
-project.version = "1.0.0-beta-3"
+allprojects {
+    ext.buildTimestamp = new Date().format('yyyy-MM-dd HH:mm:ss')
+    project.version = "1.0.0-beta-3"
+}

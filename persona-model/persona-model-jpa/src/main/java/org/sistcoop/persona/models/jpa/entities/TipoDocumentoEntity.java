@@ -19,6 +19,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
+import org.hibernate.envers.Audited;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
@@ -27,6 +28,7 @@ import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.sistcoop.persona.models.enums.TipoPersona;
 
+@Audited
 @Cacheable
 @Entity
 @Indexed
@@ -50,7 +52,7 @@ public class TipoDocumentoEntity implements Serializable {
     private Timestamp optlk;
 
     @Size(min = 1, max = 20)
-    @Id   
+    @Id
     @Column(name = "ABREVIATURA")
     public String getAbreviatura() {
         return abreviatura;

@@ -3,6 +3,7 @@ package org.sistcoop.persona.models.jpa.entities;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,8 +21,13 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Indexed;
 
+@Audited
+@Cacheable
 @Entity
+@Indexed
 @Table(name = "ACCIONISTA")
 public class AccionistaEntity implements java.io.Serializable {
 

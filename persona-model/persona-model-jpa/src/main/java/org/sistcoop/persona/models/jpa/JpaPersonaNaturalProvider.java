@@ -8,6 +8,7 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,6 +22,7 @@ import org.sistcoop.persona.models.jpa.entities.PersonaNaturalEntity;
 import org.sistcoop.persona.models.jpa.entities.TipoDocumentoEntity;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
+import org.sistcoop.persona.models.search.filters.PersonaNaturalFilterProvider;
 
 @Named
 @Stateless
@@ -30,6 +32,9 @@ public class JpaPersonaNaturalProvider extends AbstractJpaStorage implements Per
 
     @PersistenceContext
     private EntityManager em;
+
+    @Inject
+    private PersonaNaturalFilterProvider filterProvider;
 
     @Override
     protected EntityManager getEntityManager() {
@@ -45,8 +50,9 @@ public class JpaPersonaNaturalProvider extends AbstractJpaStorage implements Per
     public PersonaNaturalModel create(String codigoPais, TipoDocumentoModel tipoDocumentoModel,
             String numeroDocumento, String apellidoPaterno, String apellidoMaterno, String nombres,
             Date fechaNacimiento, Sexo sexo) {
-        TipoDocumentoEntity tipoDocumentoEntity = TipoDocumentoAdapter.toTipoDocumentoEntity(
-                tipoDocumentoModel, em);
+
+        TipoDocumentoEntity tipoDocumentoEntity = em.find(TipoDocumentoEntity.class,
+                tipoDocumentoModel.getAbreviatura());
 
         PersonaNaturalEntity personaNaturalEntity = new PersonaNaturalEntity();
         personaNaturalEntity.setCodigoPais(codigoPais);
@@ -65,8 +71,9 @@ public class JpaPersonaNaturalProvider extends AbstractJpaStorage implements Per
     public boolean remove(PersonaNaturalModel personaNaturalModel) {
         PersonaNaturalEntity personaNaturalEntity = em.find(PersonaNaturalEntity.class,
                 personaNaturalModel.getId());
-        if (personaNaturalEntity == null)
+        if (personaNaturalEntity == null) {
             return false;
+        }
         em.remove(personaNaturalEntity);
         return true;
     }
@@ -85,8 +92,9 @@ public class JpaPersonaNaturalProvider extends AbstractJpaStorage implements Per
         query.setParameter("tipoDocumento", tipoDocumento.getAbreviatura());
         query.setParameter("numeroDocumento", numeroDocumento);
         List<PersonaNaturalEntity> results = query.getResultList();
-        if (results.size() == 0)
+        if (results.size() == 0) {
             return null;
+        }
         return new PersonaNaturalAdapter(em, results.get(0));
     }
 
@@ -122,30 +130,21 @@ public class JpaPersonaNaturalProvider extends AbstractJpaStorage implements Per
     }
 
     @Override
-    public SearchResultsModel<PersonaNaturalModel> search(SearchCriteriaModel searchCriteriaBean,
-            String filterText) {
+    public SearchResultsModel<PersonaNaturalModel> search(SearchCriteriaModel criteria, String filterText) {
 
-        /*
-         * FullTextEntityManager fullTextEntityManager =
-         * org.hibernate.search.jpa.Search .getFullTextEntityManager(em);
-         * 
-         * QueryBuilder qb =
-         * fullTextEntityManager.getSearchFactory().buildQueryBuilder()
-         * .forEntity(PersonaNaturalEntity.class).get();
-         * 
-         * org.apache.lucene.search.Query query = qb.keyword().onFields("title",
-         * "subtitle", "authors.name") .matching(filterText).createQuery();
-         * 
-         * // wrap Lucene query in a javax.persistence.Query
-         * javax.persistence.Query persistenceQuery =
-         * fullTextEntityManager.createFullTextQuery(query,
-         * PersonaNaturalEntity.class);
-         * 
-         * // execute search List result = persistenceQuery.getResultList();
-         * 
-         * return null;
-         */
-        return null;
+        SearchResultsModel<PersonaNaturalEntity> entityResult = findFullText(criteria,
+                PersonaNaturalEntity.class, filterText, filterProvider.getNumeroDocumentoFilter(),
+                filterProvider.getApellidoPaternoFilter(), filterProvider.getApellidoMaternoFilter(),
+                filterProvider.getNombresFilter());
+
+        SearchResultsModel<PersonaNaturalModel> modelResult = new SearchResultsModel<>();
+        List<PersonaNaturalModel> list = new ArrayList<>();
+        for (PersonaNaturalEntity entity : entityResult.getModels()) {
+            list.add(new PersonaNaturalAdapter(em, entity));
+        }
+        modelResult.setTotalSize(entityResult.getTotalSize());
+        modelResult.setModels(list);
+        return modelResult;
     }
 
 }

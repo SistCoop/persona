@@ -71,8 +71,9 @@ public class JpaTipoDocumentoProvider extends AbstractJpaStorage implements Tipo
     public boolean remove(TipoDocumentoModel tipoDocumentoModel) {
         TipoDocumentoEntity tipoDocumentoEntity = em.find(TipoDocumentoEntity.class,
                 tipoDocumentoModel.getAbreviatura());
-        if (tipoDocumentoEntity == null)
+        if (tipoDocumentoEntity == null) {
             return false;
+        }
         em.remove(tipoDocumentoEntity);
         return true;
     }

@@ -12,6 +12,7 @@ dependencies {
     compile project(":persona-services")
     compile project(":persona-model:persona-model-api")
     compile project(":persona-model:persona-model-jpa")
+    providedCompile 'org.jboss.resteasy:resteasy-jaxrs:3.0.9.Final'
 }
 
 task createBuildInfoFile << {
