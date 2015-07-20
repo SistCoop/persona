@@ -1,3 +1,4 @@
+include "persona-web"
 include "persona-core"
 include "persona-core-jaxrs"
 include "persona-services"
@@ -7,5 +8,3 @@ include "persona-model:persona-model-mongo"
 include "persona-integration:persona-client"
 include "persona-testsuite:persona-testsuite-model"
 include "persona-testsuite:persona-testsuite-client"
-include 'persona-web'
-

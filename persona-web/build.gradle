@@ -1,8 +1,8 @@
 apply plugin: 'war'
 apply plugin: 'jetty'
-apply from: "$rootDir/gradle/functionalTest.gradle"
-apply from: "$rootDir/gradle/publishMaven.gradle"
-//apply from: "$rootDir/gradle/sshDeploy.gradle"
+//apply from: "$rootDir/gradle/functionalTest.gradle"
+apply from: "$rootDir/gradle/publishWarMaven.gradle"
+apply from: "$rootDir/gradle/cargo.gradle"
 //apply from: "$rootDir/gradle/smokeTest.gradle"
 
 dependencies {

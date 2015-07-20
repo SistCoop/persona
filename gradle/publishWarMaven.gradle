@@ -2,33 +2,33 @@ apply plugin: 'maven-publish'
 
 ext {
     artifactoryReleaseRepoUrl = config.binaryRepository.releaseUrl
-    artifactoryUsername = project.hasProperty('artifactoryUsername') ? project.getProperty('artifactoryUsername') : null
-    artifactoryPassword = project.hasProperty('artifactoryPassword') ? project.getProperty('artifactoryPassword') : null
+    artifactoryUsername = config.binaryRepository.username
+    artifactoryPassword = config.binaryRepository.password
 }
 
 publishing {
     publications {
-        toDoWebApp(MavenPublication) {
+        War(MavenPublication) {
             from components.web
             artifactId 'persona'
 
             pom.withXml {
                 def root = asNode()
                 root.appendNode('name', 'persona')
-                root.appendNode('description', 'persona Rest.')
+                root.appendNode('description', 'persona war.')
             }
         }
     }
 
     repositories {
         maven {
-            name 'remoteArtifactory'
+            name 'remoteWarArtifactory'
             url artifactoryReleaseRepoUrl
 
             credentials {
-                username = artifactoryUsername                                 
+                username = artifactoryUsername
                 password = artifactoryPassword
             }
-        }   
+        }
     }
 }

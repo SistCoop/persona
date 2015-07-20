@@ -1,0 +1,14 @@
+apply plugin: 'java' // should already be there
+apply plugin: 'miredot'
+
+miredot {
+    source = sourceSets.main.allJava
+    destination = sourceSets.main.output
+    licence = 'UHJvamVjdHxvcmcuc2lzdGNvb3AucGVyc29uYS1jbGllbnR8MjAxNi0wNy0yMXx0cnVlI01Dd0NGRXpPQ2k5eW5JVFhGQ1JKTW4wYmFhR1FCYklaQWhRYjF6cktwOFFGclVHWTgwSjdManAveWFBbkZ3PT0='
+}
+
+miredot {
+    output {
+        title = "API Manager REST Services (${project.version})"
+    }
+}
