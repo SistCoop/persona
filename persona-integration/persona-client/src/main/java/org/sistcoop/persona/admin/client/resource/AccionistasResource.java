@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.sistcoop.persona.representations.idm.AccionistaRepresentation;
-import org.sistcoop.producto.representations.idm.search.SearchResultsRepresentation;
+import org.sistcoop.persona.representations.idm.search.SearchResultsRepresentation;
 
 @Consumes(MediaType.APPLICATION_JSON)
 public interface AccionistasResource {

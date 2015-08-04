@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sistcoop.producto.representations.idm.search;
+package org.sistcoop.persona.representations.idm.search;
 
 import java.io.Serializable;
 import java.util.ArrayList;

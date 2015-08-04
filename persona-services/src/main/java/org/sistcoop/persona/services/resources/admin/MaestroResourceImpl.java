@@ -10,7 +10,7 @@ import org.sistcoop.persona.models.enums.EstadoCivil;
 import org.sistcoop.persona.models.enums.Sexo;
 import org.sistcoop.persona.models.enums.TipoEmpresa;
 import org.sistcoop.persona.models.enums.TipoPersona;
-import org.sistcoop.producto.representations.idm.search.SearchResultsRepresentation;
+import org.sistcoop.persona.representations.idm.search.SearchResultsRepresentation;
 
 @Stateless
 public class MaestroResourceImpl implements MaestroResource {

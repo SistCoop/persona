@@ -21,7 +21,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.sistcoop.producto.representations.idm.search.SearchResultsRepresentation;
+import org.sistcoop.persona.representations.idm.search.SearchResultsRepresentation;
 
 @Produces(MediaType.APPLICATION_JSON)
 @Path("/")

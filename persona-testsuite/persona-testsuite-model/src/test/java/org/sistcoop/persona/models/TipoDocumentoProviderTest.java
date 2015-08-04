@@ -55,8 +55,8 @@ public class TipoDocumentoProviderTest extends AbstractTest {
 
         TipoDocumentoModel model2 = tipoDocumentoProvider.findByAbreviatura(abreviatura);
 
-        assertThat(result, is(true));
-        assertThat(model2, is(nullValue()));
+        assertThat("result false", result, is(true));
+        assertThat("model2 is notNull", model2, is(nullValue()));
     }
 
     @Test
@@ -70,9 +70,9 @@ public class TipoDocumentoProviderTest extends AbstractTest {
 
         SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search();
 
-        assertThat(searched, is(notNullValue()));
-        assertThat(searched.getTotalSize(), is(2));
-        assertThat(searched.getModels().size(), is(2));
+        assertThat("searched is Null", searched, is(notNullValue()));
+        assertThat("searched.getTotalSize() is not 2", searched.getTotalSize(), is(2));
+        assertThat("searched.getModels() is not 2", searched.getModels().size(), is(2));
     }
 
     @Test
@@ -88,9 +88,9 @@ public class TipoDocumentoProviderTest extends AbstractTest {
 
         SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search();
 
-        assertThat(searched, is(notNullValue()));
-        assertThat(searched.getTotalSize(), is(1));
-        assertThat(searched.getModels().size(), is(1));
+        assertThat("searched is Null", searched, is(notNullValue()));
+        assertThat("searched.getTotalSize() is not 1", searched.getTotalSize(), is(1));
+        assertThat("searched.getModels() is not 1", searched.getModels().size(), is(1));
     }
 
     @Test
@@ -114,9 +114,9 @@ public class TipoDocumentoProviderTest extends AbstractTest {
 
         SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria);
 
-        assertThat(searched, is(notNullValue()));
-        assertThat(searched.getTotalSize(), is(2));
-        assertThat(searched.getModels().size(), is(2));
+        assertThat("searched is Null", searched, is(notNullValue()));
+        assertThat("searched.getTotalSize() is not 2", searched.getTotalSize(), is(2));
+        assertThat("searched.getModels() is not 2", searched.getModels().size(), is(2));
     }
 
     @Test
@@ -140,9 +140,9 @@ public class TipoDocumentoProviderTest extends AbstractTest {
 
         SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria);
 
-        assertThat(searched, is(notNullValue()));
-        assertThat(searched.getTotalSize(), is(2));
-        assertThat(searched.getModels().size(), is(2));
+        assertThat("searched is Null", searched, is(notNullValue()));
+        assertThat("searched.getTotalSize() is not 2", searched.getTotalSize(), is(2));
+        assertThat("searched.getModels() is not 2", searched.getModels().size(), is(2));
     }
 
     @Test
@@ -168,9 +168,9 @@ public class TipoDocumentoProviderTest extends AbstractTest {
 
         SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria);
 
-        assertThat(searched, is(notNullValue()));
-        assertThat(searched.getTotalSize(), is(1));
-        assertThat(searched.getModels().size(), is(1));
+        assertThat("searched is Null", searched, is(notNullValue()));
+        assertThat("searched.getTotalSize() is not 1", searched.getTotalSize(), is(1));
+        assertThat("searched.getModels() is not 1", searched.getModels().size(), is(1));
     }
 
     @Test
@@ -191,9 +191,9 @@ public class TipoDocumentoProviderTest extends AbstractTest {
         SearchCriteriaModel criteria = new SearchCriteriaModel();
         SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria, "ruc");
 
-        assertThat(searched, is(notNullValue()));
-        // assertThat(searched.getTotalSize(), is(1));
-        assertThat(searched.getModels().size(), is(1));
+        assertThat("searched is Null", searched, is(notNullValue()));
+        assertThat("searched.getTotalSize() is not 1", searched.getTotalSize(), is(1));
+        assertThat("searched.getModels() is not 1", searched.getModels().size(), is(1));
     }
 
     @Test
@@ -221,7 +221,7 @@ public class TipoDocumentoProviderTest extends AbstractTest {
         SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria, "dni");
 
         assertThat(searched, is(notNullValue()));
-        // assertThat(searched.getTotalSize(), is(0));
+        assertThat(searched.getTotalSize(), is(0));
         assertThat(searched.getModels().size(), is(0));
     }
 
@@ -251,11 +251,8 @@ public class TipoDocumentoProviderTest extends AbstractTest {
 
         SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria, "dni");
 
-        System.out.println("------------------------------------------------");
-        System.out.println(searched.getModels().size());
-        
         assertThat(searched, is(notNullValue()));
-        // assertThat(searched.getTotalSize(), is(1));
+        assertThat(searched.getTotalSize(), is(1));
         assertThat(searched.getModels().size(), is(1));
     }
 

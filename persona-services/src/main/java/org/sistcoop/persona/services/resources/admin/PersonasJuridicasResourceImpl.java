@@ -27,7 +27,7 @@ import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.models.utils.RepresentationToModel;
 import org.sistcoop.persona.representations.idm.PersonaJuridicaRepresentation;
 import org.sistcoop.persona.representations.idm.PersonaNaturalRepresentation;
-import org.sistcoop.producto.representations.idm.search.SearchResultsRepresentation;
+import org.sistcoop.persona.representations.idm.search.SearchResultsRepresentation;
 
 @Stateless
 public class PersonasJuridicasResourceImpl implements PersonasJuridicasResource {

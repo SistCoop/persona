@@ -25,7 +25,7 @@ import org.sistcoop.persona.models.search.filters.TipoDocumentoFilterProvider;
 @Stateless
 @Local(TipoDocumentoProvider.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class JpaTipoDocumentoProvider extends AbstractJpaStorage implements TipoDocumentoProvider {
+public class JpaTipoDocumentoProvider extends AbstractHibernateStorage implements TipoDocumentoProvider {
 
     @PersistenceContext
     private EntityManager em;

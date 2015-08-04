@@ -28,7 +28,7 @@ import org.sistcoop.persona.models.search.filters.PersonaNaturalFilterProvider;
 @Stateless
 @Local(PersonaNaturalProvider.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class JpaPersonaNaturalProvider extends AbstractJpaStorage implements PersonaNaturalProvider {
+public class JpaPersonaNaturalProvider extends AbstractHibernateStorage implements PersonaNaturalProvider {
 
     @PersistenceContext
     private EntityManager em;
@@ -136,7 +136,7 @@ public class JpaPersonaNaturalProvider extends AbstractJpaStorage implements Per
                 PersonaNaturalEntity.class, filterText, filterProvider.getNumeroDocumentoFilter(),
                 filterProvider.getApellidoPaternoFilter(), filterProvider.getApellidoMaternoFilter(),
                 filterProvider.getNombresFilter());
-
+        
         SearchResultsModel<PersonaNaturalModel> modelResult = new SearchResultsModel<>();
         List<PersonaNaturalModel> list = new ArrayList<>();
         for (PersonaNaturalEntity entity : entityResult.getModels()) {

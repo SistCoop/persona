@@ -21,7 +21,7 @@ import org.sistcoop.persona.models.search.filters.TipoDocumentoFilterProvider;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.models.utils.RepresentationToModel;
 import org.sistcoop.persona.representations.idm.TipoDocumentoRepresentation;
-import org.sistcoop.producto.representations.idm.search.SearchResultsRepresentation;
+import org.sistcoop.persona.representations.idm.search.SearchResultsRepresentation;
 
 @Stateless
 public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
@@ -65,8 +65,8 @@ public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
             searchCriteriaBean.addFilter(tipoDocumentoFilterProvider.getTipoPersonaFilter(), tipoPersona,
                     SearchCriteriaFilterOperator.eq);
         }
-        searchCriteriaBean.addFilter(tipoDocumentoFilterProvider.getEstadoFilter(),
-                estado ? "true" : "false", SearchCriteriaFilterOperator.bool_eq);
+        searchCriteriaBean.addFilter(tipoDocumentoFilterProvider.getEstadoFilter(), estado,
+                SearchCriteriaFilterOperator.bool_eq);
 
         // search
         SearchResultsModel<TipoDocumentoModel> results = tipoDocumentoProvider.search(searchCriteriaBean);

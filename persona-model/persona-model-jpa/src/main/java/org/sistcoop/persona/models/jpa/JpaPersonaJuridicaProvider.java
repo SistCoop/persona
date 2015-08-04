@@ -30,7 +30,7 @@ import org.sistcoop.persona.models.search.filters.PersonaJuridicaFilterProvider;
 @Stateless
 @Local(PersonaJuridicaProvider.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class JpaPersonaJuridicaProvider extends AbstractJpaStorage implements PersonaJuridicaProvider {
+public class JpaPersonaJuridicaProvider extends AbstractHibernateStorage implements PersonaJuridicaProvider {
 
     @PersistenceContext
     private EntityManager em;
