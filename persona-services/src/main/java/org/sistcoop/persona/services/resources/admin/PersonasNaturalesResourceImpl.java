@@ -73,10 +73,7 @@ public class PersonasNaturalesResourceImpl implements PersonasNaturalesResource 
                 SearchCriteriaFilterOperator.eq);
         searchCriteriaBean.addFilter(personaNaturalFilterProvider.getNumeroDocumentoFilter(), numero,
                 SearchCriteriaFilterOperator.eq);
-
-        // add ordery by
-        searchCriteriaBean.setOrder(personaNaturalFilterProvider.getApellidoPaternoFilter(), true);
-
+        
         // search
         SearchResultsModel<PersonaNaturalModel> results = personaNaturalProvider.search(searchCriteriaBean);
         SearchResultsRepresentation<PersonaNaturalRepresentation> rep = new SearchResultsRepresentation<>();
@@ -101,7 +98,9 @@ public class PersonasNaturalesResourceImpl implements PersonasNaturalesResource 
         searchCriteriaBean.setPaging(paging);
 
         // add ordery by
-        searchCriteriaBean.setOrder(personaNaturalFilterProvider.getApellidoPaternoFilter(), true);
+        searchCriteriaBean.addOrder(personaNaturalFilterProvider.getApellidoPaternoFilter(), true);
+        searchCriteriaBean.addOrder(personaNaturalFilterProvider.getApellidoMaternoFilter(), true);
+        searchCriteriaBean.addOrder(personaNaturalFilterProvider.getNombresFilter(), true);
 
         // search
         SearchResultsModel<PersonaNaturalModel> results = personaNaturalProvider.search(searchCriteriaBean,

@@ -109,7 +109,7 @@ public class PersonasJuridicasResourceImpl implements PersonasJuridicasResource 
 
         SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
         searchCriteriaBean.setPaging(paging);
-        searchCriteriaBean.setOrder(personaJuridicaFilterProvider.getRazonSocialFilter(), true);
+        searchCriteriaBean.addOrder(personaJuridicaFilterProvider.getRazonSocialFilter(), true);
 
         // search
         SearchResultsModel<PersonaJuridicaModel> results = personaJuridicaProvider.search(searchCriteriaBean,

@@ -171,12 +171,14 @@ public abstract class AbstractHibernateStorage {
                 }
             }
         }
-        OrderByModel orderBy = criteria.getOrderBy();
-        if (orderBy != null && !countOnly) {
-            if (orderBy.isAscending()) {
-                criteriaQuery.addOrder(Order.asc(orderBy.getName()));
-            } else {
-                criteriaQuery.addOrder(Order.desc(orderBy.getName()));
+        List<OrderByModel> orders = criteria.getOrders();
+        if (orders != null && !orders.isEmpty() && !countOnly) {
+            for (OrderByModel orderBy : orders) {
+                if (orderBy.isAscending()) {
+                    criteriaQuery.addOrder(Order.asc(orderBy.getName()));
+                } else {
+                    criteriaQuery.addOrder(Order.desc(orderBy.getName()));
+                }
             }
         }
     }

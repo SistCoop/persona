@@ -29,7 +29,7 @@ public class SearchCriteriaModel implements Serializable {
     private static final long serialVersionUID = 5103776179000907112L;
 
     private List<SearchCriteriaFilterModel> filters = new ArrayList<>();
-    private OrderByModel orderBy;
+    private List<OrderByModel> orders = new ArrayList<>();
     private PagingModel paging;
 
     /**
@@ -66,6 +66,17 @@ public class SearchCriteriaModel implements Serializable {
         filters.add(filter);
     }
 
+    public void addOrder(String name, boolean ascending) {
+        OrderByModel orderBy = new OrderByModel();
+        orderBy.setName(name);
+        orderBy.setAscending(ascending);
+        orders.add(orderBy);
+    }
+
+    public void addOrder(OrderByModel orderBy) {
+        orders.add(orderBy);
+    }
+
     /**
      * @param page
      *            the page
@@ -84,19 +95,6 @@ public class SearchCriteriaModel implements Serializable {
         if (this.paging == null)
             this.paging = new PagingModel();
         getPaging().setPageSize(pageSize);
-    }
-
-    /**
-     * @param name
-     *            the name
-     * @param ascending
-     *            whether is ascending
-     */
-    public void setOrder(String name, boolean ascending) {
-        if (this.orderBy == null)
-            this.orderBy = new OrderByModel();
-        orderBy.setName(name);
-        orderBy.setAscending(ascending);
     }
 
     /**
@@ -132,16 +130,16 @@ public class SearchCriteriaModel implements Serializable {
     /**
      * @return the orderBy
      */
-    public OrderByModel getOrderBy() {
-        return orderBy;
+    public List<OrderByModel> getOrders() {
+        return orders;
     }
 
     /**
      * @param orderBy
      *            the orderBy to set
      */
-    public void setOrderBy(OrderByModel orderBy) {
-        this.orderBy = orderBy;
+    public void setOrders(List<OrderByModel> orders) {
+        this.orders = orders;
     }
 
     /**
@@ -152,7 +150,7 @@ public class SearchCriteriaModel implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((filters == null) ? 0 : filters.hashCode());
-        result = prime * result + ((orderBy == null) ? 0 : orderBy.hashCode());
+        result = prime * result + ((orders == null) ? 0 : orders.hashCode());
         result = prime * result + ((paging == null) ? 0 : paging.hashCode());
         return result;
     }
@@ -174,10 +172,10 @@ public class SearchCriteriaModel implements Serializable {
                 return false;
         } else if (!filters.equals(other.filters))
             return false;
-        if (orderBy == null) {
-            if (other.orderBy != null)
+        if (orders == null) {
+            if (other.orders != null)
                 return false;
-        } else if (!orderBy.equals(other.orderBy))
+        } else if (!orders.equals(other.orders))
             return false;
         if (paging == null) {
             if (other.paging != null)
