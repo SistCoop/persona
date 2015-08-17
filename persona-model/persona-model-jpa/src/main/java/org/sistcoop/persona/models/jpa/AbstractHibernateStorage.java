@@ -143,7 +143,7 @@ public abstract class AbstractHibernateStorage {
         Criteria criteriaQuery = session.createCriteria(type);
         applySearchCriteriaToQuery(criteria, type, criteriaQuery, true);
         criteriaQuery.setProjection(Projections.rowCount());
-        return (Integer) criteriaQuery.uniqueResult();
+        return ((Long) criteriaQuery.uniqueResult()).intValue();
     }
 
     protected <T> void applySearchCriteriaToQuery(SearchCriteriaModel criteria, Class<T> type,
