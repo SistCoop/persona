@@ -21,11 +21,6 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.envers.Audited;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
 import org.sistcoop.persona.models.enums.EstadoCivil;
@@ -34,7 +29,6 @@ import org.sistcoop.persona.models.enums.Sexo;
 @Audited
 @Cacheable
 @Entity
-@Indexed
 @Table(name = "PERSONA_NATURAL")
 @NamedQueries(value = {
         @NamedQuery(name = "PersonaNaturalEntity.findAll", query = "SELECT p FROM PersonaNaturalEntity p"),
@@ -85,7 +79,7 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
     @NotNull
     @Size(min = 1, max = 50)
     @NotBlank
-    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    
     @Column(name = "APELLIDO_PATERNO")
     public String getApellidoPaterno() {
         return apellidoPaterno;
@@ -98,7 +92,7 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
     @NotNull
     @Size(min = 1, max = 50)
     @NotBlank
-    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    
     @Column(name = "APELLIDO_MATERNO")
     public String getApellidoMaterno() {
         return apellidoMaterno;
@@ -111,7 +105,7 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
     @NotNull
     @Size(min = 1, max = 70)
     @NotBlank
-    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    
     @Column(name = "NOMBRES")
     public String getNombres() {
         return nombres;

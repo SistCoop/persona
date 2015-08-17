@@ -20,18 +20,12 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.sistcoop.persona.models.enums.TipoPersona;
 
 @Audited
 @Cacheable
 @Entity
-@Indexed
 @Table(name = "TIPO_DOCUMENTO")
 @NamedQueries(value = {
         @NamedQuery(name = "TipoDocumentoEntity.findAll", query = "SELECT t FROM TipoDocumentoEntity t"),
@@ -65,7 +59,6 @@ public class TipoDocumentoEntity implements Serializable {
     @NotNull
     @Size(min = 1, max = 60)
     @NotBlank
-    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     @Column(name = "DENOMINACION")
     public String getDenominacion() {
         return denominacion;

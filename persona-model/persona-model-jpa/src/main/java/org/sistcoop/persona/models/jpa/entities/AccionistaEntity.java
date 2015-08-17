@@ -22,12 +22,10 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.envers.Audited;
-import org.hibernate.search.annotations.Indexed;
 
 @Audited
 @Cacheable
 @Entity
-@Indexed
 @Table(name = "ACCIONISTA")
 public class AccionistaEntity implements java.io.Serializable {
 

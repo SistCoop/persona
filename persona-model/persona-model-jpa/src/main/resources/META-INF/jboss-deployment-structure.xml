@@ -1,8 +1,0 @@
-<jboss-deployment-structure>
-	<deployment>
-		<dependencies>
-			<module name="org.hibernate.search.orm" slot="5.3.0.Final"
-				services="export" />
-		</dependencies>
-	</deployment>
-</jboss-deployment-structure>
