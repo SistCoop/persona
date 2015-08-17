@@ -28,6 +28,9 @@ public interface TiposDocumentoResource {
     @Produces(MediaType.APPLICATION_JSON)
     public SearchResultsRepresentation<TipoDocumentoRepresentation> search(
             @QueryParam("tipoPersona") String tipoPersona,
-            @QueryParam("estado") @DefaultValue(value = "true") boolean estado);
+            @QueryParam("estado") @DefaultValue(value = "true") boolean estado,
+            @QueryParam("filterText") @DefaultValue(value = "") String filterText,
+            @QueryParam("page") @DefaultValue(value = "1") int page,
+            @QueryParam("pageSize") @DefaultValue(value = "10") int pageSize);
 
 }

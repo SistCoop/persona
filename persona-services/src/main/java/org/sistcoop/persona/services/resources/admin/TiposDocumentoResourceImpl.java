@@ -14,6 +14,8 @@ import org.sistcoop.persona.admin.client.resource.TipoDocumentoResource;
 import org.sistcoop.persona.admin.client.resource.TiposDocumentoResource;
 import org.sistcoop.persona.models.TipoDocumentoModel;
 import org.sistcoop.persona.models.TipoDocumentoProvider;
+import org.sistcoop.persona.models.enums.TipoPersona;
+import org.sistcoop.persona.models.search.PagingModel;
 import org.sistcoop.persona.models.search.SearchCriteriaFilterOperator;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
@@ -57,19 +59,30 @@ public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
     }
 
     @Override
-    public SearchResultsRepresentation<TipoDocumentoRepresentation> search(String tipoPersona, boolean estado) {
+    public SearchResultsRepresentation<TipoDocumentoRepresentation> search(String tipoPersona,
+            boolean estado, String filterText, int page, int pageSize) {
+
+        PagingModel paging = new PagingModel();
+        paging.setPage(page);
+        paging.setPageSize(pageSize);
+
         SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
+        searchCriteriaBean.setPaging(paging);
+
+        // add ordery by
+        searchCriteriaBean.addOrder(tipoDocumentoFilterProvider.getDenominacionFilter(), true);
 
         // add filters
         if (tipoPersona != null) {
-            searchCriteriaBean.addFilter(tipoDocumentoFilterProvider.getTipoPersonaFilter(), tipoPersona,
-                    SearchCriteriaFilterOperator.eq);
+            searchCriteriaBean.addFilter(tipoDocumentoFilterProvider.getTipoPersonaFilter(),
+                    TipoPersona.valueOf(tipoPersona.toUpperCase()), SearchCriteriaFilterOperator.eq);
         }
         searchCriteriaBean.addFilter(tipoDocumentoFilterProvider.getEstadoFilter(), estado,
                 SearchCriteriaFilterOperator.bool_eq);
 
         // search
-        SearchResultsModel<TipoDocumentoModel> results = tipoDocumentoProvider.search(searchCriteriaBean);
+        SearchResultsModel<TipoDocumentoModel> results = tipoDocumentoProvider.search(searchCriteriaBean,
+                filterText);
         SearchResultsRepresentation<TipoDocumentoRepresentation> rep = new SearchResultsRepresentation<>();
         List<TipoDocumentoRepresentation> representations = new ArrayList<>();
         for (TipoDocumentoModel model : results.getModels()) {
@@ -77,6 +90,7 @@ public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
         }
         rep.setTotalSize(results.getTotalSize());
         rep.setItems(representations);
+
         return rep;
     }
 
