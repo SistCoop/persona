@@ -15,7 +15,7 @@ import org.sistcoop.persona.models.search.filters.PersonaNaturalFilterProvider;
 public class JpaPersonaNaturalFilterProvider implements PersonaNaturalFilterProvider {
 
     private final String id = "id";
-    private final String tipoDocumento = "tipoDocumento";
+    private final String tipoDocumento = "tipoDocumento.abreviatura";
     private final String numeroDocumento = "numeroDocumento";
     private final String apellidoPaterno = "apellidoPaterno";
     private final String apellidoMaterno = "apellidoMaterno";

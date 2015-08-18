@@ -65,41 +65,30 @@ public class PersonasNaturalesResourceImpl implements PersonasNaturalesResource 
     }
 
     @Override
-    public SearchResultsRepresentation<PersonaNaturalRepresentation> search(String documento, String numero) {
-        SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
+    public SearchResultsRepresentation<PersonaNaturalRepresentation> search(String documento, String numero,
+            String filterText, int page, int pageSize) {
 
-        // add filters
-        searchCriteriaBean.addFilter(personaNaturalFilterProvider.getTipoDocumentoFilter(), documento,
-                SearchCriteriaFilterOperator.eq);
-        searchCriteriaBean.addFilter(personaNaturalFilterProvider.getNumeroDocumentoFilter(), numero,
-                SearchCriteriaFilterOperator.eq);
-        
-        // search
-        SearchResultsModel<PersonaNaturalModel> results = personaNaturalProvider.search(searchCriteriaBean);
-        SearchResultsRepresentation<PersonaNaturalRepresentation> rep = new SearchResultsRepresentation<>();
-        List<PersonaNaturalRepresentation> representations = new ArrayList<>();
-        for (PersonaNaturalModel model : results.getModels()) {
-            representations.add(ModelToRepresentation.toRepresentation(model));
+        SearchResultsModel<PersonaNaturalModel> results = null;
+        if (documento != null && numero != null) {
+            SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
+
+            searchCriteriaBean.addFilter(personaNaturalFilterProvider.getTipoDocumentoFilter(), documento,
+                    SearchCriteriaFilterOperator.eq);
+            searchCriteriaBean.addFilter(personaNaturalFilterProvider.getNumeroDocumentoFilter(), numero,
+                    SearchCriteriaFilterOperator.eq);
+
+            results = personaNaturalProvider.search(searchCriteriaBean);
+        } else {
+            PagingModel paging = new PagingModel();
+            paging.setPage(page);
+            paging.setPageSize(pageSize);
+
+            SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
+            searchCriteriaBean.setPaging(paging);
+
+            results = personaNaturalProvider.search(searchCriteriaBean, filterText);
         }
-        rep.setTotalSize(results.getTotalSize());
-        rep.setItems(representations);
-        return rep;
-    }
 
-    @Override
-    public SearchResultsRepresentation<PersonaNaturalRepresentation> search(String filterText, int page,
-            int pageSize) {
-
-        PagingModel paging = new PagingModel();
-        paging.setPage(page);
-        paging.setPageSize(pageSize);
-
-        SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
-        searchCriteriaBean.setPaging(paging);        
-
-        // search
-        SearchResultsModel<PersonaNaturalModel> results = personaNaturalProvider.search(searchCriteriaBean,
-                filterText);
         SearchResultsRepresentation<PersonaNaturalRepresentation> rep = new SearchResultsRepresentation<>();
         List<PersonaNaturalRepresentation> representations = new ArrayList<>();
         for (PersonaNaturalModel model : results.getModels()) {
