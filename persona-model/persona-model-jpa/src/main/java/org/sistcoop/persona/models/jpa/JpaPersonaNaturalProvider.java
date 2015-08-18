@@ -131,12 +131,11 @@ public class JpaPersonaNaturalProvider extends AbstractHibernateStorage implemen
 
     @Override
     public SearchResultsModel<PersonaNaturalModel> search(SearchCriteriaModel criteria, String filterText) {
-
         SearchResultsModel<PersonaNaturalEntity> entityResult = findFullText(criteria,
                 PersonaNaturalEntity.class, filterText, filterProvider.getNumeroDocumentoFilter(),
                 filterProvider.getApellidoPaternoFilter(), filterProvider.getApellidoMaternoFilter(),
                 filterProvider.getNombresFilter());
-        
+
         SearchResultsModel<PersonaNaturalModel> modelResult = new SearchResultsModel<>();
         List<PersonaNaturalModel> list = new ArrayList<>();
         for (PersonaNaturalEntity entity : entityResult.getModels()) {
