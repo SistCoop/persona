@@ -95,12 +95,7 @@ public class PersonasNaturalesResourceImpl implements PersonasNaturalesResource 
         paging.setPageSize(pageSize);
 
         SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
-        searchCriteriaBean.setPaging(paging);
-
-        // add ordery by
-        searchCriteriaBean.addOrder(personaNaturalFilterProvider.getApellidoPaternoFilter(), true);
-        searchCriteriaBean.addOrder(personaNaturalFilterProvider.getApellidoMaternoFilter(), true);
-        searchCriteriaBean.addOrder(personaNaturalFilterProvider.getNombresFilter(), true);
+        searchCriteriaBean.setPaging(paging);        
 
         // search
         SearchResultsModel<PersonaNaturalModel> results = personaNaturalProvider.search(searchCriteriaBean,
