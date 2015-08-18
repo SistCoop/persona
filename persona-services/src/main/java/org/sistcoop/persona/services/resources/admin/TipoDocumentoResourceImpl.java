@@ -45,6 +45,11 @@ public class TipoDocumentoResourceImpl implements TipoDocumentoResource {
     }
 
     @Override
+    public void enable() {
+        tipoDocumentoManager.enable(getTipoDocumentoModel());
+    }
+
+    @Override
     public void disable() {
         tipoDocumentoManager.disable(getTipoDocumentoModel());
     }

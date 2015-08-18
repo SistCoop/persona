@@ -19,6 +19,11 @@ public class TipoDocumentoManager {
         model.commit();
     }
 
+    public void enable(TipoDocumentoModel model) {
+        model.setEstado(true);
+        model.commit();
+    }
+
     public void disable(TipoDocumentoModel model) {
         model.setEstado(false);
         model.commit();

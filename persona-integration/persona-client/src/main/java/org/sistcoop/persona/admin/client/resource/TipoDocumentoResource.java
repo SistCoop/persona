@@ -22,6 +22,10 @@ public interface TipoDocumentoResource {
     public void update(TipoDocumentoRepresentation representation);
 
     @POST
+    @Path("/enable")
+    public void enable();
+    
+    @POST
     @Path("/disable")
     public void disable();
 
