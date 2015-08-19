@@ -15,7 +15,7 @@ import org.sistcoop.persona.models.search.filters.PersonaJuridicaFilterProvider;
 public class JpaPersonaJuridicaFilterProvider implements PersonaJuridicaFilterProvider {
 
     private final String id = "id";
-    private final String tipoDocumento = "tipoDocumento";
+    private final String tipoDocumento = "tipoDocumento.abreviatura";
     private final String numeroDocumento = "numeroDocumento";
     private final String razonSocial = "razonSocial";
 
