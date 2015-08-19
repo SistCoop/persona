@@ -27,11 +27,7 @@ public interface PersonasJuridicasResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public SearchResultsRepresentation<PersonaJuridicaRepresentation> search(
-            @QueryParam("documento") String documento, @QueryParam("numero") String numero);
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public SearchResultsRepresentation<PersonaJuridicaRepresentation> search(
+            @QueryParam("documento") String documento, @QueryParam("numero") String numero,
             @QueryParam("filterText") @DefaultValue(value = "") String filterText,
             @QueryParam("page") @DefaultValue(value = "1") int page,
             @QueryParam("pageSize") @DefaultValue(value = "10") int pageSize);

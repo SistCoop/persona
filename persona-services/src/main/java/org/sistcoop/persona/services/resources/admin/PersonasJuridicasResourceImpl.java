@@ -78,42 +78,29 @@ public class PersonasJuridicasResourceImpl implements PersonasJuridicasResource 
     }
 
     @Override
-    public SearchResultsRepresentation<PersonaJuridicaRepresentation> search(String documento, String numero) {
-        SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
+    public SearchResultsRepresentation<PersonaJuridicaRepresentation> search(String documento, String numero,
+            String filterText, int page, int pageSize) {
+        SearchResultsModel<PersonaJuridicaModel> results = null;
+        if (documento != null && numero != null) {
+            SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
 
-        // add filters
-        searchCriteriaBean.addFilter(personaJuridicaFilterProvider.getTipoDocumentoFilter(), documento,
-                SearchCriteriaFilterOperator.eq);
-        searchCriteriaBean.addFilter(personaJuridicaFilterProvider.getNumeroDocumentoFilter(), numero,
-                SearchCriteriaFilterOperator.eq);
+            searchCriteriaBean.addFilter(personaJuridicaFilterProvider.getTipoDocumentoFilter(), documento,
+                    SearchCriteriaFilterOperator.eq);
+            searchCriteriaBean.addFilter(personaJuridicaFilterProvider.getNumeroDocumentoFilter(), numero,
+                    SearchCriteriaFilterOperator.eq);
 
-        // search
-        SearchResultsModel<PersonaJuridicaModel> results = personaJuridicaProvider.search(searchCriteriaBean);
-        SearchResultsRepresentation<PersonaJuridicaRepresentation> rep = new SearchResultsRepresentation<>();
-        List<PersonaJuridicaRepresentation> representations = new ArrayList<>();
-        for (PersonaJuridicaModel model : results.getModels()) {
-            representations.add(ModelToRepresentation.toRepresentation(model));
+            results = personaJuridicaProvider.search(searchCriteriaBean);
+        } else {
+            PagingModel paging = new PagingModel();
+            paging.setPage(page);
+            paging.setPageSize(pageSize);
+
+            SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
+            searchCriteriaBean.setPaging(paging);
+
+            results = personaJuridicaProvider.search(searchCriteriaBean, filterText);
         }
-        rep.setTotalSize(results.getTotalSize());
-        rep.setItems(representations);
-        return rep;
-    }
 
-    @Override
-    public SearchResultsRepresentation<PersonaJuridicaRepresentation> search(String filterText, int page,
-            int pageSize) {
-
-        PagingModel paging = new PagingModel();
-        paging.setPage(page);
-        paging.setPageSize(pageSize);
-
-        SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
-        searchCriteriaBean.setPaging(paging);
-        searchCriteriaBean.addOrder(personaJuridicaFilterProvider.getRazonSocialFilter(), true);
-
-        // search
-        SearchResultsModel<PersonaJuridicaModel> results = personaJuridicaProvider.search(searchCriteriaBean,
-                filterText);
         SearchResultsRepresentation<PersonaJuridicaRepresentation> rep = new SearchResultsRepresentation<>();
         List<PersonaJuridicaRepresentation> representations = new ArrayList<>();
         for (PersonaJuridicaModel model : results.getModels()) {
