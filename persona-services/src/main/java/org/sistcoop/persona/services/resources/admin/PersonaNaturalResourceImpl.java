@@ -29,8 +29,8 @@ import org.sistcoop.persona.services.util.GoogleDriveManager;
 @Stateless
 public class PersonaNaturalResourceImpl implements PersonaNaturalResource {
 
-    @PathParam("persona")
-    private String persona;
+    @PathParam("personaNatural")
+    private String personaNatural;
 
     @Inject
     private GoogleDriveManager googleDriveManager;
@@ -42,11 +42,11 @@ public class PersonaNaturalResourceImpl implements PersonaNaturalResource {
     private PersonaNaturalManager personaNaturalManager;
 
     private PersonaNaturalModel getPersonaNaturalModel() {
-        return personaNaturalProvider.findById(persona);
+        return personaNaturalProvider.findById(personaNatural);
     }
 
     @Override
-    public PersonaNaturalRepresentation persona() {
+    public PersonaNaturalRepresentation personaNatural() {
         PersonaNaturalRepresentation rep = ModelToRepresentation.toRepresentation(getPersonaNaturalModel());
         if (rep != null) {
             return rep;

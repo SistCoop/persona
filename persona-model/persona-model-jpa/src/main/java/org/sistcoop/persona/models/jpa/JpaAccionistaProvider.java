@@ -20,7 +20,6 @@ import org.sistcoop.persona.models.PersonaNaturalModel;
 import org.sistcoop.persona.models.jpa.entities.AccionistaEntity;
 import org.sistcoop.persona.models.jpa.entities.PersonaJuridicaEntity;
 import org.sistcoop.persona.models.jpa.entities.PersonaNaturalEntity;
-import org.sistcoop.persona.models.search.SearchResultsModel;
 
 @Named
 @Stateless
@@ -69,7 +68,7 @@ public class JpaAccionistaProvider implements AccionistaProvider {
     }
 
     @Override
-    public SearchResultsModel<AccionistaModel> search(PersonaJuridicaModel personaJuridicaModel) {
+    public List<AccionistaModel> getAll(PersonaJuridicaModel personaJuridicaModel) {
         PersonaJuridicaEntity personaJuridicaEntity = em.find(PersonaJuridicaEntity.class,
                 personaJuridicaModel.getId());
 
@@ -79,10 +78,7 @@ public class JpaAccionistaProvider implements AccionistaProvider {
             models.add(new AccionistaAdapter(em, accionistaEntity));
         }
 
-        SearchResultsModel<AccionistaModel> result = new SearchResultsModel<>();
-        result.setModels(models);
-        result.setTotalSize(models.size());
-        return result;
+        return models;
     }
 
 }

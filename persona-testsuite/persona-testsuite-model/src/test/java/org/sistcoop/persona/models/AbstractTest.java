@@ -13,9 +13,7 @@ import org.junit.runner.RunWith;
 import org.sistcoop.persona.models.enums.TipoPersona;
 import org.sistcoop.persona.models.jpa.JpaTipoDocumentoProvider;
 import org.sistcoop.persona.models.jpa.entities.TipoDocumentoEntity;
-import org.sistcoop.persona.models.jpa.search.filter.JpaTipoDocumentoFilterProvider;
 import org.sistcoop.persona.models.search.SearchCriteriaFilterModel;
-import org.sistcoop.persona.models.search.filters.TipoDocumentoFilterProvider;
 import org.sistcoop.persona.provider.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,11 +38,9 @@ public abstract class AbstractTest {
                 .addPackage(TipoPersona.class.getPackage())
 
                 .addPackage(SearchCriteriaFilterModel.class.getPackage())
-                .addPackage(TipoDocumentoFilterProvider.class.getPackage())
 
                 /** model-jpa **/
                 .addPackage(JpaTipoDocumentoProvider.class.getPackage())
-                .addPackage(JpaTipoDocumentoFilterProvider.class.getPackage())
                 .addPackage(TipoDocumentoEntity.class.getPackage())
 
                 .addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")

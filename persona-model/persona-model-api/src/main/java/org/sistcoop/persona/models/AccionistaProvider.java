@@ -1,10 +1,10 @@
 package org.sistcoop.persona.models;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.ejb.Local;
 
-import org.sistcoop.persona.models.search.SearchResultsModel;
 import org.sistcoop.persona.provider.Provider;
 
 @Local
@@ -17,6 +17,6 @@ public interface AccionistaProvider extends Provider {
 
     boolean remove(AccionistaModel accionistaModel);
 
-    SearchResultsModel<AccionistaModel> search(PersonaJuridicaModel personaJuridicaModel);
+    List<AccionistaModel> getAll(PersonaJuridicaModel personaJuridicaModel);
 
 }

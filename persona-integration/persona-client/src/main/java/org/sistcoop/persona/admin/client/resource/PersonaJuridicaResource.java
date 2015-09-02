@@ -15,20 +15,20 @@ public interface PersonaJuridicaResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public PersonaJuridicaRepresentation persona();
+    public PersonaJuridicaRepresentation personaJuridica();
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public void update(PersonaJuridicaRepresentation representation);
 
     @POST
-    @Path("/disable")
+    @Path("disable")
     public void disable();
 
     @DELETE
     public void remove();
 
-    @Path("/accionistas")
+    @Path("accionistas")
     public AccionistasResource accionistas();
 
 }

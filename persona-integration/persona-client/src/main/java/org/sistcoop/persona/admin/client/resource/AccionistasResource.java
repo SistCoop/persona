@@ -1,5 +1,7 @@
 package org.sistcoop.persona.admin.client.resource;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -10,12 +12,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.sistcoop.persona.representations.idm.AccionistaRepresentation;
-import org.sistcoop.persona.representations.idm.search.SearchResultsRepresentation;
 
 @Consumes(MediaType.APPLICATION_JSON)
 public interface AccionistasResource {
 
-    @Path("/{accionista}")
+    @Path("{accionista}")
     public AccionistaResource accionista(@PathParam("accionista") String accionista);
 
     @POST
@@ -23,6 +24,6 @@ public interface AccionistasResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public SearchResultsRepresentation<AccionistaRepresentation> search();
+    public List<AccionistaRepresentation> getAll();
 
 }

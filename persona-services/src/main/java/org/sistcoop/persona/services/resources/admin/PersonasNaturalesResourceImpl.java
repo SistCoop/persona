@@ -20,7 +20,6 @@ import org.sistcoop.persona.models.search.PagingModel;
 import org.sistcoop.persona.models.search.SearchCriteriaFilterOperator;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
-import org.sistcoop.persona.models.search.filters.PersonaNaturalFilterProvider;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.models.utils.RepresentationToModel;
 import org.sistcoop.persona.representations.idm.PersonaNaturalRepresentation;
@@ -39,16 +38,13 @@ public class PersonasNaturalesResourceImpl implements PersonasNaturalesResource 
     private RepresentationToModel representationToModel;
 
     @Inject
-    private PersonaNaturalFilterProvider personaNaturalFilterProvider;
-
-    @Inject
     private PersonaNaturalResource personaNaturalResource;
 
     @Context
     private UriInfo uriInfo;
 
     @Override
-    public PersonaNaturalResource persona(String persona) {
+    public PersonaNaturalResource personaNatural(String personaNatural) {
         return personaNaturalResource;
     }
 
@@ -65,17 +61,15 @@ public class PersonasNaturalesResourceImpl implements PersonasNaturalesResource 
     }
 
     @Override
-    public SearchResultsRepresentation<PersonaNaturalRepresentation> search(String documento, String numero,
-            String filterText, int page, int pageSize) {
+    public SearchResultsRepresentation<PersonaNaturalRepresentation> search(String tipoDocumento,
+            String numeroDocumento, String filterText, int page, int pageSize) {
 
         SearchResultsModel<PersonaNaturalModel> results = null;
-        if (documento != null && numero != null) {
+        if (tipoDocumento != null && numeroDocumento != null) {
             SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
 
-            searchCriteriaBean.addFilter(personaNaturalFilterProvider.getTipoDocumentoFilter(), documento,
-                    SearchCriteriaFilterOperator.eq);
-            searchCriteriaBean.addFilter(personaNaturalFilterProvider.getNumeroDocumentoFilter(), numero,
-                    SearchCriteriaFilterOperator.eq);
+            searchCriteriaBean.addFilter("tipoDocumento", tipoDocumento, SearchCriteriaFilterOperator.eq);
+            searchCriteriaBean.addFilter("numeroDocumento", numeroDocumento, SearchCriteriaFilterOperator.eq);
 
             results = personaNaturalProvider.search(searchCriteriaBean);
         } else {

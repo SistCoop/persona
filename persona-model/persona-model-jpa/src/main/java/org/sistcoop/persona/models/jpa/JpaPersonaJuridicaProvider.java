@@ -8,7 +8,6 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -24,7 +23,6 @@ import org.sistcoop.persona.models.jpa.entities.PersonaNaturalEntity;
 import org.sistcoop.persona.models.jpa.entities.TipoDocumentoEntity;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
-import org.sistcoop.persona.models.search.filters.PersonaJuridicaFilterProvider;
 
 @Named
 @Stateless
@@ -34,9 +32,6 @@ public class JpaPersonaJuridicaProvider extends AbstractHibernateStorage impleme
 
     @PersistenceContext
     private EntityManager em;
-
-    @Inject
-    private PersonaJuridicaFilterProvider filterProvider;
 
     @Override
     protected EntityManager getEntityManager() {
@@ -137,8 +132,7 @@ public class JpaPersonaJuridicaProvider extends AbstractHibernateStorage impleme
     @Override
     public SearchResultsModel<PersonaJuridicaModel> search(SearchCriteriaModel criteria, String filterText) {
         SearchResultsModel<PersonaJuridicaEntity> entityResult = findFullText(criteria,
-                PersonaJuridicaEntity.class, filterText, filterProvider.getNumeroDocumentoFilter(),
-                filterProvider.getRazonSocialFilter());
+                PersonaJuridicaEntity.class, filterText, "numeroDocumento", "razonSocial");
 
         SearchResultsModel<PersonaJuridicaModel> modelResult = new SearchResultsModel<>();
         List<PersonaJuridicaModel> list = new ArrayList<>();

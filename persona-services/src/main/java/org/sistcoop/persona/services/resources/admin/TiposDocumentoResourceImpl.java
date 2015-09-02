@@ -19,7 +19,6 @@ import org.sistcoop.persona.models.search.PagingModel;
 import org.sistcoop.persona.models.search.SearchCriteriaFilterOperator;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
-import org.sistcoop.persona.models.search.filters.TipoDocumentoFilterProvider;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.models.utils.RepresentationToModel;
 import org.sistcoop.persona.representations.idm.TipoDocumentoRepresentation;
@@ -32,9 +31,6 @@ public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
     private TipoDocumentoProvider tipoDocumentoProvider;
 
     @Inject
-    private TipoDocumentoFilterProvider tipoDocumentoFilterProvider;
-
-    @Inject
     private RepresentationToModel representationToModel;
 
     @Context
@@ -44,7 +40,7 @@ public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
     private TipoDocumentoResource tipoDocumentoResource;
 
     @Override
-    public TipoDocumentoResource documento(String documento) {
+    public TipoDocumentoResource tipoDocumento(String documento) {
         return tipoDocumentoResource;
     }
 
@@ -59,6 +55,16 @@ public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
     }
 
     @Override
+    public List<TipoDocumentoRepresentation> getAll() {
+        List<TipoDocumentoModel> results = tipoDocumentoProvider.getAll();
+        List<TipoDocumentoRepresentation> representations = new ArrayList<>();
+        for (TipoDocumentoModel model : results) {
+            representations.add(ModelToRepresentation.toRepresentation(model));
+        }
+        return representations;
+    }
+
+    @Override
     public SearchResultsRepresentation<TipoDocumentoRepresentation> search(String tipoPersona,
             boolean estado, String filterText, int page, int pageSize) {
 
@@ -69,16 +75,12 @@ public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
         SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
         searchCriteriaBean.setPaging(paging);
 
-        // add ordery by
-        searchCriteriaBean.addOrder(tipoDocumentoFilterProvider.getDenominacionFilter(), true);
-
         // add filters
         if (tipoPersona != null) {
-            searchCriteriaBean.addFilter(tipoDocumentoFilterProvider.getTipoPersonaFilter(),
-                    TipoPersona.valueOf(tipoPersona.toUpperCase()), SearchCriteriaFilterOperator.eq);
+            searchCriteriaBean.addFilter("tipoPersona", TipoPersona.valueOf(tipoPersona.toUpperCase()),
+                    SearchCriteriaFilterOperator.eq);
         }
-        searchCriteriaBean.addFilter(tipoDocumentoFilterProvider.getEstadoFilter(), estado,
-                SearchCriteriaFilterOperator.bool_eq);
+        searchCriteriaBean.addFilter("estado", estado, SearchCriteriaFilterOperator.bool_eq);
 
         // search
         SearchResultsModel<TipoDocumentoModel> results = tipoDocumentoProvider.search(searchCriteriaBean,

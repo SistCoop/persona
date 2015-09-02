@@ -19,17 +19,15 @@ import org.sistcoop.persona.models.PersonaJuridicaModel;
 import org.sistcoop.persona.models.PersonaJuridicaProvider;
 import org.sistcoop.persona.models.PersonaNaturalProvider;
 import org.sistcoop.persona.models.TipoDocumentoProvider;
-import org.sistcoop.persona.models.search.SearchResultsModel;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.models.utils.RepresentationToModel;
 import org.sistcoop.persona.representations.idm.AccionistaRepresentation;
-import org.sistcoop.persona.representations.idm.search.SearchResultsRepresentation;
 
 @Stateless
 public class AccionistasResourceImpl implements AccionistasResource {
 
-    @PathParam("persona")
-    private String persona;
+    @PathParam("personaJuridica")
+    private String personaJuridica;
 
     @Inject
     private TipoDocumentoProvider tipoDocumentoProvider;
@@ -53,7 +51,7 @@ public class AccionistasResourceImpl implements AccionistasResource {
     private UriInfo uriInfo;
 
     private PersonaJuridicaModel getPersonaJuridicaModel() {
-        return personaJuridicaProvider.findById(persona);
+        return personaJuridicaProvider.findById(personaJuridica);
     }
 
     @Override
@@ -72,16 +70,13 @@ public class AccionistasResourceImpl implements AccionistasResource {
     }
 
     @Override
-    public SearchResultsRepresentation<AccionistaRepresentation> search() {
-        SearchResultsModel<AccionistaModel> results = accionistaProvider.search(getPersonaJuridicaModel());
-        SearchResultsRepresentation<AccionistaRepresentation> rep = new SearchResultsRepresentation<>();
+    public List<AccionistaRepresentation> getAll() {
+        List<AccionistaModel> results = accionistaProvider.getAll(getPersonaJuridicaModel());
         List<AccionistaRepresentation> representations = new ArrayList<>();
-        for (AccionistaModel model : results.getModels()) {
+        for (AccionistaModel model : results) {
             representations.add(ModelToRepresentation.toRepresentation(model));
         }
-        rep.setTotalSize(results.getTotalSize());
-        rep.setItems(representations);
-        return rep;
+        return representations;
     }
 
 }

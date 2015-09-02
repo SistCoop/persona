@@ -16,8 +16,8 @@ import org.sistcoop.persona.services.managers.TipoDocumentoManager;
 @Stateless
 public class TipoDocumentoResourceImpl implements TipoDocumentoResource {
 
-    @PathParam("documento")
-    private String documento;
+    @PathParam("tipoDocumento")
+    private String tipoDocumento;
 
     @Inject
     private TipoDocumentoProvider tipoDocumentoProvider;
@@ -26,11 +26,11 @@ public class TipoDocumentoResourceImpl implements TipoDocumentoResource {
     private TipoDocumentoManager tipoDocumentoManager;
 
     private TipoDocumentoModel getTipoDocumentoModel() {
-        return tipoDocumentoProvider.findByAbreviatura(documento);
+        return tipoDocumentoProvider.findByAbreviatura(tipoDocumento);
     }
 
     @Override
-    public TipoDocumentoRepresentation documento() {
+    public TipoDocumentoRepresentation tipoDocumento() {
         TipoDocumentoRepresentation rep = ModelToRepresentation.toRepresentation(getTipoDocumentoModel());
         if (rep != null) {
             return rep;

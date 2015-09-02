@@ -3,6 +3,8 @@ package org.sistcoop.persona.models;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.jboss.arquillian.junit.Arquillian;
@@ -13,7 +15,6 @@ import org.sistcoop.persona.models.enums.TipoPersona;
 import org.sistcoop.persona.models.search.SearchCriteriaFilterOperator;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
-import org.sistcoop.persona.models.search.filters.TipoDocumentoFilterProvider;
 
 @RunWith(Arquillian.class)
 @UsingDataSet("empty.xml")
@@ -21,9 +22,6 @@ public class TipoDocumentoProviderTest extends AbstractTest {
 
     @Inject
     private TipoDocumentoProvider tipoDocumentoProvider;
-
-    @Inject
-    private TipoDocumentoFilterProvider tipoDocumentoFilterProvider;
 
     @Test
     public void findByAbreviatura() {
@@ -68,11 +66,10 @@ public class TipoDocumentoProviderTest extends AbstractTest {
         TipoDocumentoModel model2 = tipoDocumentoProvider.create("P.NAC", "Partida de nacimiento", 11,
                 TipoPersona.NATURAL);
 
-        SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search();
+        List<TipoDocumentoModel> searched = tipoDocumentoProvider.getAll();
 
         assertThat("searched is Null", searched, is(notNullValue()));
-        assertThat("searched.getTotalSize() is not 2", searched.getTotalSize(), is(2));
-        assertThat("searched.getModels() is not 2", searched.getModels().size(), is(2));
+        assertThat("searched.getTotalSize() is not 2", searched.size(), is(2));
     }
 
     @Test
@@ -86,11 +83,10 @@ public class TipoDocumentoProviderTest extends AbstractTest {
         model1.setEstado(false);
         model1.commit();
 
-        SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search();
+        List<TipoDocumentoModel> searched = tipoDocumentoProvider.getAll();
 
         assertThat("searched is Null", searched, is(notNullValue()));
-        assertThat("searched.getTotalSize() is not 1", searched.getTotalSize(), is(1));
-        assertThat("searched.getModels() is not 1", searched.getModels().size(), is(1));
+        assertThat("searched.getTotalSize() is not 1", searched.size(), is(1));
     }
 
     @Test
@@ -109,8 +105,7 @@ public class TipoDocumentoProviderTest extends AbstractTest {
 
         // add filters
         SearchCriteriaModel criteria = new SearchCriteriaModel();
-        criteria.addFilter(tipoDocumentoFilterProvider.getTipoPersonaFilter(), TipoPersona.NATURAL,
-                SearchCriteriaFilterOperator.eq);
+        criteria.addFilter("tipoPersona", TipoPersona.NATURAL, SearchCriteriaFilterOperator.eq);
 
         SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria);
 
@@ -135,8 +130,7 @@ public class TipoDocumentoProviderTest extends AbstractTest {
 
         // add filters
         SearchCriteriaModel criteria = new SearchCriteriaModel();
-        criteria.addFilter(tipoDocumentoFilterProvider.getEstadoFilter(), true,
-                SearchCriteriaFilterOperator.bool_eq);
+        criteria.addFilter("estado", true, SearchCriteriaFilterOperator.bool_eq);
 
         SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria);
 
@@ -161,10 +155,8 @@ public class TipoDocumentoProviderTest extends AbstractTest {
 
         // add filters
         SearchCriteriaModel criteria = new SearchCriteriaModel();
-        criteria.addFilter(tipoDocumentoFilterProvider.getTipoPersonaFilter(), TipoPersona.NATURAL,
-                SearchCriteriaFilterOperator.eq);
-        criteria.addFilter(tipoDocumentoFilterProvider.getEstadoFilter(), true,
-                SearchCriteriaFilterOperator.bool_eq);
+        criteria.addFilter("tipoPersona", TipoPersona.NATURAL, SearchCriteriaFilterOperator.eq);
+        criteria.addFilter("estado", true, SearchCriteriaFilterOperator.bool_eq);
 
         SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria);
 
@@ -215,8 +207,7 @@ public class TipoDocumentoProviderTest extends AbstractTest {
 
         // add filters
         SearchCriteriaModel criteria = new SearchCriteriaModel();
-        criteria.addFilter(tipoDocumentoFilterProvider.getEstadoFilter(), true,
-                SearchCriteriaFilterOperator.bool_eq);
+        criteria.addFilter("estado", true, SearchCriteriaFilterOperator.bool_eq);
 
         SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria, "dni");
 
@@ -244,10 +235,8 @@ public class TipoDocumentoProviderTest extends AbstractTest {
 
         // add filters
         SearchCriteriaModel criteria = new SearchCriteriaModel();
-        criteria.addFilter(tipoDocumentoFilterProvider.getTipoPersonaFilter(), TipoPersona.NATURAL,
-                SearchCriteriaFilterOperator.eq);
-        criteria.addFilter(tipoDocumentoFilterProvider.getEstadoFilter(), true,
-                SearchCriteriaFilterOperator.bool_eq);
+        criteria.addFilter("tipoPersona", TipoPersona.NATURAL, SearchCriteriaFilterOperator.eq);
+        criteria.addFilter("estado", true, SearchCriteriaFilterOperator.bool_eq);
 
         SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria, "dni");
 

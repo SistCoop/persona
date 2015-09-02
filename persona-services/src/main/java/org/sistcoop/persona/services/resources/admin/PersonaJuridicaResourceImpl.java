@@ -17,8 +17,8 @@ import org.sistcoop.persona.services.managers.PersonaJuridicaManager;
 @Stateless
 public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
 
-    @PathParam("persona")
-    private String persona;
+    @PathParam("personaJuridica")
+    private String personaJuridica;
 
     @Inject
     private PersonaJuridicaProvider personaJuridicaProvider;
@@ -30,11 +30,11 @@ public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
     private AccionistasResource accionistasResource;
 
     private PersonaJuridicaModel getPersonaJuridicaModel() {
-        return personaJuridicaProvider.findById(persona);
+        return personaJuridicaProvider.findById(personaJuridica);
     }
 
     @Override
-    public PersonaJuridicaRepresentation persona() {
+    public PersonaJuridicaRepresentation personaJuridica() {
         PersonaJuridicaRepresentation rep = ModelToRepresentation.toRepresentation(getPersonaJuridicaModel());
         if (rep != null) {
             return rep;

@@ -15,18 +15,18 @@ public interface TipoDocumentoResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public TipoDocumentoRepresentation documento();
+    public TipoDocumentoRepresentation tipoDocumento();
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public void update(TipoDocumentoRepresentation representation);
 
     @POST
-    @Path("/enable")
+    @Path("enable")
     public void enable();
-    
+
     @POST
-    @Path("/disable")
+    @Path("disable")
     public void disable();
 
     @DELETE

@@ -16,24 +16,24 @@ public interface PersonaNaturalResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public PersonaNaturalRepresentation persona();
+    public PersonaNaturalRepresentation personaNatural();
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public void update(PersonaNaturalRepresentation representation);
 
     @POST
-    @Path("/foto")
+    @Path("foto")
     @Consumes("multipart/form-data")
     public void setFoto(MultipartFormDataInput input);
 
     @POST
-    @Path("/firma")
+    @Path("firma")
     @Consumes("multipart/form-data")
     public void setFirma(MultipartFormDataInput input);
 
     @POST
-    @Path("/disable")
+    @Path("disable")
     public void disable();
 
     @DELETE

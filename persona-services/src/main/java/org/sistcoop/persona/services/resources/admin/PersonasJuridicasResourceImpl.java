@@ -22,7 +22,6 @@ import org.sistcoop.persona.models.search.PagingModel;
 import org.sistcoop.persona.models.search.SearchCriteriaFilterOperator;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
-import org.sistcoop.persona.models.search.filters.PersonaJuridicaFilterProvider;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.models.utils.RepresentationToModel;
 import org.sistcoop.persona.representations.idm.PersonaJuridicaRepresentation;
@@ -42,9 +41,6 @@ public class PersonasJuridicasResourceImpl implements PersonasJuridicasResource 
     private PersonaJuridicaProvider personaJuridicaProvider;
 
     @Inject
-    private PersonaJuridicaFilterProvider personaJuridicaFilterProvider;
-
-    @Inject
     private RepresentationToModel representationToModel;
 
     @Inject
@@ -54,7 +50,7 @@ public class PersonasJuridicasResourceImpl implements PersonasJuridicasResource 
     private UriInfo uriInfo;
 
     @Override
-    public PersonaJuridicaResource persona(String persona) {
+    public PersonaJuridicaResource personaJuridica(String personaJuridica) {
         return personaJuridicaResource;
     }
 
@@ -78,16 +74,14 @@ public class PersonasJuridicasResourceImpl implements PersonasJuridicasResource 
     }
 
     @Override
-    public SearchResultsRepresentation<PersonaJuridicaRepresentation> search(String documento, String numero,
-            String filterText, int page, int pageSize) {
+    public SearchResultsRepresentation<PersonaJuridicaRepresentation> search(String tipoDocumento,
+            String numeroDocumento, String filterText, int page, int pageSize) {
         SearchResultsModel<PersonaJuridicaModel> results = null;
-        if (documento != null && numero != null) {
+        if (tipoDocumento != null && numeroDocumento != null) {
             SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
 
-            searchCriteriaBean.addFilter(personaJuridicaFilterProvider.getTipoDocumentoFilter(), documento,
-                    SearchCriteriaFilterOperator.eq);
-            searchCriteriaBean.addFilter(personaJuridicaFilterProvider.getNumeroDocumentoFilter(), numero,
-                    SearchCriteriaFilterOperator.eq);
+            searchCriteriaBean.addFilter("tipoDocumento", tipoDocumento, SearchCriteriaFilterOperator.eq);
+            searchCriteriaBean.addFilter("numeroDocumento", numeroDocumento, SearchCriteriaFilterOperator.eq);
 
             results = personaJuridicaProvider.search(searchCriteriaBean);
         } else {

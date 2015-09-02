@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.sistcoop.persona.representations.idm.AccionistaRepresentation;
 
-@Path("/accionistas")
 public interface AccionistaResource {
 
     @GET
@@ -23,7 +22,7 @@ public interface AccionistaResource {
     public void update(AccionistaRepresentation representation);
 
     @POST
-    @Path("/disable")
+    @Path("disable")
     public void disable();
 
     @DELETE

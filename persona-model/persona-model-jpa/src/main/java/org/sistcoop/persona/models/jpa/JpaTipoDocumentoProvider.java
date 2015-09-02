@@ -7,7 +7,6 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,7 +18,6 @@ import org.sistcoop.persona.models.enums.TipoPersona;
 import org.sistcoop.persona.models.jpa.entities.TipoDocumentoEntity;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
-import org.sistcoop.persona.models.search.filters.TipoDocumentoFilterProvider;
 
 @Named
 @Stateless
@@ -29,9 +27,6 @@ public class JpaTipoDocumentoProvider extends AbstractHibernateStorage implement
 
     @PersistenceContext
     private EntityManager em;
-
-    @Inject
-    private TipoDocumentoFilterProvider filterProvider;
 
     @Override
     protected EntityManager getEntityManager() {
@@ -79,22 +74,17 @@ public class JpaTipoDocumentoProvider extends AbstractHibernateStorage implement
     }
 
     @Override
-    public SearchResultsModel<TipoDocumentoModel> search() {
+    public List<TipoDocumentoModel> getAll() {
         TypedQuery<TipoDocumentoEntity> query = em.createNamedQuery("TipoDocumentoEntity.findAll",
                 TipoDocumentoEntity.class);
 
         List<TipoDocumentoEntity> entities = query.getResultList();
         List<TipoDocumentoModel> models = new ArrayList<TipoDocumentoModel>();
         for (TipoDocumentoEntity tipoDocumentoEntity : entities) {
-            if (tipoDocumentoEntity.isEstado()) {
-                models.add(new TipoDocumentoAdapter(em, tipoDocumentoEntity));
-            }
+            models.add(new TipoDocumentoAdapter(em, tipoDocumentoEntity));
         }
 
-        SearchResultsModel<TipoDocumentoModel> result = new SearchResultsModel<>();
-        result.setModels(models);
-        result.setTotalSize(models.size());
-        return result;
+        return models;
     }
 
     @Override
@@ -114,8 +104,7 @@ public class JpaTipoDocumentoProvider extends AbstractHibernateStorage implement
     @Override
     public SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria, String filterText) {
         SearchResultsModel<TipoDocumentoEntity> entityResult = findFullText(criteria,
-                TipoDocumentoEntity.class, filterText, filterProvider.getAbreviaturaFilter(),
-                filterProvider.getDenominacionFilter());
+                TipoDocumentoEntity.class, filterText, "abreviatura", "denominacion");
 
         SearchResultsModel<TipoDocumentoModel> modelResult = new SearchResultsModel<>();
         List<TipoDocumentoModel> list = new ArrayList<>();

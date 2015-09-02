@@ -16,31 +16,31 @@
  */
 package org.sistcoop.persona.admin.client.resource;
 
+import java.util.List;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-import org.sistcoop.persona.representations.idm.search.SearchResultsRepresentation;
 
 @Produces(MediaType.APPLICATION_JSON)
 @Path("/")
 public interface MaestroResource {
 
     @GET
-    @Path("/tiposPersona")
-    public SearchResultsRepresentation<String> getTipoPersonas();
+    @Path("tiposPersona")
+    public List<String> getAllTipoPersonas();
 
     @GET
-    @Path("/estadosCiviles")
-    public SearchResultsRepresentation<String> getEstadosCiviles();
+    @Path("estadosCiviles")
+    public List<String> getAllEstadosCiviles();
 
     @GET
-    @Path("/sexos")
-    public SearchResultsRepresentation<String> getSexos();
+    @Path("sexos")
+    public List<String> getAllSexos();
 
     @GET
-    @Path("/tiposEmpresa")
-    public SearchResultsRepresentation<String> getTiposEmpresa();
+    @Path("tiposEmpresa")
+    public List<String> getAllTiposEmpresa();
 
 }

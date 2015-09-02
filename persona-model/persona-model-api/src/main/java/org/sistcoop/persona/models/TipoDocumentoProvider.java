@@ -1,5 +1,7 @@
 package org.sistcoop.persona.models;
 
+import java.util.List;
+
 import javax.ejb.Local;
 
 import org.sistcoop.persona.models.enums.TipoPersona;
@@ -17,7 +19,7 @@ public interface TipoDocumentoProvider extends Provider {
 
     boolean remove(TipoDocumentoModel tipoDocumentoModel);
 
-    SearchResultsModel<TipoDocumentoModel> search();
+    List<TipoDocumentoModel> getAll();
 
     SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria);
 

@@ -18,18 +18,20 @@ import org.sistcoop.persona.representations.idm.search.SearchResultsRepresentati
 @Consumes(MediaType.APPLICATION_JSON)
 public interface PersonasJuridicasResource {
 
-    @Path("/{persona}")
-    public PersonaJuridicaResource persona(@PathParam("persona") String persona);
+    @Path("{personaJuridica}")
+    public PersonaJuridicaResource personaJuridica(@PathParam("personaJuridica") String personaJuridica);
 
     @POST
     public Response create(PersonaJuridicaRepresentation representation);
 
     @GET
+    @Path("search")
     @Produces(MediaType.APPLICATION_JSON)
     public SearchResultsRepresentation<PersonaJuridicaRepresentation> search(
-            @QueryParam("documento") String documento, @QueryParam("numero") String numero,
+            @QueryParam("tipoDocumento") String tipoDocumento,
+            @QueryParam("numeroDocumento") String numeroDocumento,
             @QueryParam("filterText") @DefaultValue(value = "") String filterText,
             @QueryParam("page") @DefaultValue(value = "1") int page,
-            @QueryParam("pageSize") @DefaultValue(value = "10") int pageSize);
+            @QueryParam("pageSize") @DefaultValue(value = "20") int pageSize);
 
 }
