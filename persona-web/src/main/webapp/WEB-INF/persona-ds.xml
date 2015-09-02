@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+	<datasource jndi-name="java:jboss/datasources/PersonaDS" pool-name="PersonaDS" enabled="true" use-java-context="true">
+		<connection-url>jdbc:postgresql://localhost:5432/persona</connection-url>
+		<driver>postgresql</driver>
+		<security>
+			<user-name>postgres</user-name>
+			<password>123456</password>
+		</security>
+	</datasource>
+</datasources>
