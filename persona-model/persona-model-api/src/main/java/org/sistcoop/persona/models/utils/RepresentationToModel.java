@@ -78,20 +78,12 @@ public class RepresentationToModel {
         return model;
     }
 
-    public AccionistaModel createAccionista(AccionistaRepresentation representation,
-            PersonaJuridicaModel personaJuridicaModel, TipoDocumentoProvider tipoDocumentoProvider,
-            PersonaNaturalProvider personaNaturalProvider, AccionistaProvider accionistaProvider) {
+    public AccionistaModel createAccionista(AccionistaRepresentation rep,
+            PersonaJuridicaModel personaJuridica, PersonaNaturalModel personaNatural,
+            AccionistaProvider accionistaProvider) {
 
-        PersonaNaturalRepresentation personaNaturalRepresentation = representation.getPersonaNatural();
-
-        TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider
-                .findByAbreviatura(personaNaturalRepresentation.getTipoDocumento());
-        PersonaNaturalModel personaNaturalModel = personaNaturalProvider.findByTipoNumeroDocumento(
-                tipoDocumentoModel, personaNaturalRepresentation.getNumeroDocumento());
-
-        AccionistaModel model = accionistaProvider.create(personaJuridicaModel, personaNaturalModel,
-                representation.getPorcentajeParticipacion());
-
+        AccionistaModel model = accionistaProvider.create(personaJuridica, personaNatural,
+                rep.getPorcentajeParticipacion());
         return model;
     }
 }

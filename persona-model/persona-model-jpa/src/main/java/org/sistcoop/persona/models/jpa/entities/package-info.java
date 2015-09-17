@@ -1,20 +1,10 @@
 /**
- * 
- */
-/**
- * @author Huertas
- *
+ * @author <a href="mailto:carlosthe19916@sistcoop.com">Carlos Feria</a>
  */
 
-
-
-@GenericGenerators(
-		value = { 
-				@GenericGenerator(name = "SgGenericGenerator", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-						@Parameter(name = "prefer_sequence_per_entity", value = "true"),
-						@Parameter(name = "optimizer ", value = "pooled") }) 
-				}
-		)
+@GenericGenerators(value = { @GenericGenerator(name = "SgGenericGenerator", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "prefer_sequence_per_entity", value = "true"),
+        @Parameter(name = "optimizer ", value = "pooled") }) })
 package org.sistcoop.persona.models.jpa.entities;
 
 import org.hibernate.annotations.GenericGenerator;

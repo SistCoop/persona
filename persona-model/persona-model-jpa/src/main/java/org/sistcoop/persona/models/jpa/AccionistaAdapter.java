@@ -9,6 +9,10 @@ import org.sistcoop.persona.models.PersonaJuridicaModel;
 import org.sistcoop.persona.models.PersonaNaturalModel;
 import org.sistcoop.persona.models.jpa.entities.AccionistaEntity;
 
+/**
+ * @author <a href="mailto:carlosthe19916@sistcoop.com">Carlos Feria</a>
+ */
+
 public class AccionistaAdapter implements AccionistaModel {
 
     /**
@@ -16,8 +20,8 @@ public class AccionistaAdapter implements AccionistaModel {
 	 */
     private static final long serialVersionUID = 1L;
 
-    protected AccionistaEntity accionistaEntity;
-    protected EntityManager em;
+    private AccionistaEntity accionistaEntity;
+    private EntityManager em;
 
     public AccionistaAdapter(EntityManager em, AccionistaEntity accionistaEntity) {
         this.em = em;

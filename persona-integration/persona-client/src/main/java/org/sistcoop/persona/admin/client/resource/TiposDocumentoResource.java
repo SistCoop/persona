@@ -24,7 +24,7 @@ public interface TiposDocumentoResource {
     public TipoDocumentoResource tipoDocumento(@PathParam("tipoDocumento") String tipoDocumento);
 
     @POST
-    public Response create(TipoDocumentoRepresentation representation);
+    public Response create(TipoDocumentoRepresentation rep);
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

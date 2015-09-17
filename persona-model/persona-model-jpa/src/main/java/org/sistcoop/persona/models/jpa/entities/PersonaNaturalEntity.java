@@ -26,12 +26,17 @@ import org.hibernate.validator.constraints.URL;
 import org.sistcoop.persona.models.enums.EstadoCivil;
 import org.sistcoop.persona.models.enums.Sexo;
 
+/**
+ * @author <a href="mailto:carlosthe19916@sistcoop.com">Carlos Feria</a>
+ */
+
 @Audited
 @Cacheable
 @Entity
 @Table(name = "PERSONA_NATURAL")
 @NamedQueries(value = {
         @NamedQuery(name = "PersonaNaturalEntity.findAll", query = "SELECT p FROM PersonaNaturalEntity p"),
+        @NamedQuery(name = "PersonaNaturalEntity.findByTipoDocumento", query = "SELECT p FROM PersonaNaturalEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento"),
         @NamedQuery(name = "PersonaNaturalEntity.findByTipoNumeroDocumento", query = "SELECT p FROM PersonaNaturalEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento AND p.numeroDocumento = :numeroDocumento") })
 public class PersonaNaturalEntity extends PersonaEntity implements Serializable {
 
@@ -40,15 +45,55 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
 	 */
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "ID")
     private String id;
+
+    @NotNull
+    @Size(min = 1, max = 50)
+    @NotBlank
+    @Column(name = "APELLIDO_PATERNO")
     private String apellidoPaterno;
+
+    @NotNull
+    @Size(min = 1, max = 50)
+    @NotBlank
+    @Column(name = "APELLIDO_MATERNO")
     private String apellidoMaterno;
+
+    @NotNull
+    @Size(min = 1, max = 70)
+    @NotBlank
+    @Column(name = "NOMBRES")
     private String nombres;
+
+    @NotNull
+    @Past
+    @Temporal(TemporalType.DATE)
+    @Column(name = "FECHA_NACIMIENTO")
     private Date fechaNacimiento;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "SEXO")
     private Sexo sexo;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ESTADO_CIVIL")
     private EstadoCivil estadoCivil;
+
+    @Size(min = 0, max = 70)
+    @Column(name = "OCUPACION")
     private String ocupacion;
+
+    @URL
+    @Column(name = "URL_FOTO")
     private String urlFoto;
+
+    @URL
+    @Column(name = "URL_FIRMA")
     private String urlFirma;
 
     public PersonaNaturalEntity() {
@@ -64,10 +109,6 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
         super(tipoDocumento, numeroDocumento);
     }
 
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "ID")
     public String getId() {
         return id;
     }
@@ -76,11 +117,6 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
         this.id = id;
     }
 
-    @NotNull
-    @Size(min = 1, max = 50)
-    @NotBlank
-    
-    @Column(name = "APELLIDO_PATERNO")
     public String getApellidoPaterno() {
         return apellidoPaterno;
     }
@@ -89,11 +125,6 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
         this.apellidoPaterno = apellidoPaterno;
     }
 
-    @NotNull
-    @Size(min = 1, max = 50)
-    @NotBlank
-    
-    @Column(name = "APELLIDO_MATERNO")
     public String getApellidoMaterno() {
         return apellidoMaterno;
     }
@@ -102,11 +133,6 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
         this.apellidoMaterno = apellidoMaterno;
     }
 
-    @NotNull
-    @Size(min = 1, max = 70)
-    @NotBlank
-    
-    @Column(name = "NOMBRES")
     public String getNombres() {
         return nombres;
     }
@@ -115,10 +141,6 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
         this.nombres = nombres;
     }
 
-    @NotNull
-    @Past
-    @Temporal(TemporalType.DATE)
-    @Column(name = "FECHA_NACIMIENTO")
     public Date getFechaNacimiento() {
         return fechaNacimiento;
     }
@@ -127,9 +149,6 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "SEXO")
     public Sexo getSexo() {
         return sexo;
     }
@@ -138,8 +157,6 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
         this.sexo = sexo;
     }
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "ESTADO_CIVIL")
     public EstadoCivil getEstadoCivil() {
         return estadoCivil;
     }
@@ -148,8 +165,6 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
         this.estadoCivil = estadoCivil;
     }
 
-    @Size(min = 0, max = 70)
-    @Column(name = "OCUPACION")
     public String getOcupacion() {
         return ocupacion;
     }
@@ -158,8 +173,6 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
         this.ocupacion = ocupacion;
     }
 
-    @URL
-    @Column(name = "URL_FOTO")
     public String getUrlFoto() {
         return urlFoto;
     }
@@ -168,14 +181,20 @@ public class PersonaNaturalEntity extends PersonaEntity implements Serializable 
         this.urlFoto = urlFoto;
     }
 
-    @URL
-    @Column(name = "URL_FIRMA")
     public String getUrlFirma() {
         return urlFirma;
     }
 
     public void setUrlFirma(String urlFirma) {
         this.urlFirma = urlFirma;
+    }
+
+    @Override
+    public String toString() {
+        return "(PersonaNaturalEntity id=" + this.id + " tipoDocumento="
+                + this.tipoDocumento.getAbreviatura() + " numeroDocumento" + this.numeroDocumento
+                + " apellidoPaterno=" + this.apellidoPaterno + " apellidoMaterno=" + this.apellidoMaterno
+                + " nombres=" + this.nombres + ")";
     }
 
     @Override

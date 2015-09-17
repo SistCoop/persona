@@ -16,6 +16,10 @@ import org.sistcoop.persona.models.jpa.entities.AccionistaEntity;
 import org.sistcoop.persona.models.jpa.entities.PersonaJuridicaEntity;
 import org.sistcoop.persona.models.jpa.entities.PersonaNaturalEntity;
 
+/**
+ * @author <a href="mailto:carlosthe19916@sistcoop.com">Carlos Feria</a>
+ */
+
 public class PersonaJuridicaAdapter implements PersonaJuridicaModel {
 
     /**

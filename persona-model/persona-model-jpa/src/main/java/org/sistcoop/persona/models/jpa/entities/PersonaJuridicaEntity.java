@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -32,12 +33,17 @@ import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotBlank;
 import org.sistcoop.persona.models.enums.TipoEmpresa;
 
+/**
+ * @author <a href="mailto:carlosthe19916@sistcoop.com">Carlos Feria</a>
+ */
+
 @Audited
 @Cacheable
 @Entity
 @Table(name = "PERSONA_JURIDICA")
 @NamedQueries(value = {
         @NamedQuery(name = "PersonaJuridicaEntity.findAll", query = "SELECT p FROM PersonaJuridicaEntity p"),
+        @NamedQuery(name = "PersonaJuridicaEntity.findByTipoDocumento", query = "SELECT p FROM PersonaJuridicaEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento"),
         @NamedQuery(name = "PersonaJuridicaEntity.findByTipoNumeroDocumento", query = "SELECT p FROM PersonaJuridicaEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento AND p.numeroDocumento = :numeroDocumento") })
 public class PersonaJuridicaEntity extends PersonaEntity implements Serializable {
 
@@ -46,25 +52,54 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
 	 */
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "ID")
     private String id;
+
+    @NotNull
+    @Size(min = 1, max = 70)
+    @NotBlank
+    @Column(name = "RAZON_SOCIAL")
     private String razonSocial;
+
+    @Size(min = 0, max = 50)
+    @Column(name = "NOMBRE_COMERCIAL")
     private String nombreComercial;
+
+    @NotNull
+    @Past
+    @Temporal(TemporalType.DATE)
+    @Column(name = "FECHA_CONSTITUCION")
     private Date fechaConstitucion;
+
+    @Size(min = 0, max = 70)
+    @Column(name = "ACTIVIDAD_PRINCIPAL")
     private String actividadPrincipal;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TIPO_EMPRESA")
     private TipoEmpresa tipoEmpresa;
+
+    @NotNull
+    @Type(type = "org.hibernate.type.TrueFalseType")
+    @Column(name = "FIN_LUCRO")
     private boolean finLucro;
 
+    @NotNull
+    @OneToOne
+    @JoinColumn(name = "REPRESENTANTE_LEGAL", foreignKey = @ForeignKey)
     private PersonaNaturalEntity representanteLegal;
+
+    @OneToMany(mappedBy = "personaJuridica", fetch = FetchType.LAZY, orphanRemoval = true, cascade = { CascadeType.REMOVE })
     private Set<AccionistaEntity> accionistas = new HashSet<AccionistaEntity>(0);
 
     public PersonaJuridicaEntity() {
         super();
     }
 
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "ID")
     public String getId() {
         return id;
     }
@@ -73,10 +108,6 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
         this.id = id;
     }
 
-    @NotNull
-    @Size(min = 1, max = 70)
-    @NotBlank
-    @Column(name = "RAZON_SOCIAL")
     public String getRazonSocial() {
         return razonSocial;
     }
@@ -85,8 +116,6 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
         this.razonSocial = razonSocial;
     }
 
-    @Size(min = 0, max = 50)
-    @Column(name = "NOMBRE_COMERCIAL")
     public String getNombreComercial() {
         return nombreComercial;
     }
@@ -95,10 +124,6 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
         this.nombreComercial = nombreComercial;
     }
 
-    @NotNull
-    @Past
-    @Temporal(TemporalType.DATE)
-    @Column(name = "FECHA_CONSTITUCION")
     public Date getFechaConstitucion() {
         return fechaConstitucion;
     }
@@ -107,8 +132,6 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
         this.fechaConstitucion = fechaConstitucion;
     }
 
-    @Size(min = 0, max = 70)
-    @Column(name = "ACTIVIDAD_PRINCIPAL")
     public String getActividadPrincipal() {
         return actividadPrincipal;
     }
@@ -117,9 +140,6 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
         this.actividadPrincipal = actividadPrincipal;
     }
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "TIPO_EMPRESA")
     public TipoEmpresa getTipoEmpresa() {
         return tipoEmpresa;
     }
@@ -128,9 +148,6 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
         this.tipoEmpresa = tipoEmpresa;
     }
 
-    @NotNull
-    @Type(type = "org.hibernate.type.TrueFalseType")
-    @Column(name = "FIN_LUCRO")
     public boolean isFinLucro() {
         return finLucro;
     }
@@ -139,9 +156,6 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
         this.finLucro = finLucro;
     }
 
-    @NotNull
-    @OneToOne
-    @JoinColumn(name = "REPRESENTANTE_LEGAL", foreignKey = @ForeignKey)
     public PersonaNaturalEntity getRepresentanteLegal() {
         return representanteLegal;
     }
@@ -150,13 +164,19 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
         this.representanteLegal = representanteLegal;
     }
 
-    @OneToMany(mappedBy = "personaJuridica", fetch = FetchType.LAZY)
     public Set<AccionistaEntity> getAccionistas() {
         return accionistas;
     }
 
     public void setAccionistas(Set<AccionistaEntity> accionistas) {
         this.accionistas = accionistas;
+    }
+
+    @Override
+    public String toString() {
+        return "(PersonaJuridicaEntity id=" + this.id + " tipoDocumento="
+                + this.tipoDocumento.getAbreviatura() + " numeroDocumento" + this.numeroDocumento
+                + " razonSocial=" + this.razonSocial + ")";
     }
 
     @Override

@@ -10,18 +10,21 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.sistcoop.persona.Jsend;
 import org.sistcoop.persona.admin.client.resource.AccionistaResource;
 import org.sistcoop.persona.admin.client.resource.AccionistasResource;
 import org.sistcoop.persona.models.AccionistaModel;
 import org.sistcoop.persona.models.AccionistaProvider;
 import org.sistcoop.persona.models.PersonaJuridicaModel;
 import org.sistcoop.persona.models.PersonaJuridicaProvider;
+import org.sistcoop.persona.models.PersonaNaturalModel;
 import org.sistcoop.persona.models.PersonaNaturalProvider;
+import org.sistcoop.persona.models.TipoDocumentoModel;
 import org.sistcoop.persona.models.TipoDocumentoProvider;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.models.utils.RepresentationToModel;
 import org.sistcoop.persona.representations.idm.AccionistaRepresentation;
+import org.sistcoop.persona.representations.idm.PersonaNaturalRepresentation;
+import org.sistcoop.persona.services.ErrorResponse;
 
 @Stateless
 public class AccionistasResourceImpl implements AccionistasResource {
@@ -60,13 +63,26 @@ public class AccionistasResourceImpl implements AccionistasResource {
     }
 
     @Override
-    public Response create(AccionistaRepresentation representation) {
-        AccionistaModel model = representationToModel.createAccionista(representation,
-                getPersonaJuridicaModel(), tipoDocumentoProvider, personaNaturalProvider, accionistaProvider);
+    public Response create(AccionistaRepresentation rep) {
+        PersonaJuridicaModel personaJuridica = getPersonaJuridicaModel();
+
+        PersonaNaturalRepresentation personaNaturalRep = rep.getPersonaNatural();
+        TipoDocumentoModel tipoDocumento = tipoDocumentoProvider.findByAbreviatura(personaNaturalRep
+                .getTipoDocumento());
+        PersonaNaturalModel personaNatural = personaNaturalProvider.findByTipoNumeroDocumento(tipoDocumento,
+                personaNaturalRep.getNumeroDocumento());
+
+        // Check duplicated personaJuridica y personaNatural
+        if (accionistaProvider.findByPersonaJuridicaNatural(personaJuridica, personaNatural) != null) {
+            return ErrorResponse.exists("Accionista existe con la misma persona juridica y natural");
+        }
+
+        AccionistaModel model = representationToModel.createAccionista(rep, personaJuridica, personaNatural,
+                accionistaProvider);
 
         return Response.created(uriInfo.getAbsolutePathBuilder().path(model.getId()).build())
                 .header("Access-Control-Expose-Headers", "Location")
-                .entity(Jsend.getSuccessJSend(model.getId())).build();
+                .entity(ModelToRepresentation.toRepresentation(model)).build();
     }
 
     @Override

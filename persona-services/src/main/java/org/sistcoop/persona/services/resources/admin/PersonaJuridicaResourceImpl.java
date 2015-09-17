@@ -2,9 +2,9 @@ package org.sistcoop.persona.services.resources.admin;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Response;
 
 import org.sistcoop.persona.admin.client.resource.AccionistasResource;
 import org.sistcoop.persona.admin.client.resource.PersonaJuridicaResource;
@@ -12,6 +12,7 @@ import org.sistcoop.persona.models.PersonaJuridicaModel;
 import org.sistcoop.persona.models.PersonaJuridicaProvider;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.representations.idm.PersonaJuridicaRepresentation;
+import org.sistcoop.persona.services.ErrorResponse;
 import org.sistcoop.persona.services.managers.PersonaJuridicaManager;
 
 @Stateless
@@ -34,18 +35,18 @@ public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
     }
 
     @Override
-    public PersonaJuridicaRepresentation personaJuridica() {
+    public PersonaJuridicaRepresentation toRepresentation() {
         PersonaJuridicaRepresentation rep = ModelToRepresentation.toRepresentation(getPersonaJuridicaModel());
         if (rep != null) {
             return rep;
         } else {
-            throw new NotFoundException();
+            throw new NotFoundException("PersonaJuridica no encontrado");
         }
     }
 
     @Override
-    public void update(PersonaJuridicaRepresentation representation) {
-        personaJuridicaManager.update(getPersonaJuridicaModel(), representation);
+    public void update(PersonaJuridicaRepresentation rep) {
+        personaJuridicaManager.update(getPersonaJuridicaModel(), rep);
     }
 
     @Override
@@ -54,10 +55,16 @@ public class PersonaJuridicaResourceImpl implements PersonaJuridicaResource {
     }
 
     @Override
-    public void remove() {
-        boolean result = personaJuridicaProvider.remove(getPersonaJuridicaModel());
-        if (!result) {
-            throw new InternalServerErrorException();
+    public Response remove() {
+        PersonaJuridicaModel personaJuridica = getPersonaJuridicaModel();
+        if (personaJuridica == null) {
+            throw new NotFoundException("PersonaJuridica no encontrado");
+        }
+        boolean removed = personaJuridicaProvider.remove(personaJuridica);
+        if (removed) {
+            return Response.noContent().build();
+        } else {
+            return ErrorResponse.error("PersonaJuridica no pudo ser eliminado", Response.Status.BAD_REQUEST);
         }
     }
 

@@ -23,6 +23,10 @@ import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotBlank;
 import org.sistcoop.persona.models.enums.TipoPersona;
 
+/**
+ * @author <a href="mailto:carlosthe19916@sistcoop.com">Carlos Feria</a>
+ */
+
 @Audited
 @Cacheable
 @Entity
@@ -37,17 +41,36 @@ public class TipoDocumentoEntity implements Serializable {
 	 */
     private static final long serialVersionUID = 1L;
 
-    private String abreviatura;
-    private String denominacion;
-    private int cantidadCaracteres;
-    private TipoPersona tipoPersona;
-    private boolean estado;
-
-    private Timestamp optlk;
-
     @Size(min = 1, max = 20)
     @Id
     @Column(name = "ABREVIATURA")
+    private String abreviatura;
+
+    @NotNull
+    @Size(min = 1, max = 60)
+    @NotBlank
+    @Column(name = "DENOMINACION")
+    private String denominacion;
+
+    @NotNull
+    @Min(value = 1)
+    @Max(value = 20)
+    @Column(name = "CANTIDAD_CARACTERES")
+    private int cantidadCaracteres;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TIPO_PERSONA")
+    private TipoPersona tipoPersona;
+
+    @NotNull
+    @Type(type = "org.hibernate.type.TrueFalseType")
+    @Column(name = "ESTADO")
+    private boolean estado;
+
+    @Version
+    private Timestamp optlk;
+
     public String getAbreviatura() {
         return abreviatura;
     }
@@ -56,10 +79,6 @@ public class TipoDocumentoEntity implements Serializable {
         this.abreviatura = abreviatura;
     }
 
-    @NotNull
-    @Size(min = 1, max = 60)
-    @NotBlank
-    @Column(name = "DENOMINACION")
     public String getDenominacion() {
         return denominacion;
     }
@@ -68,10 +87,6 @@ public class TipoDocumentoEntity implements Serializable {
         this.denominacion = denominacion;
     }
 
-    @NotNull
-    @Min(value = 1)
-    @Max(value = 20)
-    @Column(name = "CANTIDAD_CARACTERES")
     public int getCantidadCaracteres() {
         return cantidadCaracteres;
     }
@@ -80,9 +95,6 @@ public class TipoDocumentoEntity implements Serializable {
         this.cantidadCaracteres = cantidadCaracteres;
     }
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "TIPO_PERSONA")
     public TipoPersona getTipoPersona() {
         return tipoPersona;
     }
@@ -91,9 +103,6 @@ public class TipoDocumentoEntity implements Serializable {
         this.tipoPersona = tipoPersona;
     }
 
-    @NotNull
-    @Type(type = "org.hibernate.type.TrueFalseType")
-    @Column(name = "ESTADO")
     public boolean isEstado() {
         return estado;
     }
@@ -102,13 +111,17 @@ public class TipoDocumentoEntity implements Serializable {
         this.estado = estado;
     }
 
-    @Version
     public Timestamp getOptlk() {
         return optlk;
     }
 
     public void setOptlk(Timestamp optlk) {
         this.optlk = optlk;
+    }
+
+    @Override
+    public String toString() {
+        return "(TipoDocumentoEntity abreviatura=" + this.abreviatura + ")";
     }
 
     @Override

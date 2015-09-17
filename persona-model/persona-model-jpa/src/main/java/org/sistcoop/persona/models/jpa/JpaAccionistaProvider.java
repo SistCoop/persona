@@ -12,23 +12,34 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import org.sistcoop.persona.models.AccionistaModel;
 import org.sistcoop.persona.models.AccionistaProvider;
+import org.sistcoop.persona.models.ModelDuplicateException;
 import org.sistcoop.persona.models.PersonaJuridicaModel;
 import org.sistcoop.persona.models.PersonaNaturalModel;
 import org.sistcoop.persona.models.jpa.entities.AccionistaEntity;
 import org.sistcoop.persona.models.jpa.entities.PersonaJuridicaEntity;
 import org.sistcoop.persona.models.jpa.entities.PersonaNaturalEntity;
 
+/**
+ * @author <a href="mailto:carlosthe19916@sistcoop.com">Carlos Feria</a>
+ */
+
 @Named
 @Stateless
 @Local(AccionistaProvider.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class JpaAccionistaProvider implements AccionistaProvider {
+public class JpaAccionistaProvider extends AbstractHibernateStorage implements AccionistaProvider {
 
     @PersistenceContext
-    protected EntityManager em;
+    private EntityManager em;
+
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.em;
+    }
 
     @Override
     public void close() {
@@ -36,13 +47,18 @@ public class JpaAccionistaProvider implements AccionistaProvider {
     }
 
     @Override
-    public AccionistaModel create(PersonaJuridicaModel personaJuridicaModel,
-            PersonaNaturalModel personaNaturalModel, BigDecimal porcentaje) {
+    public AccionistaModel create(PersonaJuridicaModel personaJuridica, PersonaNaturalModel personaNatural,
+            BigDecimal porcentaje) {
+        if (findByPersonaJuridicaNatural(personaJuridica, personaNatural) != null) {
+            throw new ModelDuplicateException(
+                    "AccionistaEntity personaNatural y personaJuridica debe ser unico, se encontro otra entidad con personaJuridica="
+                            + personaJuridica + "y personaNatural=" + personaNatural);
+        }
 
         PersonaJuridicaEntity personaJuridicaEntity = em.find(PersonaJuridicaEntity.class,
-                personaJuridicaModel.getId());
+                personaJuridica.getId());
         PersonaNaturalEntity personaNaturalEntity = em.find(PersonaNaturalEntity.class,
-                personaNaturalModel.getId());
+                personaNatural.getId());
 
         AccionistaEntity accionistaEntity = new AccionistaEntity();
         accionistaEntity.setPersonaNatural(personaNaturalEntity);
@@ -56,6 +72,25 @@ public class JpaAccionistaProvider implements AccionistaProvider {
     public AccionistaModel findById(String id) {
         AccionistaEntity accionistaEntity = em.find(AccionistaEntity.class, id);
         return accionistaEntity != null ? new AccionistaAdapter(em, accionistaEntity) : null;
+    }
+
+    @Override
+    public AccionistaModel findByPersonaJuridicaNatural(PersonaJuridicaModel personaJuridica,
+            PersonaNaturalModel personaNatural) {
+        TypedQuery<AccionistaEntity> query = em.createNamedQuery(
+                "AccionistaEntity.findByIdPersonaJuridicaNatural", AccionistaEntity.class);
+        query.setParameter("idPersonaJuridica", personaJuridica.getId());
+        query.setParameter("idPersonaNatural", personaNatural.getId());
+        List<AccionistaEntity> results = query.getResultList();
+        if (results.isEmpty()) {
+            return null;
+        } else if (results.size() > 1) {
+            throw new IllegalStateException("Mas de un AccionistaEntity con personaNatural="
+                    + personaNatural.getId() + " y personaJuridica=" + personaJuridica.getId() + ", results="
+                    + results);
+        } else {
+            return new AccionistaAdapter(em, results.get(0));
+        }
     }
 
     @Override

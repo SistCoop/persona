@@ -9,9 +9,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.sistcoop.persona.Jsend;
 import org.sistcoop.persona.admin.client.resource.PersonaNaturalResource;
 import org.sistcoop.persona.admin.client.resource.PersonasNaturalesResource;
+import org.sistcoop.persona.models.ModelDuplicateException;
 import org.sistcoop.persona.models.PersonaNaturalModel;
 import org.sistcoop.persona.models.PersonaNaturalProvider;
 import org.sistcoop.persona.models.TipoDocumentoModel;
@@ -23,6 +23,7 @@ import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.models.utils.RepresentationToModel;
 import org.sistcoop.persona.representations.idm.PersonaNaturalRepresentation;
 import org.sistcoop.persona.representations.idm.search.SearchResultsRepresentation;
+import org.sistcoop.persona.services.ErrorResponse;
 
 @Stateless
 public class PersonasNaturalesResourceImpl implements PersonasNaturalesResource {
@@ -48,15 +49,24 @@ public class PersonasNaturalesResourceImpl implements PersonasNaturalesResource 
     }
 
     @Override
-    public Response create(PersonaNaturalRepresentation representation) {
-        TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.findByAbreviatura(representation
+    public Response create(PersonaNaturalRepresentation rep) {
+        TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.findByAbreviatura(rep
                 .getTipoDocumento());
-        PersonaNaturalModel model = representationToModel.createPersonaNatural(representation,
-                tipoDocumentoModel, personaNaturalProvider);
 
-        return Response.created(uriInfo.getAbsolutePathBuilder().path(model.getId()).build())
-                .header("Access-Control-Expose-Headers", "Location")
-                .entity(Jsend.getSuccessJSend(model.getId())).build();
+        // Check duplicated tipo y numero de documento
+        if (personaNaturalProvider.findByTipoNumeroDocumento(tipoDocumentoModel, rep.getNumeroDocumento()) != null) {
+            return ErrorResponse.exists("PersonaNatural existe con el mismo tipo y numero de documento");
+        }
+
+        try {
+            PersonaNaturalModel model = representationToModel.createPersonaNatural(rep, tipoDocumentoModel,
+                    personaNaturalProvider);
+            return Response.created(uriInfo.getAbsolutePathBuilder().path(model.getId()).build())
+                    .header("Access-Control-Expose-Headers", "Location")
+                    .entity(ModelToRepresentation.toRepresentation(model)).build();
+        } catch (ModelDuplicateException e) {
+            return ErrorResponse.exists("PersonaNatural existe con el mismo tipo y numero de documento");
+        }
     }
 
     @Override

@@ -13,14 +13,20 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.sistcoop.persona.models.ModelDuplicateException;
 import org.sistcoop.persona.models.PersonaNaturalModel;
 import org.sistcoop.persona.models.PersonaNaturalProvider;
 import org.sistcoop.persona.models.TipoDocumentoModel;
 import org.sistcoop.persona.models.enums.Sexo;
+import org.sistcoop.persona.models.jpa.entities.AccionistaEntity;
 import org.sistcoop.persona.models.jpa.entities.PersonaNaturalEntity;
 import org.sistcoop.persona.models.jpa.entities.TipoDocumentoEntity;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
+
+/**
+ * @author <a href="mailto:carlosthe19916@sistcoop.com">Carlos Feria</a>
+ */
 
 @Named
 @Stateless
@@ -45,6 +51,11 @@ public class JpaPersonaNaturalProvider extends AbstractHibernateStorage implemen
     public PersonaNaturalModel create(String codigoPais, TipoDocumentoModel tipoDocumentoModel,
             String numeroDocumento, String apellidoPaterno, String apellidoMaterno, String nombres,
             Date fechaNacimiento, Sexo sexo) {
+        if (findByTipoNumeroDocumento(tipoDocumentoModel, numeroDocumento) != null) {
+            throw new ModelDuplicateException(
+                    "PersonaNaturalEntity tipoDocumento y numeroDocumento debe ser unico, se encontro otra entidad con tipoDocumento="
+                            + tipoDocumentoModel + "y numeroDocumento=" + numeroDocumento);
+        }
 
         TipoDocumentoEntity tipoDocumentoEntity = em.find(TipoDocumentoEntity.class,
                 tipoDocumentoModel.getAbreviatura());
@@ -64,6 +75,14 @@ public class JpaPersonaNaturalProvider extends AbstractHibernateStorage implemen
 
     @Override
     public boolean remove(PersonaNaturalModel personaNaturalModel) {
+        TypedQuery<AccionistaEntity> query1 = em.createNamedQuery("AccionistaEntity.findByIdPersonaNatural",
+                AccionistaEntity.class);
+        query1.setParameter("idPersonaNatural", personaNaturalModel.getId());
+        query1.setMaxResults(1);
+        if (!query1.getResultList().isEmpty()) {
+            return false;
+        }
+
         PersonaNaturalEntity personaNaturalEntity = em.find(PersonaNaturalEntity.class,
                 personaNaturalModel.getId());
         if (personaNaturalEntity == null) {
@@ -87,10 +106,14 @@ public class JpaPersonaNaturalProvider extends AbstractHibernateStorage implemen
         query.setParameter("tipoDocumento", tipoDocumento.getAbreviatura());
         query.setParameter("numeroDocumento", numeroDocumento);
         List<PersonaNaturalEntity> results = query.getResultList();
-        if (results.size() == 0) {
+        if (results.isEmpty()) {
             return null;
+        } else if (results.size() > 1) {
+            throw new IllegalStateException("Mas de una PersonaNaturalEntity con tipoDocumento="
+                    + tipoDocumento + " y numeroDocumento=" + numeroDocumento + ", results=" + results);
+        } else {
+            return new PersonaNaturalAdapter(em, results.get(0));
         }
-        return new PersonaNaturalAdapter(em, results.get(0));
     }
 
     @Override

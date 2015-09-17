@@ -8,6 +8,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.sistcoop.persona.representations.idm.PersonaNaturalRepresentation;
@@ -16,11 +17,11 @@ public interface PersonaNaturalResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public PersonaNaturalRepresentation personaNatural();
+    public PersonaNaturalRepresentation toRepresentation();
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public void update(PersonaNaturalRepresentation representation);
+    public void update(PersonaNaturalRepresentation rep);
 
     @POST
     @Path("foto")
@@ -37,6 +38,6 @@ public interface PersonaNaturalResource {
     public void disable();
 
     @DELETE
-    public void remove();
+    public Response remove();
 
 }

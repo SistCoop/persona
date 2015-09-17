@@ -20,7 +20,7 @@ public interface AccionistasResource {
     public AccionistaResource accionista(@PathParam("accionista") String accionista);
 
     @POST
-    public Response create(AccionistaRepresentation representation);
+    public Response create(AccionistaRepresentation rep);
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

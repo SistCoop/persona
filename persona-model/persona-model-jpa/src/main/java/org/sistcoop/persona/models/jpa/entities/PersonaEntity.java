@@ -16,6 +16,10 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
+/**
+ * @author <a href="mailto:carlosthe19916@sistcoop.com">Carlos Feria</a>
+ */
+
 @MappedSuperclass
 public abstract class PersonaEntity implements Serializable {
 
@@ -24,19 +28,49 @@ public abstract class PersonaEntity implements Serializable {
 	 */
     private static final long serialVersionUID = 1L;
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TIPO_DOCUMENTO", foreignKey = @ForeignKey)
     protected TipoDocumentoEntity tipoDocumento;
+
+    @NotNull
+    @Size(min = 1, max = 20)
+    @NotBlank
+    @Column(name = "NUMERO_DOCUMENTO")
     protected String numeroDocumento;
 
     // nacionalidad
+    @NotNull
+    @Size(min = 3, max = 3)
+    @NotBlank
+    @Column(name = "CODIGO_PAIS")
     protected String codigoPais;
 
+    @Size(min = 0, max = 6)
+    @Column(name = "UBIGEO")
     protected String ubigeo;
+
+    @Size(min = 0, max = 100)
+    @Column(name = "DIRECCION")
     protected String direccion;
+
+    @Size(min = 0, max = 70)
+    @Column(name = "REFERENCIA")
     protected String referencia;
+
+    @Size(min = 0, max = 20)
+    @Column(name = "TELEFONO")
     protected String telefono;
+
+    @Size(min = 0, max = 20)
+    @Column(name = "CELULAR")
     protected String celular;
+
+    @Email
+    @Column(name = "EMAIL")
     protected String email;
 
+    @Version
     protected Timestamp optlk;
 
     public PersonaEntity() {
@@ -48,9 +82,6 @@ public abstract class PersonaEntity implements Serializable {
         this.numeroDocumento = numeroDocumento;
     }
 
-    @NotNull    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TIPO_DOCUMENTO", foreignKey = @ForeignKey)
     public TipoDocumentoEntity getTipoDocumento() {
         return tipoDocumento;
     }
@@ -59,10 +90,6 @@ public abstract class PersonaEntity implements Serializable {
         this.tipoDocumento = tipoDocumento;
     }
 
-    @NotNull
-    @Size(min = 1, max = 20)
-    @NotBlank
-    @Column(name = "NUMERO_DOCUMENTO")
     public String getNumeroDocumento() {
         return numeroDocumento;
     }
@@ -71,10 +98,6 @@ public abstract class PersonaEntity implements Serializable {
         this.numeroDocumento = numeroDocumento;
     }
 
-    @NotNull
-    @Size(min = 3, max = 3)
-    @NotBlank
-    @Column(name = "CODIGO_PAIS")
     public String getCodigoPais() {
         return codigoPais;
     }
@@ -83,8 +106,6 @@ public abstract class PersonaEntity implements Serializable {
         this.codigoPais = codigoPais;
     }
 
-    @Size(min = 0, max = 6)
-    @Column(name = "UBIGEO")
     public String getUbigeo() {
         return ubigeo;
     }
@@ -93,8 +114,6 @@ public abstract class PersonaEntity implements Serializable {
         this.ubigeo = ubigeo;
     }
 
-    @Size(min = 0, max = 100)
-    @Column(name = "DIRECCION")
     public String getDireccion() {
         return direccion;
     }
@@ -103,8 +122,6 @@ public abstract class PersonaEntity implements Serializable {
         this.direccion = direccion;
     }
 
-    @Size(min = 0, max = 70)
-    @Column(name = "REFERENCIA")
     public String getReferencia() {
         return referencia;
     }
@@ -113,8 +130,6 @@ public abstract class PersonaEntity implements Serializable {
         this.referencia = referencia;
     }
 
-    @Size(min = 0, max = 20)
-    @Column(name = "TELEFONO")
     public String getTelefono() {
         return telefono;
     }
@@ -123,8 +138,6 @@ public abstract class PersonaEntity implements Serializable {
         this.telefono = telefono;
     }
 
-    @Size(min = 0, max = 20)
-    @Column(name = "CELULAR")
     public String getCelular() {
         return celular;
     }
@@ -133,8 +146,6 @@ public abstract class PersonaEntity implements Serializable {
         this.celular = celular;
     }
 
-    @Email
-    @Column(name = "EMAIL")
     public String getEmail() {
         return email;
     }
@@ -143,13 +154,18 @@ public abstract class PersonaEntity implements Serializable {
         this.email = email;
     }
 
-    @Version
     public Timestamp getOptlk() {
         return optlk;
     }
 
     public void setOptlk(Timestamp optlk) {
         this.optlk = optlk;
+    }
+
+    @Override
+    public String toString() {
+        return "(PersonaEntity tipoDocumento=" + this.tipoDocumento.getAbreviatura() + " numeroDocumento="
+                + this.numeroDocumento + ")";
     }
 
     @Override

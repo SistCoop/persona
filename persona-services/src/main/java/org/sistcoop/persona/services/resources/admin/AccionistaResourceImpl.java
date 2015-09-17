@@ -2,17 +2,17 @@ package org.sistcoop.persona.services.resources.admin;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Response;
 
 import org.sistcoop.persona.admin.client.resource.AccionistaResource;
 import org.sistcoop.persona.models.AccionistaModel;
 import org.sistcoop.persona.models.AccionistaProvider;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.representations.idm.AccionistaRepresentation;
+import org.sistcoop.persona.services.ErrorResponse;
 import org.sistcoop.persona.services.managers.AccionistaManager;
-import org.sistcoop.persona.services.messages.Messages;
 
 @Stateless
 public class AccionistaResourceImpl implements AccionistaResource {
@@ -31,18 +31,18 @@ public class AccionistaResourceImpl implements AccionistaResource {
     }
 
     @Override
-    public AccionistaRepresentation accionista() {
+    public AccionistaRepresentation toRepresentation() {
         AccionistaRepresentation rep = ModelToRepresentation.toRepresentation(getAccionistaModel());
         if (rep != null) {
             return rep;
         } else {
-            throw new NotFoundException();
+            throw new NotFoundException("Accionista no encontrado");
         }
     }
 
     @Override
-    public void update(AccionistaRepresentation representation) {
-        accionistaManager.update(getAccionistaModel(), representation);
+    public void update(AccionistaRepresentation rep) {
+        accionistaManager.update(getAccionistaModel(), rep);
     }
 
     @Override
@@ -51,11 +51,16 @@ public class AccionistaResourceImpl implements AccionistaResource {
     }
 
     @Override
-    public void remove() {
-        boolean result = accionistaProvider.remove(getAccionistaModel());
-        if (!result) {
-            throw new InternalServerErrorException(Messages.ERROR);
+    public Response remove() {
+        AccionistaModel accionistaModel = getAccionistaModel();
+        if (accionistaModel == null) {
+            throw new NotFoundException("Accionista no encontrado");
+        }
+        boolean removed = accionistaProvider.remove(accionistaModel);
+        if (removed) {
+            return Response.noContent().build();
+        } else {
+            return ErrorResponse.error("Accionista no pudo ser eliminado", Response.Status.BAD_REQUEST);
         }
     }
-
 }

@@ -12,12 +12,19 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.sistcoop.persona.models.ModelDuplicateException;
 import org.sistcoop.persona.models.TipoDocumentoModel;
 import org.sistcoop.persona.models.TipoDocumentoProvider;
 import org.sistcoop.persona.models.enums.TipoPersona;
+import org.sistcoop.persona.models.jpa.entities.PersonaJuridicaEntity;
+import org.sistcoop.persona.models.jpa.entities.PersonaNaturalEntity;
 import org.sistcoop.persona.models.jpa.entities.TipoDocumentoEntity;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
+
+/**
+ * @author <a href="mailto:carlosthe19916@sistcoop.com">Carlos Feria</a>
+ */
 
 @Named
 @Stateless
@@ -41,6 +48,12 @@ public class JpaTipoDocumentoProvider extends AbstractHibernateStorage implement
     @Override
     public TipoDocumentoModel create(String abreviatura, String denominacion, int cantidadCaracteres,
             TipoPersona tipoPersona) {
+        if (findByAbreviatura(abreviatura) != null) {
+            throw new ModelDuplicateException(
+                    "TipoDocumentoEntity abreviatura debe ser unico, se encontro otra entidad con abreviatura:"
+                            + abreviatura);
+        }
+
         TipoDocumentoEntity tipoDocumentoEntity = new TipoDocumentoEntity();
         tipoDocumentoEntity.setAbreviatura(abreviatura);
         tipoDocumentoEntity.setDenominacion(denominacion);
@@ -57,13 +70,34 @@ public class JpaTipoDocumentoProvider extends AbstractHibernateStorage implement
                 TipoDocumentoEntity.class);
         query.setParameter("abreviatura", abreviatura);
         List<TipoDocumentoEntity> results = query.getResultList();
-        if (results.size() == 0)
+        if (results.isEmpty()) {
             return null;
-        return new TipoDocumentoAdapter(em, results.get(0));
+        } else if (results.size() > 1) {
+            throw new IllegalStateException("Mas de un TipoDocumentoEntity con abreviatura=" + abreviatura
+                    + ", results=" + results);
+        } else {
+            return new TipoDocumentoAdapter(em, results.get(0));
+        }
     }
 
     @Override
     public boolean remove(TipoDocumentoModel tipoDocumentoModel) {
+        TypedQuery<PersonaNaturalEntity> query1 = em.createNamedQuery(
+                "PersonaNaturalEntity.findByTipoDocumento", PersonaNaturalEntity.class);
+        query1.setParameter("tipoDocumento", tipoDocumentoModel.getAbreviatura());
+        query1.setMaxResults(1);
+        if (!query1.getResultList().isEmpty()) {
+            return false;
+        }
+
+        TypedQuery<PersonaJuridicaEntity> query2 = em.createNamedQuery(
+                "PersonaJuridicaEntity.findByTipoDocumento", PersonaJuridicaEntity.class);
+        query2.setParameter("tipoDocumento", tipoDocumentoModel.getAbreviatura());
+        query2.setMaxResults(1);
+        if (!query2.getResultList().isEmpty()) {
+            return false;
+        }
+
         TipoDocumentoEntity tipoDocumentoEntity = em.find(TipoDocumentoEntity.class,
                 tipoDocumentoModel.getAbreviatura());
         if (tipoDocumentoEntity == null) {

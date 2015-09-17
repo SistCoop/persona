@@ -6,12 +6,16 @@ import org.sistcoop.persona.models.TipoDocumentoModel;
 import org.sistcoop.persona.models.enums.TipoPersona;
 import org.sistcoop.persona.models.jpa.entities.TipoDocumentoEntity;
 
+/**
+ * @author <a href="mailto:carlosthe19916@sistcoop.com">Carlos Feria</a>
+ */
+
 public class TipoDocumentoAdapter implements TipoDocumentoModel {
 
     private static final long serialVersionUID = 1L;
 
-    protected TipoDocumentoEntity tipoDocumentoEntity;
-    protected EntityManager em;
+    private TipoDocumentoEntity tipoDocumentoEntity;
+    private EntityManager em;
 
     public TipoDocumentoAdapter(EntityManager em, TipoDocumentoEntity tipoDocumentoEntity) {
         this.em = em;

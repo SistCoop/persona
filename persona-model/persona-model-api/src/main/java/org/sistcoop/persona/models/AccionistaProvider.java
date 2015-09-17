@@ -12,11 +12,14 @@ public interface AccionistaProvider extends Provider {
 
     AccionistaModel findById(String id);
 
-    AccionistaModel create(PersonaJuridicaModel personaJuridicaModel,
-            PersonaNaturalModel personaNaturalModel, BigDecimal porcentaje);
+    AccionistaModel findByPersonaJuridicaNatural(PersonaJuridicaModel personaJuridica,
+            PersonaNaturalModel personaNatural);
 
-    boolean remove(AccionistaModel accionistaModel);
+    AccionistaModel create(PersonaJuridicaModel personaJuridica, PersonaNaturalModel personaNatural,
+            BigDecimal porcentaje);
 
-    List<AccionistaModel> getAll(PersonaJuridicaModel personaJuridicaModel);
+    boolean remove(AccionistaModel accionista);
+
+    List<AccionistaModel> getAll(PersonaJuridicaModel personaJuridica);
 
 }

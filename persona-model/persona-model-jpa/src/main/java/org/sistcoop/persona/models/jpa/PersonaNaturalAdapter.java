@@ -10,6 +10,10 @@ import org.sistcoop.persona.models.enums.EstadoCivil;
 import org.sistcoop.persona.models.enums.Sexo;
 import org.sistcoop.persona.models.jpa.entities.PersonaNaturalEntity;
 
+/**
+ * @author <a href="mailto:carlosthe19916@sistcoop.com">Carlos Feria</a>
+ */
+
 public class PersonaNaturalAdapter implements PersonaNaturalModel {
 
     /**
@@ -17,8 +21,8 @@ public class PersonaNaturalAdapter implements PersonaNaturalModel {
 	 */
     private static final long serialVersionUID = 1L;
 
-    protected PersonaNaturalEntity personaNaturalEntity;
-    protected EntityManager em;
+    private PersonaNaturalEntity personaNaturalEntity;
+    private EntityManager em;
 
     public PersonaNaturalAdapter(EntityManager em, PersonaNaturalEntity personaNaturalEntity) {
         this.em = em;

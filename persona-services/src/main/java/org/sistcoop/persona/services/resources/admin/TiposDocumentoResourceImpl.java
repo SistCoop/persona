@@ -9,9 +9,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.sistcoop.persona.Jsend;
 import org.sistcoop.persona.admin.client.resource.TipoDocumentoResource;
 import org.sistcoop.persona.admin.client.resource.TiposDocumentoResource;
+import org.sistcoop.persona.models.ModelDuplicateException;
 import org.sistcoop.persona.models.TipoDocumentoModel;
 import org.sistcoop.persona.models.TipoDocumentoProvider;
 import org.sistcoop.persona.models.enums.TipoPersona;
@@ -23,6 +23,7 @@ import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.models.utils.RepresentationToModel;
 import org.sistcoop.persona.representations.idm.TipoDocumentoRepresentation;
 import org.sistcoop.persona.representations.idm.search.SearchResultsRepresentation;
+import org.sistcoop.persona.services.ErrorResponse;
 
 @Stateless
 public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
@@ -45,13 +46,19 @@ public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
     }
 
     @Override
-    public Response create(TipoDocumentoRepresentation representation) {
-        TipoDocumentoModel model = representationToModel.createTipoDocumento(representation,
-                tipoDocumentoProvider);
-
-        return Response.created(uriInfo.getAbsolutePathBuilder().path(model.getAbreviatura()).build())
-                .header("Access-Control-Expose-Headers", "Location")
-                .entity(Jsend.getSuccessJSend(model.getAbreviatura())).build();
+    public Response create(TipoDocumentoRepresentation rep) {
+        // Check duplicated abreviatura
+        if (tipoDocumentoProvider.findByAbreviatura(rep.getAbreviatura()) != null) {
+            return ErrorResponse.exists("TipoDocumento existe con la misma abreviatura");
+        }
+        try {
+            TipoDocumentoModel model = representationToModel.createTipoDocumento(rep, tipoDocumentoProvider);
+            return Response.created(uriInfo.getAbsolutePathBuilder().path(model.getAbreviatura()).build())
+                    .header("Access-Control-Expose-Headers", "Location")
+                    .entity(ModelToRepresentation.toRepresentation(model)).build();
+        } catch (ModelDuplicateException e) {
+            return ErrorResponse.exists("TipoDocumento existe con la misma abreviatura");
+        }
     }
 
     @Override

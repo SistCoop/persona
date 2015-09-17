@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
@@ -22,8 +23,8 @@ import org.sistcoop.persona.models.PersonaNaturalModel;
 import org.sistcoop.persona.models.PersonaNaturalProvider;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.representations.idm.PersonaNaturalRepresentation;
+import org.sistcoop.persona.services.ErrorResponse;
 import org.sistcoop.persona.services.managers.PersonaNaturalManager;
-import org.sistcoop.persona.services.messages.Messages;
 import org.sistcoop.persona.services.util.GoogleDriveManager;
 
 @Stateless
@@ -46,18 +47,18 @@ public class PersonaNaturalResourceImpl implements PersonaNaturalResource {
     }
 
     @Override
-    public PersonaNaturalRepresentation personaNatural() {
+    public PersonaNaturalRepresentation toRepresentation() {
         PersonaNaturalRepresentation rep = ModelToRepresentation.toRepresentation(getPersonaNaturalModel());
         if (rep != null) {
             return rep;
         } else {
-            throw new NotFoundException();
+            throw new NotFoundException("PersonaNatural no encontrado");
         }
     }
 
     @Override
-    public void update(PersonaNaturalRepresentation representation) {
-        personaNaturalManager.update(getPersonaNaturalModel(), representation);
+    public void update(PersonaNaturalRepresentation rep) {
+        personaNaturalManager.update(getPersonaNaturalModel(), rep);
     }
 
     @Override
@@ -130,10 +131,16 @@ public class PersonaNaturalResourceImpl implements PersonaNaturalResource {
     }
 
     @Override
-    public void remove() {
-        boolean result = personaNaturalProvider.remove(getPersonaNaturalModel());
-        if (!result) {
-            throw new InternalServerErrorException(Messages.ERROR);
+    public Response remove() {
+        PersonaNaturalModel personaNatural = getPersonaNaturalModel();
+        if (personaNatural == null) {
+            throw new NotFoundException("PersonaNatural no encontrado");
+        }
+        boolean removed = personaNaturalProvider.remove(personaNatural);
+        if (removed) {
+            return Response.noContent().build();
+        } else {
+            return ErrorResponse.error("PersonaNatural no pudo ser eliminado", Response.Status.BAD_REQUEST);
         }
     }
 

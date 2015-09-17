@@ -12,6 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Digits;
@@ -23,29 +25,54 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.envers.Audited;
 
+/**
+ * @author <a href="mailto:carlosthe19916@sistcoop.com">Carlos Feria</a>
+ */
+
 @Audited
 @Cacheable
 @Entity
 @Table(name = "ACCIONISTA")
+@NamedQueries(value = {
+        @NamedQuery(name = "AccionistaEntity.findAll", query = "SELECT a FROM AccionistaEntity a"),
+        @NamedQuery(name = "AccionistaEntity.findByIdPersonaNatural", query = "SELECT a FROM AccionistaEntity a INNER JOIN a.personaNatural p WHERE p.id = :idPersonaNatural"),
+        @NamedQuery(name = "AccionistaEntity.findByIdPersonaJuridicaNatural", query = "SELECT a FROM AccionistaEntity a INNER JOIN a.personaJuridica pj INNER JOIN a.personaNatural pn WHERE pj.id = :idPersonaNatural AND pn.id = :idPersonaNatural") })
 public class AccionistaEntity implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "ID")
     private String id;
+
+    @NotNull
+    @NaturalId
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PERSONA_NATURAL_ID", foreignKey = @ForeignKey)
     private PersonaNaturalEntity personaNatural;
+
+    @NotNull
+    @NaturalId
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PERSONA_JURIDICA_ID", foreignKey = @ForeignKey)
     private PersonaJuridicaEntity personaJuridica;
+
+    @NotNull
+    @Min(value = 1)
+    @Max(value = 100)
+    @Digits(integer = 3, fraction = 2)
+    @Column(name = "PORCENTAJE_PARTICIPACION")
     private BigDecimal porcentajeParticipacion;
 
+    @Version
     private Timestamp optlk;
 
     public AccionistaEntity() {
         // TODO Auto-generated constructor stub
     }
 
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "ID")
     public String getId() {
         return id;
     }
@@ -54,10 +81,6 @@ public class AccionistaEntity implements java.io.Serializable {
         this.id = id;
     }
 
-    @NotNull
-    @NaturalId
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(foreignKey = @ForeignKey)
     public PersonaNaturalEntity getPersonaNatural() {
         return personaNatural;
     }
@@ -66,10 +89,6 @@ public class AccionistaEntity implements java.io.Serializable {
         this.personaNatural = personaNatural;
     }
 
-    @NotNull
-    @NaturalId
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(foreignKey = @ForeignKey)
     public PersonaJuridicaEntity getPersonaJuridica() {
         return personaJuridica;
     }
@@ -78,11 +97,6 @@ public class AccionistaEntity implements java.io.Serializable {
         this.personaJuridica = personaJuridica;
     }
 
-    @NotNull
-    @Min(value = 1)
-    @Max(value = 100)
-    @Digits(integer = 3, fraction = 2)
-    @Column(name = "PORCENTAJE_PARTICIPACION")
     public BigDecimal getPorcentajeParticipacion() {
         return porcentajeParticipacion;
     }
@@ -91,13 +105,18 @@ public class AccionistaEntity implements java.io.Serializable {
         this.porcentajeParticipacion = porcentajeParticipacion;
     }
 
-    @Version
     public Timestamp getOptlk() {
         return optlk;
     }
 
     public void setOptlk(Timestamp optlk) {
         this.optlk = optlk;
+    }
+
+    @Override
+    public String toString() {
+        return "(AccionistaEntity id=" + this.id + " personaJuridica=" + this.personaJuridica.getId()
+                + " personaNatural" + this.personaNatural.getId() + ")";
     }
 
     @Override

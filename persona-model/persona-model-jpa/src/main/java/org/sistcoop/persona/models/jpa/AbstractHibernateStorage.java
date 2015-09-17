@@ -20,9 +20,9 @@ import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
 
 /**
- * A base class that JPA storage impls can extend.
+ * A base class that Hibernate storage impls can extend.
  *
- * @author eric.wittmann@redhat.com
+ * @author <a href="mailto:carlosthe19916@sistcoop.com">Carlos Feria</a>
  */
 public abstract class AbstractHibernateStorage {
 
@@ -145,16 +145,17 @@ public abstract class AbstractHibernateStorage {
         criteriaQuery.setProjection(Projections.rowCount());
         return ((Long) criteriaQuery.uniqueResult()).intValue();
     }
-    
-    protected <T> int executeCountQuery(SearchCriteriaModel criteria, Session session, Class<T> type, String filterText, String... field) {
+
+    protected <T> int executeCountQuery(SearchCriteriaModel criteria, Session session, Class<T> type,
+            String filterText, String... field) {
         Criteria criteriaQuery = session.createCriteria(type);
-        applySearchCriteriaToQuery(criteria, type, criteriaQuery, true);        
+        applySearchCriteriaToQuery(criteria, type, criteriaQuery, true);
         List<Criterion> disjuntionsCount = new ArrayList<>();
         for (String fieldName : field) {
             Criterion criterion = Restrictions.ilike(fieldName, filterText, MatchMode.ANYWHERE);
             disjuntionsCount.add(criterion);
         }
-        criteriaQuery.add(Restrictions.or(disjuntionsCount.toArray(new Criterion[disjuntionsCount.size()])));        
+        criteriaQuery.add(Restrictions.or(disjuntionsCount.toArray(new Criterion[disjuntionsCount.size()])));
         criteriaQuery.setProjection(Projections.rowCount());
         return ((Long) criteriaQuery.uniqueResult()).intValue();
     }
