@@ -35,10 +35,6 @@ public class AdminMessagesProvider implements MessagesProvider {
         }
     }
 
-    @Override
-    public void close() {
-    }
-
     private Properties getMessagesBundle(Locale locale) {
         Properties properties = new Properties();
 
@@ -47,7 +43,7 @@ public class AdminMessagesProvider implements MessagesProvider {
         }
 
         URL url = getClass().getClassLoader().getResource(
-                "theme/base/admin/messages/messages_" + locale.toString() + ".properties");
+                "messages/messages_" + locale.toString() + ".properties");
         if (url != null) {
             try {
                 properties.load(url.openStream());

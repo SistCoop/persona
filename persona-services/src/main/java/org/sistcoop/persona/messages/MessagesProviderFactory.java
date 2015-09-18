@@ -3,6 +3,7 @@ package org.sistcoop.persona.messages;
 /**
  * @author <a href="mailto:leonardo.zanivan@gmail.com">Leonardo Zanivan</a>
  */
+
 public interface MessagesProviderFactory {
 
     public MessagesProvider create();

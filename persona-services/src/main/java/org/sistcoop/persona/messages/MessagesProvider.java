@@ -1,11 +1,9 @@
 package org.sistcoop.persona.messages;
 
-import org.sistcoop.persona.provider.Provider;
-
 /**
  * @author <a href="mailto:leonardo.zanivan@gmail.com">Leonardo Zanivan</a>
  */
-public interface MessagesProvider extends Provider {
+public interface MessagesProvider {
 
     String getMessage(String messageKey, Object... parameters);
 

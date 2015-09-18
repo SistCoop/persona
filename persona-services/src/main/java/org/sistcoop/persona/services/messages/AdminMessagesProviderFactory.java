@@ -2,12 +2,15 @@ package org.sistcoop.persona.services.messages;
 
 import java.util.Locale;
 
+import javax.enterprise.context.Dependent;
+
 import org.sistcoop.persona.messages.MessagesProvider;
 import org.sistcoop.persona.messages.MessagesProviderFactory;
 
 /**
  * @author <a href="mailto:leonardo.zanivan@gmail.com">Leonardo Zanivan</a>
  */
+@Dependent
 public class AdminMessagesProviderFactory implements MessagesProviderFactory {
 
     @Override
