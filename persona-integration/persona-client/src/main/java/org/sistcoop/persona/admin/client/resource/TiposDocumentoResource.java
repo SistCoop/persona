@@ -34,6 +34,7 @@ public interface TiposDocumentoResource {
     @Path("search")
     @Produces(MediaType.APPLICATION_JSON)
     public SearchResultsRepresentation<TipoDocumentoRepresentation> search(
+            @QueryParam("abreviatura") String abreviatura,
             @QueryParam("tipoPersona") String tipoPersona,
             @QueryParam("estado") @DefaultValue(value = "true") boolean estado,
             @QueryParam("filterText") @DefaultValue(value = "") String filterText,

@@ -72,8 +72,8 @@ public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
     }
 
     @Override
-    public SearchResultsRepresentation<TipoDocumentoRepresentation> search(String tipoPersona,
-            boolean estado, String filterText, int page, int pageSize) {
+    public SearchResultsRepresentation<TipoDocumentoRepresentation> search(String abreviatura,
+            String tipoPersona, boolean estado, String filterText, int page, int pageSize) {
 
         PagingModel paging = new PagingModel();
         paging.setPage(page);
@@ -81,6 +81,11 @@ public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
 
         SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
         searchCriteriaBean.setPaging(paging);
+
+        // add filters
+        if (abreviatura != null) {
+            searchCriteriaBean.addFilter("abreviatura", abreviatura, SearchCriteriaFilterOperator.eq);
+        }
 
         // add filters
         if (tipoPersona != null) {
