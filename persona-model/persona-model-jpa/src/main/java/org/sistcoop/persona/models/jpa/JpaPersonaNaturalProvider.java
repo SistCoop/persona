@@ -19,6 +19,7 @@ import org.sistcoop.persona.models.PersonaNaturalProvider;
 import org.sistcoop.persona.models.TipoDocumentoModel;
 import org.sistcoop.persona.models.enums.Sexo;
 import org.sistcoop.persona.models.jpa.entities.AccionistaEntity;
+import org.sistcoop.persona.models.jpa.entities.PersonaJuridicaEntity;
 import org.sistcoop.persona.models.jpa.entities.PersonaNaturalEntity;
 import org.sistcoop.persona.models.jpa.entities.TipoDocumentoEntity;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
@@ -80,6 +81,15 @@ public class JpaPersonaNaturalProvider extends AbstractHibernateStorage implemen
         query1.setParameter("idPersonaNatural", personaNaturalModel.getId());
         query1.setMaxResults(1);
         if (!query1.getResultList().isEmpty()) {
+            return false;
+        }
+
+        TypedQuery<PersonaJuridicaEntity> query2 = em
+                .createNamedQuery("PersonaJuridicaEntity.FindByIdPersonaNaturalRepresentanteLegal",
+                        PersonaJuridicaEntity.class);
+        query2.setParameter("idPersonaNaturalRepresentanteLegal", personaNaturalModel.getId());
+        query2.setMaxResults(1);
+        if (!query2.getResultList().isEmpty()) {
             return false;
         }
 
