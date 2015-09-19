@@ -19,7 +19,6 @@ import org.sistcoop.persona.models.PersonaNaturalProvider;
 import org.sistcoop.persona.models.TipoDocumentoModel;
 import org.sistcoop.persona.models.TipoDocumentoProvider;
 import org.sistcoop.persona.models.search.PagingModel;
-import org.sistcoop.persona.models.search.SearchCriteriaFilterOperator;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
@@ -88,12 +87,18 @@ public class PersonasJuridicasResourceImpl implements PersonasJuridicasResource 
             String numeroDocumento, String filterText, int page, int pageSize) {
         SearchResultsModel<PersonaJuridicaModel> results = null;
         if (tipoDocumento != null && numeroDocumento != null) {
-            SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
+            TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.findByAbreviatura(tipoDocumento);
+            PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.findByTipoNumeroDocumento(
+                    tipoDocumentoModel, numeroDocumento);
 
-            searchCriteriaBean.addFilter("tipoDocumento", tipoDocumento, SearchCriteriaFilterOperator.eq);
-            searchCriteriaBean.addFilter("numeroDocumento", numeroDocumento, SearchCriteriaFilterOperator.eq);
+            List<PersonaJuridicaModel> items = new ArrayList<>();
+            if (personaJuridicaModel != null) {
+                items.add(personaJuridicaModel);
+            }
 
-            results = personaJuridicaProvider.search(searchCriteriaBean);
+            results = new SearchResultsModel<>();
+            results.setModels(items);
+            results.setTotalSize(items.size());
         } else {
             PagingModel paging = new PagingModel();
             paging.setPage(page);
