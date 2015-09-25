@@ -1,6 +1,7 @@
 package org.sistcoop.persona.models;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Local;
 
@@ -22,7 +23,7 @@ public interface PersonaNaturalProvider extends Provider {
 
     boolean remove(PersonaNaturalModel personaNaturalModel);
 
-    SearchResultsModel<PersonaNaturalModel> search();
+    List<PersonaNaturalModel> getAll();
 
     SearchResultsModel<PersonaNaturalModel> search(SearchCriteriaModel criteria);
 

@@ -127,19 +127,15 @@ public class JpaPersonaNaturalProvider extends AbstractHibernateStorage implemen
     }
 
     @Override
-    public SearchResultsModel<PersonaNaturalModel> search() {
+    public List<PersonaNaturalModel> getAll() {
         TypedQuery<PersonaNaturalEntity> query = em.createNamedQuery("PersonaNaturalEntity.findAll",
                 PersonaNaturalEntity.class);
 
         List<PersonaNaturalEntity> entities = query.getResultList();
-        List<PersonaNaturalModel> models = new ArrayList<PersonaNaturalModel>();
+        List<PersonaNaturalModel> result = new ArrayList<PersonaNaturalModel>();
         for (PersonaNaturalEntity personaNaturalEntity : entities) {
-            models.add(new PersonaNaturalAdapter(em, personaNaturalEntity));
+            result.add(new PersonaNaturalAdapter(em, personaNaturalEntity));
         }
-
-        SearchResultsModel<PersonaNaturalModel> result = new SearchResultsModel<>();
-        result.setModels(models);
-        result.setTotalSize(models.size());
         return result;
     }
 
