@@ -14,14 +14,16 @@ import org.sistcoop.persona.admin.client.resource.TiposDocumentoResource;
 import org.sistcoop.persona.models.ModelDuplicateException;
 import org.sistcoop.persona.models.TipoDocumentoModel;
 import org.sistcoop.persona.models.TipoDocumentoProvider;
-import org.sistcoop.persona.models.enums.TipoPersona;
-import org.sistcoop.persona.models.search.PagingModel;
 import org.sistcoop.persona.models.search.SearchCriteriaFilterOperator;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.models.utils.RepresentationToModel;
 import org.sistcoop.persona.representations.idm.TipoDocumentoRepresentation;
+import org.sistcoop.persona.representations.idm.search.OrderByRepresentation;
+import org.sistcoop.persona.representations.idm.search.PagingRepresentation;
+import org.sistcoop.persona.representations.idm.search.SearchCriteriaFilterRepresentation;
+import org.sistcoop.persona.representations.idm.search.SearchCriteriaRepresentation;
 import org.sistcoop.persona.representations.idm.search.SearchResultsRepresentation;
 import org.sistcoop.persona.services.ErrorResponse;
 
@@ -71,40 +73,82 @@ public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
         return representations;
     }
 
+    /*
+     * @Override public SearchResultsRepresentation<TipoDocumentoRepresentation>
+     * search(String abreviatura, String tipoPersona, boolean estado, String
+     * filterText, int page, int pageSize) {
+     * 
+     * PagingModel paging = new PagingModel(); paging.setPage(page);
+     * paging.setPageSize(pageSize);
+     * 
+     * SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
+     * searchCriteriaBean.setPaging(paging);
+     * 
+     * // add filters if (abreviatura != null) {
+     * searchCriteriaBean.addFilter("abreviatura", abreviatura,
+     * SearchCriteriaFilterOperator.eq); }
+     * 
+     * // add filters if (tipoPersona != null) {
+     * searchCriteriaBean.addFilter("tipoPersona",
+     * TipoPersona.valueOf(tipoPersona.toUpperCase()),
+     * SearchCriteriaFilterOperator.eq); }
+     * searchCriteriaBean.addFilter("estado", estado,
+     * SearchCriteriaFilterOperator.bool_eq);
+     * 
+     * // search SearchResultsModel<TipoDocumentoModel> results =
+     * tipoDocumentoProvider.search(searchCriteriaBean, filterText);
+     * SearchResultsRepresentation<TipoDocumentoRepresentation> rep = new
+     * SearchResultsRepresentation<>(); List<TipoDocumentoRepresentation>
+     * representations = new ArrayList<>(); for (TipoDocumentoModel model :
+     * results.getModels()) {
+     * representations.add(ModelToRepresentation.toRepresentation(model)); }
+     * rep.setTotalSize(results.getTotalSize()); rep.setItems(representations);
+     * 
+     * return rep; }
+     */
+
     @Override
-    public SearchResultsRepresentation<TipoDocumentoRepresentation> search(String abreviatura,
-            String tipoPersona, boolean estado, String filterText, int page, int pageSize) {
+    public SearchResultsRepresentation<TipoDocumentoRepresentation> search(
+            SearchCriteriaRepresentation criteria) {
+        SearchCriteriaModel criteriaModel = new SearchCriteriaModel();
 
-        PagingModel paging = new PagingModel();
-        paging.setPage(page);
-        paging.setPageSize(pageSize);
-
-        SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
-        searchCriteriaBean.setPaging(paging);
-
-        // add filters
-        if (abreviatura != null) {
-            searchCriteriaBean.addFilter("abreviatura", abreviatura, SearchCriteriaFilterOperator.eq);
+        // set filter and order
+        for (SearchCriteriaFilterRepresentation filter : criteria.getFilters()) {
+            criteriaModel.addFilter(filter.getName(), filter.getValue(),
+                    SearchCriteriaFilterOperator.valueOf(filter.getOperator().toString()));
+        }
+        for (OrderByRepresentation order : criteria.getOrders()) {
+            criteriaModel.addOrder(order.getName(), order.isAscending());
         }
 
-        // add filters
-        if (tipoPersona != null) {
-            searchCriteriaBean.addFilter("tipoPersona", TipoPersona.valueOf(tipoPersona.toUpperCase()),
-                    SearchCriteriaFilterOperator.eq);
+        // set paging
+        PagingRepresentation paging = criteria.getPaging();
+        if (paging == null) {
+            paging = new PagingRepresentation();
+            paging.setPage(1);
+            paging.setPageSize(20);
         }
-        searchCriteriaBean.addFilter("estado", estado, SearchCriteriaFilterOperator.bool_eq);
+        criteriaModel.setPageSize(paging.getPageSize());
+        criteriaModel.setPage(paging.getPage());
+
+        // extract filterText
+        String filterText = criteria.getFilterText();
 
         // search
-        SearchResultsModel<TipoDocumentoModel> results = tipoDocumentoProvider.search(searchCriteriaBean,
-                filterText);
-        SearchResultsRepresentation<TipoDocumentoRepresentation> rep = new SearchResultsRepresentation<>();
-        List<TipoDocumentoRepresentation> representations = new ArrayList<>();
-        for (TipoDocumentoModel model : results.getModels()) {
-            representations.add(ModelToRepresentation.toRepresentation(model));
+        SearchResultsModel<TipoDocumentoModel> results = null;
+        if (filterText == null) {
+            results = tipoDocumentoProvider.search(criteriaModel);
+        } else {
+            results = tipoDocumentoProvider.search(criteriaModel, filterText);
         }
-        rep.setTotalSize(results.getTotalSize());
-        rep.setItems(representations);
 
+        SearchResultsRepresentation<TipoDocumentoRepresentation> rep = new SearchResultsRepresentation<>();
+        List<TipoDocumentoRepresentation> items = new ArrayList<>();
+        for (TipoDocumentoModel model : results.getModels()) {
+            items.add(ModelToRepresentation.toRepresentation(model));
+        }
+        rep.setItems(items);
+        rep.setTotalSize(results.getTotalSize());
         return rep;
     }
 

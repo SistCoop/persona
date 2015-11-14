@@ -18,13 +18,17 @@ import org.sistcoop.persona.models.PersonaNaturalModel;
 import org.sistcoop.persona.models.PersonaNaturalProvider;
 import org.sistcoop.persona.models.TipoDocumentoModel;
 import org.sistcoop.persona.models.TipoDocumentoProvider;
-import org.sistcoop.persona.models.search.PagingModel;
+import org.sistcoop.persona.models.search.SearchCriteriaFilterOperator;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.models.utils.RepresentationToModel;
 import org.sistcoop.persona.representations.idm.PersonaJuridicaRepresentation;
 import org.sistcoop.persona.representations.idm.PersonaNaturalRepresentation;
+import org.sistcoop.persona.representations.idm.search.OrderByRepresentation;
+import org.sistcoop.persona.representations.idm.search.PagingRepresentation;
+import org.sistcoop.persona.representations.idm.search.SearchCriteriaFilterRepresentation;
+import org.sistcoop.persona.representations.idm.search.SearchCriteriaRepresentation;
 import org.sistcoop.persona.representations.idm.search.SearchResultsRepresentation;
 import org.sistcoop.persona.services.ErrorResponse;
 
@@ -56,8 +60,8 @@ public class PersonasJuridicasResourceImpl implements PersonasJuridicasResource 
 
     @Override
     public Response create(PersonaJuridicaRepresentation rep) {
-        TipoDocumentoModel tipoDocumentoPersonaJuridica = tipoDocumentoProvider.findByAbreviatura(rep
-                .getTipoDocumento());
+        TipoDocumentoModel tipoDocumentoPersonaJuridica = tipoDocumentoProvider
+                .findByAbreviatura(rep.getTipoDocumento());
 
         // Check duplicated tipo y numero de documento
         if (personaJuridicaProvider.findByTipoNumeroDocumento(tipoDocumentoPersonaJuridica,
@@ -68,8 +72,8 @@ public class PersonasJuridicasResourceImpl implements PersonasJuridicasResource 
         PersonaNaturalRepresentation representanteRep = rep.getRepresentanteLegal();
         TipoDocumentoModel tipoDocumentoRepresentante = tipoDocumentoProvider
                 .findByAbreviatura(representanteRep.getTipoDocumento());
-        PersonaNaturalModel representante = personaNaturalProvider.findByTipoNumeroDocumento(
-                tipoDocumentoRepresentante, representanteRep.getNumeroDocumento());
+        PersonaNaturalModel representante = personaNaturalProvider
+                .findByTipoNumeroDocumento(tipoDocumentoRepresentante, representanteRep.getNumeroDocumento());
         try {
             PersonaJuridicaModel model = representationToModel.createPersonaJuridica(rep,
                     tipoDocumentoPersonaJuridica, representante, personaJuridicaProvider);
@@ -82,41 +86,82 @@ public class PersonasJuridicasResourceImpl implements PersonasJuridicasResource 
         }
     }
 
+    /*
+     * @Override public
+     * SearchResultsRepresentation<PersonaJuridicaRepresentation> search(String
+     * tipoDocumento, String numeroDocumento, String filterText, int page, int
+     * pageSize) { SearchResultsModel<PersonaJuridicaModel> results = null; if
+     * (tipoDocumento != null && numeroDocumento != null) { TipoDocumentoModel
+     * tipoDocumentoModel =
+     * tipoDocumentoProvider.findByAbreviatura(tipoDocumento);
+     * PersonaJuridicaModel personaJuridicaModel =
+     * personaJuridicaProvider.findByTipoNumeroDocumento( tipoDocumentoModel,
+     * numeroDocumento);
+     * 
+     * List<PersonaJuridicaModel> items = new ArrayList<>(); if
+     * (personaJuridicaModel != null) { items.add(personaJuridicaModel); }
+     * 
+     * results = new SearchResultsModel<>(); results.setModels(items);
+     * results.setTotalSize(items.size()); } else { PagingModel paging = new
+     * PagingModel(); paging.setPage(page); paging.setPageSize(pageSize);
+     * 
+     * SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
+     * searchCriteriaBean.setPaging(paging);
+     * 
+     * results = personaJuridicaProvider.search(searchCriteriaBean, filterText);
+     * }
+     * 
+     * SearchResultsRepresentation<PersonaJuridicaRepresentation> rep = new
+     * SearchResultsRepresentation<>(); List<PersonaJuridicaRepresentation>
+     * representations = new ArrayList<>(); for (PersonaJuridicaModel model :
+     * results.getModels()) {
+     * representations.add(ModelToRepresentation.toRepresentation(model)); }
+     * rep.setTotalSize(results.getTotalSize()); rep.setItems(representations);
+     * return rep; }
+     */
+
     @Override
-    public SearchResultsRepresentation<PersonaJuridicaRepresentation> search(String tipoDocumento,
-            String numeroDocumento, String filterText, int page, int pageSize) {
+    public SearchResultsRepresentation<PersonaJuridicaRepresentation> search(
+            SearchCriteriaRepresentation criteria) {
+        SearchCriteriaModel criteriaModel = new SearchCriteriaModel();
+
+        // set filter and order
+        for (SearchCriteriaFilterRepresentation filter : criteria.getFilters()) {
+            criteriaModel.addFilter(filter.getName(), filter.getValue(),
+                    SearchCriteriaFilterOperator.valueOf(filter.getOperator().toString()));
+        }
+        for (OrderByRepresentation order : criteria.getOrders()) {
+            criteriaModel.addOrder(order.getName(), order.isAscending());
+        }
+
+        // set paging
+        PagingRepresentation paging = criteria.getPaging();
+        if (paging == null) {
+            paging = new PagingRepresentation();
+            paging.setPage(1);
+            paging.setPageSize(20);
+        }
+        criteriaModel.setPageSize(paging.getPageSize());
+        criteriaModel.setPage(paging.getPage());
+
+        // extract filterText
+        String filterText = criteria.getFilterText();
+
+        // search
         SearchResultsModel<PersonaJuridicaModel> results = null;
-        if (tipoDocumento != null && numeroDocumento != null) {
-            TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.findByAbreviatura(tipoDocumento);
-            PersonaJuridicaModel personaJuridicaModel = personaJuridicaProvider.findByTipoNumeroDocumento(
-                    tipoDocumentoModel, numeroDocumento);
-
-            List<PersonaJuridicaModel> items = new ArrayList<>();
-            if (personaJuridicaModel != null) {
-                items.add(personaJuridicaModel);
-            }
-
-            results = new SearchResultsModel<>();
-            results.setModels(items);
-            results.setTotalSize(items.size());
+        if (filterText == null) {
+            results = personaJuridicaProvider.search(criteriaModel);
         } else {
-            PagingModel paging = new PagingModel();
-            paging.setPage(page);
-            paging.setPageSize(pageSize);
-
-            SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
-            searchCriteriaBean.setPaging(paging);
-
-            results = personaJuridicaProvider.search(searchCriteriaBean, filterText);
+            results = personaJuridicaProvider.search(criteriaModel, filterText);
         }
 
         SearchResultsRepresentation<PersonaJuridicaRepresentation> rep = new SearchResultsRepresentation<>();
-        List<PersonaJuridicaRepresentation> representations = new ArrayList<>();
+        List<PersonaJuridicaRepresentation> items = new ArrayList<>();
         for (PersonaJuridicaModel model : results.getModels()) {
-            representations.add(ModelToRepresentation.toRepresentation(model));
+            items.add(ModelToRepresentation.toRepresentation(model));
         }
+        rep.setItems(items);
         rep.setTotalSize(results.getTotalSize());
-        rep.setItems(representations);
         return rep;
     }
 

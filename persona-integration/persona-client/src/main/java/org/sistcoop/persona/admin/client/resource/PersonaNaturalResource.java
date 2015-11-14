@@ -13,6 +13,10 @@ import javax.ws.rs.core.Response;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.sistcoop.persona.representations.idm.PersonaNaturalRepresentation;
 
+/**
+ * @author carlosthe19916@gmail.com
+ */
+
 public interface PersonaNaturalResource {
 
     @GET
@@ -38,6 +42,7 @@ public interface PersonaNaturalResource {
     public void disable();
 
     @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
     public Response remove();
 
 }

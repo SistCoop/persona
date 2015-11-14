@@ -58,7 +58,7 @@ public class JpaTipoDocumentoProvider extends AbstractHibernateStorage implement
         tipoDocumentoEntity.setAbreviatura(abreviatura);
         tipoDocumentoEntity.setDenominacion(denominacion);
         tipoDocumentoEntity.setCantidadCaracteres(cantidadCaracteres);
-        tipoDocumentoEntity.setTipoPersona(tipoPersona);
+        tipoDocumentoEntity.setTipoPersona(tipoPersona.toString());
         tipoDocumentoEntity.setEstado(true);
         em.persist(tipoDocumentoEntity);
         return new TipoDocumentoAdapter(em, tipoDocumentoEntity);

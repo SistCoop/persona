@@ -1,3 +1,5 @@
+apply from: "$rootDir/gradle/miredot.gradle"
+
 dependencies {
     compile project(":persona-core")
     compile project(":persona-core-jaxrs")

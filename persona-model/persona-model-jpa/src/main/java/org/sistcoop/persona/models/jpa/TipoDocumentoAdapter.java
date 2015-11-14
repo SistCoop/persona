@@ -65,12 +65,13 @@ public class TipoDocumentoAdapter implements TipoDocumentoModel {
 
     @Override
     public TipoPersona getTipoPersona() {
-        return tipoDocumentoEntity.getTipoPersona();
+        String tipoPersona = tipoDocumentoEntity.getTipoPersona();
+        return TipoPersona.valueOf(tipoPersona);
     }
 
     @Override
     public void setTipoPersona(TipoPersona tipoPersona) {
-        tipoDocumentoEntity.setTipoPersona(tipoPersona);
+        tipoDocumentoEntity.setTipoPersona(tipoPersona.toString());
     }
 
     @Override

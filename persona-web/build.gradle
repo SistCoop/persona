@@ -1,9 +1,4 @@
 apply plugin: 'war'
-apply plugin: 'jetty'
-//apply from: "$rootDir/gradle/functionalTest.gradle"
-apply from: "$rootDir/gradle/publishWarMaven.gradle"
-apply from: "$rootDir/gradle/cargo.gradle"
-//apply from: "$rootDir/gradle/smokeTest.gradle"
 
 dependencies {
     compile project(":persona-core")
@@ -15,29 +10,6 @@ dependencies {
     providedCompile 'org.jboss.resteasy:resteasy-jaxrs:3.0.9.Final'
 }
 
-task createBuildInfoFile << {
-	def buildInfoDir = new File("$buildDir")
-	if( !buildInfoDir.exists() ) {        
-        buildInfoDir.mkdirs()
-    }
-    
-    def buildInfoFile = new File("$buildDir/build-info.properties")
-    Properties props = new Properties()
-    props.setProperty('version', project.version.toString())
-    props.setProperty('timestamp', project.buildTimestamp)
-    props.store(buildInfoFile.newWriter(), null)
-}
-
-war {
-    dependsOn createBuildInfoFile
+war {   
     baseName = 'persona'
-
-    from(buildDir) {
-        include 'build-info.properties'
-        into('WEB-INF/classes')
-    }
-}
-
-jettyRun {
-    contextPath = 'persona'
 }

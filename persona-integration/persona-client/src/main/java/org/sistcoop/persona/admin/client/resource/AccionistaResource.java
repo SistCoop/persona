@@ -12,6 +12,10 @@ import javax.ws.rs.core.Response;
 
 import org.sistcoop.persona.representations.idm.AccionistaRepresentation;
 
+/**
+ * @author carlosthe19916@gmail.com
+ */
+
 public interface AccionistaResource {
 
     @GET
@@ -27,6 +31,7 @@ public interface AccionistaResource {
     public void disable();
 
     @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
     public Response remove();
 
 }

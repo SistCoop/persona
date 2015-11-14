@@ -1,14 +1,51 @@
-apply plugin: 'java' // should already be there
+apply plugin: 'java'
 apply plugin: 'miredot'
 
 miredot {
     source = sourceSets.main.allJava
     destination = sourceSets.main.output
-    licence = 'UHJvamVjdHxvcmcuc2lzdGNvb3AucGVyc29uYS1jbGllbnR8MjAxNi0wNy0yMXx0cnVlI01Dd0NGRXpPQ2k5eW5JVFhGQ1JKTW4wYmFhR1FCYklaQWhRYjF6cktwOFFGclVHWTgwSjdManAveWFBbkZ3PT0='
+    licence = 'cHJvamVjdHxvcmcuc2lzdGNvb3AucGVyc29uYS1jbGllbnR8MjAxNi0xMC0wN3x0cnVlfC0xI01Dd0NGRzkvaTRZMmhXcVl5ZjZzZmdqd2hUc1ZNNFNDQWhSQ0g1RjJQc1J2aXJGbkRmODlORFJKV2RndHFRPT0='
 }
-
+  
 miredot {
     output {
         title = "API Manager REST Services (${project.version})"
+        formats {
+            'docx' {
+                location = 'out/docx'
+            }
+            'html' {
+                location = 'out/html'
+                baseUrl = 'http://persona.sistcoop.com/rest'
+                initialCollapseLevel = 1
+            }
+        }
     }
+    restModel {
+        httpStatusCodes {
+            '200' { 
+                document = 'always'
+                defaultMessage = 'La llamada a este servicio fue completada satisfactoriamente.' 
+            }
+            '401' {
+                document = 'explicit: com.qmino.miredot.petstore.exceptions.AuthorizationException'
+                defaultMessage = 'El usuario fue autenticado, pero no tiene autorizacion para usar este servicio.'
+            }
+            '412' { 
+                document = 'put,post'
+                defaultMessage = 'JSON/XML datos enviados invalidos.' 
+            }
+            '500' { 
+                document = 'always'
+                defaultMessage = 'Internal server exception. La llamada a este servicio no fue satisfactoria.'
+                sticky = true // Document always, even if there is an @statuscode tag
+            }
+        }
+    }
+}
+
+javadoc {
+    source = sourceSets.main.allJava
+    classpath = configurations.compile
+    options.tags = [ "summary", "title", "servicetag", "statuscode", "responseheader" ]
 }

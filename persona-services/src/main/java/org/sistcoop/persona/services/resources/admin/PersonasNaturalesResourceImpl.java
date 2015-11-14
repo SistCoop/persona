@@ -16,12 +16,16 @@ import org.sistcoop.persona.models.PersonaNaturalModel;
 import org.sistcoop.persona.models.PersonaNaturalProvider;
 import org.sistcoop.persona.models.TipoDocumentoModel;
 import org.sistcoop.persona.models.TipoDocumentoProvider;
-import org.sistcoop.persona.models.search.PagingModel;
+import org.sistcoop.persona.models.search.SearchCriteriaFilterOperator;
 import org.sistcoop.persona.models.search.SearchCriteriaModel;
 import org.sistcoop.persona.models.search.SearchResultsModel;
 import org.sistcoop.persona.models.utils.ModelToRepresentation;
 import org.sistcoop.persona.models.utils.RepresentationToModel;
 import org.sistcoop.persona.representations.idm.PersonaNaturalRepresentation;
+import org.sistcoop.persona.representations.idm.search.OrderByRepresentation;
+import org.sistcoop.persona.representations.idm.search.PagingRepresentation;
+import org.sistcoop.persona.representations.idm.search.SearchCriteriaFilterRepresentation;
+import org.sistcoop.persona.representations.idm.search.SearchCriteriaRepresentation;
 import org.sistcoop.persona.representations.idm.search.SearchResultsRepresentation;
 import org.sistcoop.persona.services.ErrorResponse;
 
@@ -50,11 +54,12 @@ public class PersonasNaturalesResourceImpl implements PersonasNaturalesResource 
 
     @Override
     public Response create(PersonaNaturalRepresentation rep) {
-        TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.findByAbreviatura(rep
-                .getTipoDocumento());
+        TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider
+                .findByAbreviatura(rep.getTipoDocumento());
 
         // Check duplicated tipo y numero de documento
-        if (personaNaturalProvider.findByTipoNumeroDocumento(tipoDocumentoModel, rep.getNumeroDocumento()) != null) {
+        if (personaNaturalProvider.findByTipoNumeroDocumento(tipoDocumentoModel,
+                rep.getNumeroDocumento()) != null) {
             return ErrorResponse.exists("PersonaNatural existe con el mismo tipo y numero de documento");
         }
 
@@ -69,42 +74,83 @@ public class PersonasNaturalesResourceImpl implements PersonasNaturalesResource 
         }
     }
 
+    /*
+     * @Override public
+     * SearchResultsRepresentation<PersonaNaturalRepresentation> search(String
+     * tipoDocumento, String numeroDocumento, String filterText, int page, int
+     * pageSize) {
+     * 
+     * SearchResultsModel<PersonaNaturalModel> results = null; if (tipoDocumento
+     * != null && numeroDocumento != null) { TipoDocumentoModel
+     * tipoDocumentoModel =
+     * tipoDocumentoProvider.findByAbreviatura(tipoDocumento);
+     * PersonaNaturalModel personaNaturalModel = personaNaturalProvider
+     * .findByTipoNumeroDocumento(tipoDocumentoModel, numeroDocumento);
+     * 
+     * List<PersonaNaturalModel> items = new ArrayList<>(); if
+     * (personaNaturalModel != null) { items.add(personaNaturalModel); }
+     * 
+     * results = new SearchResultsModel<>(); results.setModels(items);
+     * results.setTotalSize(items.size()); } else { PagingModel paging = new
+     * PagingModel(); paging.setPage(page); paging.setPageSize(pageSize);
+     * 
+     * SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
+     * searchCriteriaBean.setPaging(paging);
+     * 
+     * results = personaNaturalProvider.search(searchCriteriaBean, filterText);
+     * }
+     * 
+     * SearchResultsRepresentation<PersonaNaturalRepresentation> rep = new
+     * SearchResultsRepresentation<>(); List<PersonaNaturalRepresentation>
+     * representations = new ArrayList<>(); for (PersonaNaturalModel model :
+     * results.getModels()) {
+     * representations.add(ModelToRepresentation.toRepresentation(model)); }
+     * rep.setTotalSize(results.getTotalSize()); rep.setItems(representations);
+     * return rep; }
+     */
+
     @Override
-    public SearchResultsRepresentation<PersonaNaturalRepresentation> search(String tipoDocumento,
-            String numeroDocumento, String filterText, int page, int pageSize) {
+    public SearchResultsRepresentation<PersonaNaturalRepresentation> search(
+            SearchCriteriaRepresentation criteria) {
+        SearchCriteriaModel criteriaModel = new SearchCriteriaModel();
 
+        // set filter and order
+        for (SearchCriteriaFilterRepresentation filter : criteria.getFilters()) {
+            criteriaModel.addFilter(filter.getName(), filter.getValue(),
+                    SearchCriteriaFilterOperator.valueOf(filter.getOperator().toString()));
+        }
+        for (OrderByRepresentation order : criteria.getOrders()) {
+            criteriaModel.addOrder(order.getName(), order.isAscending());
+        }
+
+        // set paging
+        PagingRepresentation paging = criteria.getPaging();
+        if (paging == null) {
+            paging = new PagingRepresentation();
+            paging.setPage(1);
+            paging.setPageSize(20);
+        }
+        criteriaModel.setPageSize(paging.getPageSize());
+        criteriaModel.setPage(paging.getPage());
+
+        // extract filterText
+        String filterText = criteria.getFilterText();
+
+        // search
         SearchResultsModel<PersonaNaturalModel> results = null;
-        if (tipoDocumento != null && numeroDocumento != null) {
-            TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.findByAbreviatura(tipoDocumento);
-            PersonaNaturalModel personaNaturalModel = personaNaturalProvider.findByTipoNumeroDocumento(
-                    tipoDocumentoModel, numeroDocumento);
-
-            List<PersonaNaturalModel> items = new ArrayList<>();
-            if (personaNaturalModel != null) {
-                items.add(personaNaturalModel);
-            }
-
-            results = new SearchResultsModel<>();
-            results.setModels(items);
-            results.setTotalSize(items.size());
+        if (filterText == null) {
+            results = personaNaturalProvider.search(criteriaModel);
         } else {
-            PagingModel paging = new PagingModel();
-            paging.setPage(page);
-            paging.setPageSize(pageSize);
-
-            SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
-            searchCriteriaBean.setPaging(paging);
-
-            results = personaNaturalProvider.search(searchCriteriaBean, filterText);
+            results = personaNaturalProvider.search(criteriaModel, filterText);
         }
 
         SearchResultsRepresentation<PersonaNaturalRepresentation> rep = new SearchResultsRepresentation<>();
-        List<PersonaNaturalRepresentation> representations = new ArrayList<>();
+        List<PersonaNaturalRepresentation> items = new ArrayList<>();
         for (PersonaNaturalModel model : results.getModels()) {
-            representations.add(ModelToRepresentation.toRepresentation(model));
+            items.add(ModelToRepresentation.toRepresentation(model));
         }
+        rep.setItems(items);
         rep.setTotalSize(results.getTotalSize());
-        rep.setItems(representations);
         return rep;
     }
 

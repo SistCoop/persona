@@ -12,6 +12,10 @@ import javax.ws.rs.core.Response;
 
 import org.sistcoop.persona.representations.idm.TipoDocumentoRepresentation;
 
+/**
+ * @author carlosthe19916@gmail.com
+ */
+
 public interface TipoDocumentoResource {
 
     @GET
@@ -31,6 +35,7 @@ public interface TipoDocumentoResource {
     public void disable();
 
     @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
     public Response remove();
 
 }

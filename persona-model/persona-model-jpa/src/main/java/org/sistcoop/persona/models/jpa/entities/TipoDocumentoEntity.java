@@ -6,8 +6,6 @@ import java.sql.Timestamp;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -21,7 +19,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotBlank;
-import org.sistcoop.persona.models.enums.TipoPersona;
 
 /**
  * @author <a href="mailto:carlosthe19916@sistcoop.com">Carlos Feria</a>
@@ -59,9 +56,9 @@ public class TipoDocumentoEntity implements Serializable {
     private int cantidadCaracteres;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
+    @Size(min = 1, max = 60)
     @Column(name = "TIPO_PERSONA")
-    private TipoPersona tipoPersona;
+    private String tipoPersona;
 
     @NotNull
     @Type(type = "org.hibernate.type.TrueFalseType")
@@ -95,11 +92,11 @@ public class TipoDocumentoEntity implements Serializable {
         this.cantidadCaracteres = cantidadCaracteres;
     }
 
-    public TipoPersona getTipoPersona() {
+    public String getTipoPersona() {
         return tipoPersona;
     }
 
-    public void setTipoPersona(TipoPersona tipoPersona) {
+    public void setTipoPersona(String tipoPersona) {
         this.tipoPersona = tipoPersona;
     }
 

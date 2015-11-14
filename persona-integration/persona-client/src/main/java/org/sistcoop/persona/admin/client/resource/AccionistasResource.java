@@ -13,6 +13,10 @@ import javax.ws.rs.core.Response;
 
 import org.sistcoop.persona.representations.idm.AccionistaRepresentation;
 
+/**
+ * @author carlosthe19916@gmail.com
+ */
+
 @Consumes(MediaType.APPLICATION_JSON)
 public interface AccionistasResource {
 
@@ -20,6 +24,7 @@ public interface AccionistasResource {
     public AccionistaResource accionista(@PathParam("accionista") String accionista);
 
     @POST
+    @Produces(MediaType.APPLICATION_JSON)
     public Response create(AccionistaRepresentation rep);
 
     @GET
