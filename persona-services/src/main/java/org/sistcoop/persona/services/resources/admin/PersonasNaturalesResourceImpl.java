@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -71,6 +72,19 @@ public class PersonasNaturalesResourceImpl implements PersonasNaturalesResource 
                     .entity(ModelToRepresentation.toRepresentation(model)).build();
         } catch (ModelDuplicateException e) {
             return ErrorResponse.exists("PersonaNatural existe con el mismo tipo y numero de documento");
+        }
+    }
+
+    @Override
+    public PersonaNaturalRepresentation findByTipoNumeroDocumento(PersonaNaturalRepresentation rep) {
+        TipoDocumentoModel tipoDocumento = tipoDocumentoProvider.findByAbreviatura(rep.getTipoDocumento());
+        PersonaNaturalModel personaNatural = personaNaturalProvider.findByTipoNumeroDocumento(tipoDocumento,
+                rep.getNumeroDocumento());
+        PersonaNaturalRepresentation representation = ModelToRepresentation.toRepresentation(personaNatural);
+        if (representation != null) {
+            return representation;
+        } else {
+            throw new NotFoundException("PersonaNatural no encontrado");
         }
     }
 

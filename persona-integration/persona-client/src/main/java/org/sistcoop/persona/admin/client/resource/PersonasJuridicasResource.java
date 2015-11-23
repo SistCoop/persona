@@ -27,6 +27,12 @@ public interface PersonasJuridicasResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(PersonaJuridicaRepresentation representation);
 
+    @POST
+    @Path("findByTipoNumeroDocumento")
+    @Produces(MediaType.APPLICATION_JSON)
+    public PersonaJuridicaRepresentation findByTipoNumeroDocumento(PersonaJuridicaRepresentation rep);
+
+    
     /*@GET
     @Path("search")
     @Produces(MediaType.APPLICATION_JSON)

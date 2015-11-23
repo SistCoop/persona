@@ -27,6 +27,12 @@ public interface PersonasNaturalesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(PersonaNaturalRepresentation representation);
 
+    @POST
+    @Path("findByTipoNumeroDocumento")
+    @Produces(MediaType.APPLICATION_JSON)
+    public PersonaNaturalRepresentation findByTipoNumeroDocumento(PersonaNaturalRepresentation rep);
+
+    
     /*@GET
     @Path("search")
     @Produces(MediaType.APPLICATION_JSON)

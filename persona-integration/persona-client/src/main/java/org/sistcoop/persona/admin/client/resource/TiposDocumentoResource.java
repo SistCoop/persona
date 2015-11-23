@@ -3,11 +3,13 @@ package org.sistcoop.persona.admin.client.resource;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -30,21 +32,16 @@ public interface TiposDocumentoResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(TipoDocumentoRepresentation rep);
 
+    @POST
+    @Path("findByAbreviatura")
+    @Produces(MediaType.APPLICATION_JSON)
+    public TipoDocumentoRepresentation findByAbreviatura(TipoDocumentoRepresentation rep);
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TipoDocumentoRepresentation> getAll();
+    public List<TipoDocumentoRepresentation> getAll(@QueryParam("tipoPersona") String tipoPersona,
+            @QueryParam("estado") @DefaultValue(value = "true") Boolean estado);
 
-    /*@GET
-    @Path("search")
-    @Produces(MediaType.APPLICATION_JSON)
-    public SearchResultsRepresentation<TipoDocumentoRepresentation> search(
-            @QueryParam("abreviatura") String abreviatura,
-            @QueryParam("tipoPersona") String tipoPersona,
-            @QueryParam("estado") @DefaultValue(value = "true") boolean estado,
-            @QueryParam("filterText") @DefaultValue(value = "") String filterText,
-            @QueryParam("page") @DefaultValue(value = "1") int page,
-            @QueryParam("pageSize") @DefaultValue(value = "20") int pageSize);*/
-    
     /**
      * Este endpoint provee una forma de buscar direccionesRegionales. Los
      * criterios de busqueda estan definidos por los parametros enviados.

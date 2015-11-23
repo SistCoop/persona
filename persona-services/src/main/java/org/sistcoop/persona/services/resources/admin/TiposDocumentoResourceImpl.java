@@ -1,10 +1,12 @@
 package org.sistcoop.persona.services.resources.admin;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -64,48 +66,37 @@ public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
     }
 
     @Override
-    public List<TipoDocumentoRepresentation> getAll() {
+    public TipoDocumentoRepresentation findByAbreviatura(TipoDocumentoRepresentation rep) {
+        TipoDocumentoModel tipoDocumento = tipoDocumentoProvider.findByAbreviatura(rep.getAbreviatura());
+        TipoDocumentoRepresentation representation = ModelToRepresentation.toRepresentation(tipoDocumento);
+        if (representation != null) {
+            return representation;
+        } else {
+            throw new NotFoundException("TipoDocumento no encontrado");
+        }
+    }
+
+    @Override
+    public List<TipoDocumentoRepresentation> getAll(String tipoPersona, Boolean estado) {
         List<TipoDocumentoModel> results = tipoDocumentoProvider.getAll();
+        for (Iterator<TipoDocumentoModel> iterator = results.iterator(); iterator.hasNext();) {
+            TipoDocumentoModel model = iterator.next();
+            if (tipoPersona != null && !tipoPersona.equalsIgnoreCase(model.getTipoPersona().toString())) {
+                iterator.remove();
+                break;
+            }
+            if (estado != null && estado != model.getEstado()) {
+                iterator.remove();
+                break;
+            }
+        }
+
         List<TipoDocumentoRepresentation> representations = new ArrayList<>();
         for (TipoDocumentoModel model : results) {
             representations.add(ModelToRepresentation.toRepresentation(model));
         }
         return representations;
     }
-
-    /*
-     * @Override public SearchResultsRepresentation<TipoDocumentoRepresentation>
-     * search(String abreviatura, String tipoPersona, boolean estado, String
-     * filterText, int page, int pageSize) {
-     * 
-     * PagingModel paging = new PagingModel(); paging.setPage(page);
-     * paging.setPageSize(pageSize);
-     * 
-     * SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
-     * searchCriteriaBean.setPaging(paging);
-     * 
-     * // add filters if (abreviatura != null) {
-     * searchCriteriaBean.addFilter("abreviatura", abreviatura,
-     * SearchCriteriaFilterOperator.eq); }
-     * 
-     * // add filters if (tipoPersona != null) {
-     * searchCriteriaBean.addFilter("tipoPersona",
-     * TipoPersona.valueOf(tipoPersona.toUpperCase()),
-     * SearchCriteriaFilterOperator.eq); }
-     * searchCriteriaBean.addFilter("estado", estado,
-     * SearchCriteriaFilterOperator.bool_eq);
-     * 
-     * // search SearchResultsModel<TipoDocumentoModel> results =
-     * tipoDocumentoProvider.search(searchCriteriaBean, filterText);
-     * SearchResultsRepresentation<TipoDocumentoRepresentation> rep = new
-     * SearchResultsRepresentation<>(); List<TipoDocumentoRepresentation>
-     * representations = new ArrayList<>(); for (TipoDocumentoModel model :
-     * results.getModels()) {
-     * representations.add(ModelToRepresentation.toRepresentation(model)); }
-     * rep.setTotalSize(results.getTotalSize()); rep.setItems(representations);
-     * 
-     * return rep; }
-     */
 
     @Override
     public SearchResultsRepresentation<TipoDocumentoRepresentation> search(

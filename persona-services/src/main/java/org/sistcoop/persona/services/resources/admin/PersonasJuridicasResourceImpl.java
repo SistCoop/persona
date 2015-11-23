@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -83,6 +84,20 @@ public class PersonasJuridicasResourceImpl implements PersonasJuridicasResource 
                     .entity(ModelToRepresentation.toRepresentation(model)).build();
         } catch (ModelDuplicateException e) {
             return ErrorResponse.exists("PersonaJuridica existe con el mismo tipo y numero de documento");
+        }
+    }
+
+    @Override
+    public PersonaJuridicaRepresentation findByTipoNumeroDocumento(PersonaJuridicaRepresentation rep) {
+        TipoDocumentoModel tipoDocumento = tipoDocumentoProvider.findByAbreviatura(rep.getTipoDocumento());
+        PersonaJuridicaModel personaJuridica = personaJuridicaProvider
+                .findByTipoNumeroDocumento(tipoDocumento, rep.getNumeroDocumento());
+        PersonaJuridicaRepresentation representation = ModelToRepresentation
+                .toRepresentation(personaJuridica);
+        if (representation != null) {
+            return representation;
+        } else {
+            throw new NotFoundException("Persona juridica no encontrado");
         }
     }
 
