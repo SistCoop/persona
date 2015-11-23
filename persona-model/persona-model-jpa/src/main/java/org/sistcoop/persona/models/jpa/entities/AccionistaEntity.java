@@ -1,7 +1,6 @@
 package org.sistcoop.persona.models.jpa.entities;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -67,7 +66,7 @@ public class AccionistaEntity implements java.io.Serializable {
     private BigDecimal porcentajeParticipacion;
 
     @Version
-    private Timestamp optlk;
+    private Integer optlk;
 
     public AccionistaEntity() {
         // TODO Auto-generated constructor stub
@@ -105,11 +104,11 @@ public class AccionistaEntity implements java.io.Serializable {
         this.porcentajeParticipacion = porcentajeParticipacion;
     }
 
-    public Timestamp getOptlk() {
+    public Integer getOptlk() {
         return optlk;
     }
 
-    public void setOptlk(Timestamp optlk) {
+    public void setOptlk(Integer optlk) {
         this.optlk = optlk;
     }
 

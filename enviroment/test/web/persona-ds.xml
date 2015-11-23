@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources>
-	
-	<!-- DEVELOPMENT ENVIROMENT -->
-		
+
+	<!-- TEST ENVIROMENT -->
+
 	<datasource jndi-name="java:jboss/datasources/PersonaDS" pool-name="PersonaDS" enabled="true" use-java-context="true">
 		<connection-url>jdbc:postgresql://localhost:5432/persona</connection-url>
 		<driver>postgresql</driver>
@@ -11,5 +11,5 @@
 			<password>123456</password>
 		</security>
 	</datasource>
-	
+
 </datasources>

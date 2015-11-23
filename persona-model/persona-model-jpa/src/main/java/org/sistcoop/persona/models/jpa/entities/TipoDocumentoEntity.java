@@ -1,7 +1,6 @@
 package org.sistcoop.persona.models.jpa.entities;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -66,7 +65,7 @@ public class TipoDocumentoEntity implements Serializable {
     private boolean estado;
 
     @Version
-    private Timestamp optlk;
+    private Integer optlk;
 
     public String getAbreviatura() {
         return abreviatura;
@@ -108,11 +107,11 @@ public class TipoDocumentoEntity implements Serializable {
         this.estado = estado;
     }
 
-    public Timestamp getOptlk() {
+    public Integer getOptlk() {
         return optlk;
     }
 
-    public void setOptlk(Timestamp optlk) {
+    public void setOptlk(Integer optlk) {
         this.optlk = optlk;
     }
 
