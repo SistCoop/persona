@@ -10,4 +10,5 @@
 			</configuration>
 		</container>
 	</group>
+
 </arquillian>

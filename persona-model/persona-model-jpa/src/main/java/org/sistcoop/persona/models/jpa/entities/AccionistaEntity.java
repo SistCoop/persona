@@ -36,7 +36,7 @@ import org.hibernate.envers.Audited;
 @NamedQueries(value = {
         @NamedQuery(name = "AccionistaEntity.findAll", query = "SELECT a FROM AccionistaEntity a"),
         @NamedQuery(name = "AccionistaEntity.findByIdPersonaNatural", query = "SELECT a FROM AccionistaEntity a INNER JOIN a.personaNatural p WHERE p.id = :idPersonaNatural"),
-        @NamedQuery(name = "AccionistaEntity.findByIdPersonaJuridicaNatural", query = "SELECT a FROM AccionistaEntity a INNER JOIN a.personaJuridica pj INNER JOIN a.personaNatural pn WHERE pj.id = :idPersonaNatural AND pn.id = :idPersonaNatural") })
+        @NamedQuery(name = "AccionistaEntity.findByIdPersonaJuridicaNatural", query = "SELECT a FROM AccionistaEntity a INNER JOIN a.personaJuridica pj INNER JOIN a.personaNatural pn WHERE pj.id = :idPersonaJuridica AND pn.id = :idPersonaNatural") })
 public class AccionistaEntity implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;

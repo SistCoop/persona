@@ -29,11 +29,9 @@ public abstract class AbstractTest {
         File[] dependencies = Maven.resolver().resolve("org.slf4j:slf4j-simple:1.7.10").withoutTransitivity()
                 .asFile();
 
-        WebArchive war = ShrinkWrap
-                .create(WebArchive.class, "test.war")
+        WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
                 /** model-api **/
-                .addPackage(Provider.class.getPackage())
-                .addPackage(TipoDocumentoModel.class.getPackage())
+                .addPackage(Provider.class.getPackage()).addPackage(TipoDocumentoModel.class.getPackage())
 
                 .addPackage(TipoPersona.class.getPackage())
 
@@ -44,8 +42,6 @@ public abstract class AbstractTest {
                 .addPackage(TipoDocumentoEntity.class.getPackage())
 
                 .addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
-                .addAsManifestResource("META-INF/test-jboss-deployment-structure.xml",
-                        "jboss-deployment-structure.xml")
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml").addAsWebInfResource("test-ds.xml");
 
         war.addAsLibraries(dependencies);

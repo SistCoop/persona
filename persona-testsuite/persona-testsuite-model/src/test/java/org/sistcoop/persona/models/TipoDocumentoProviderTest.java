@@ -86,7 +86,7 @@ public class TipoDocumentoProviderTest extends AbstractTest {
         List<TipoDocumentoModel> searched = tipoDocumentoProvider.getAll();
 
         assertThat("searched is Null", searched, is(notNullValue()));
-        assertThat("searched.getTotalSize() is not 1", searched.size(), is(1));
+        assertThat("searched.getTotalSize() is not 1", searched.size(), is(2));
     }
 
     @Test
@@ -97,15 +97,15 @@ public class TipoDocumentoProviderTest extends AbstractTest {
         TipoDocumentoModel model2 = tipoDocumentoProvider.create("P.NAC", "Partida de nacimiento", 11,
                 TipoPersona.NATURAL);
         @SuppressWarnings("unused")
-        TipoDocumentoModel model3 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente",
-                11, TipoPersona.JURIDICA);
+        TipoDocumentoModel model3 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente", 11,
+                TipoPersona.JURIDICA);
 
         model1.setEstado(false);
         model1.commit();
 
         // add filters
         SearchCriteriaModel criteria = new SearchCriteriaModel();
-        criteria.addFilter("tipoPersona", TipoPersona.NATURAL, SearchCriteriaFilterOperator.eq);
+        criteria.addFilter("tipoPersona", TipoPersona.NATURAL.toString(), SearchCriteriaFilterOperator.eq);
 
         SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria);
 
@@ -122,8 +122,8 @@ public class TipoDocumentoProviderTest extends AbstractTest {
         TipoDocumentoModel model2 = tipoDocumentoProvider.create("P.NAC", "Partida de nacimiento", 11,
                 TipoPersona.NATURAL);
         @SuppressWarnings("unused")
-        TipoDocumentoModel model3 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente",
-                11, TipoPersona.JURIDICA);
+        TipoDocumentoModel model3 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente", 11,
+                TipoPersona.JURIDICA);
 
         model1.setEstado(false);
         model1.commit();
@@ -147,15 +147,15 @@ public class TipoDocumentoProviderTest extends AbstractTest {
         TipoDocumentoModel model2 = tipoDocumentoProvider.create("P.NAC", "Partida de nacimiento", 11,
                 TipoPersona.NATURAL);
         @SuppressWarnings("unused")
-        TipoDocumentoModel model3 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente",
-                11, TipoPersona.JURIDICA);
+        TipoDocumentoModel model3 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente", 11,
+                TipoPersona.JURIDICA);
 
         model1.setEstado(false);
         model1.commit();
 
         // add filters
         SearchCriteriaModel criteria = new SearchCriteriaModel();
-        criteria.addFilter("tipoPersona", TipoPersona.NATURAL, SearchCriteriaFilterOperator.eq);
+        criteria.addFilter("tipoPersona", TipoPersona.NATURAL.toString(), SearchCriteriaFilterOperator.eq);
         criteria.addFilter("estado", true, SearchCriteriaFilterOperator.bool_eq);
 
         SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria);
@@ -177,8 +177,8 @@ public class TipoDocumentoProviderTest extends AbstractTest {
         TipoDocumentoModel model3 = tipoDocumentoProvider.create("Pasaporte", "Pasaporte", 11,
                 TipoPersona.NATURAL);
         @SuppressWarnings("unused")
-        TipoDocumentoModel model4 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente",
-                11, TipoPersona.JURIDICA);
+        TipoDocumentoModel model4 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente", 11,
+                TipoPersona.JURIDICA);
 
         SearchCriteriaModel criteria = new SearchCriteriaModel();
         SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria, "ruc");
@@ -199,8 +199,8 @@ public class TipoDocumentoProviderTest extends AbstractTest {
         TipoDocumentoModel model3 = tipoDocumentoProvider.create("Pasaporte", "Pasaporte", 11,
                 TipoPersona.NATURAL);
         @SuppressWarnings("unused")
-        TipoDocumentoModel model4 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente",
-                11, TipoPersona.JURIDICA);
+        TipoDocumentoModel model4 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente", 11,
+                TipoPersona.JURIDICA);
 
         model1.setEstado(false);
         model1.commit();
@@ -227,15 +227,15 @@ public class TipoDocumentoProviderTest extends AbstractTest {
         TipoDocumentoModel model3 = tipoDocumentoProvider.create("Pasaporte", "Pasaporte", 11,
                 TipoPersona.NATURAL);
         @SuppressWarnings("unused")
-        TipoDocumentoModel model4 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente",
-                11, TipoPersona.JURIDICA);
+        TipoDocumentoModel model4 = tipoDocumentoProvider.create("RUC", "Registro unico de contribuyente", 11,
+                TipoPersona.JURIDICA);
 
         model2.setEstado(false);
         model2.commit();
 
         // add filters
         SearchCriteriaModel criteria = new SearchCriteriaModel();
-        criteria.addFilter("tipoPersona", TipoPersona.NATURAL, SearchCriteriaFilterOperator.eq);
+        criteria.addFilter("tipoPersona", TipoPersona.NATURAL.toString(), SearchCriteriaFilterOperator.eq);
         criteria.addFilter("estado", true, SearchCriteriaFilterOperator.bool_eq);
 
         SearchResultsModel<TipoDocumentoModel> searched = tipoDocumentoProvider.search(criteria, "dni");
