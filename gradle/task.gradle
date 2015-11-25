@@ -19,7 +19,7 @@ task copyTestsuiteModelConfiguration(type: Copy) {
 
 task copyConfiguration(dependsOn: [copyWebConfiguration, copyModelJpaConfiguration, copyTestsuiteModelConfiguration, copyTestsuiteClientConfiguration])
 
-assemble.dependsOn copyConfiguration
-test.dependsOn copyConfiguration
+//assemble.dependsOn copyConfiguration
+//test.dependsOn copyConfiguration
 
 //gradle -Penv=prod build
