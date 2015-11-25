@@ -41,10 +41,16 @@ public class GoogleDriveStarter {
 	private Credential credential;
 
 	@PostConstruct
-	private void init() throws GeneralSecurityException, IOException {
-		httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-		dataStoreFactory = new FileDataStoreFactory(DATA_STORE_DIR);
-		loadCredential();
+	private void init() {
+		try {
+			httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+			dataStoreFactory = new FileDataStoreFactory(DATA_STORE_DIR);
+			loadCredential();
+		} catch (GeneralSecurityException e) {			
+			e.printStackTrace();
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}
 	}
 
 	public String getApplicationName() {
