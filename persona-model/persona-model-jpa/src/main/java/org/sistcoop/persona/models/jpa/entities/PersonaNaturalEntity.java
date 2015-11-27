@@ -8,8 +8,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -35,197 +39,222 @@ import org.sistcoop.persona.models.enums.Sexo;
 @Entity
 @Table(name = "PERSONA_NATURAL")
 @NamedQueries(value = {
-        @NamedQuery(name = "PersonaNaturalEntity.findAll", query = "SELECT p FROM PersonaNaturalEntity p"),
-        @NamedQuery(name = "PersonaNaturalEntity.findByTipoDocumento", query = "SELECT p FROM PersonaNaturalEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento"),
-        @NamedQuery(name = "PersonaNaturalEntity.findByTipoNumeroDocumento", query = "SELECT p FROM PersonaNaturalEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento AND p.numeroDocumento = :numeroDocumento") })
+		@NamedQuery(name = "PersonaNaturalEntity.findAll", query = "SELECT p FROM PersonaNaturalEntity p"),
+		@NamedQuery(name = "PersonaNaturalEntity.findByTipoDocumento", query = "SELECT p FROM PersonaNaturalEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento"),
+		@NamedQuery(name = "PersonaNaturalEntity.findByTipoNumeroDocumento", query = "SELECT p FROM PersonaNaturalEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento AND p.numeroDocumento = :numeroDocumento") })
 public class PersonaNaturalEntity extends PersonaEntity implements Serializable {
 
-    /**
+	/**
 	 * 
 	 */
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "ID")
-    private String id;
+	@Id
+	@GeneratedValue(generator = "uuid2")
+	@GenericGenerator(name = "uuid2", strategy = "uuid2")
+	@Column(name = "ID")
+	private String id;
 
-    @NotNull
-    @Size(min = 1, max = 50)
-    @NotBlank
-    @Column(name = "APELLIDO_PATERNO")
-    private String apellidoPaterno;
+	@NotNull
+	@Size(min = 1, max = 50)
+	@NotBlank
+	@Column(name = "APELLIDO_PATERNO")
+	private String apellidoPaterno;
 
-    @NotNull
-    @Size(min = 1, max = 50)
-    @NotBlank
-    @Column(name = "APELLIDO_MATERNO")
-    private String apellidoMaterno;
+	@NotNull
+	@Size(min = 1, max = 50)
+	@NotBlank
+	@Column(name = "APELLIDO_MATERNO")
+	private String apellidoMaterno;
 
-    @NotNull
-    @Size(min = 1, max = 70)
-    @NotBlank
-    @Column(name = "NOMBRES")
-    private String nombres;
+	@NotNull
+	@Size(min = 1, max = 70)
+	@NotBlank
+	@Column(name = "NOMBRES")
+	private String nombres;
 
-    @NotNull
-    @Past
-    @Temporal(TemporalType.DATE)
-    @Column(name = "FECHA_NACIMIENTO")
-    private Date fechaNacimiento;
+	@NotNull
+	@Past
+	@Temporal(TemporalType.DATE)
+	@Column(name = "FECHA_NACIMIENTO")
+	private Date fechaNacimiento;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "SEXO")
-    private Sexo sexo;
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(name = "SEXO")
+	private Sexo sexo;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "ESTADO_CIVIL")
-    private EstadoCivil estadoCivil;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ESTADO_CIVIL")
+	private EstadoCivil estadoCivil;
 
-    @Size(min = 0, max = 70)
-    @Column(name = "OCUPACION")
-    private String ocupacion;
+	@Size(min = 0, max = 70)
+	@Column(name = "OCUPACION")
+	private String ocupacion;
 
-    @URL
-    @Column(name = "URL_FOTO")
-    private String urlFoto;
+	@URL
+	@Column(name = "URL_FOTO")
+	private String urlFoto;
 
-    @URL
-    @Column(name = "URL_FIRMA")
-    private String urlFirma;
+	@URL
+	@Column(name = "URL_FIRMA")
+	private String urlFirma;
 
-    public PersonaNaturalEntity() {
-        super();
-    }
+	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "FILE_STORE_FOTO_ID", foreignKey = @ForeignKey )
+	private FileStoreEntity foto;
 
-    public PersonaNaturalEntity(String id) {
-        super();
-        this.id = id;
-    }
+	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "FILE_STORE_FIRMA_ID", foreignKey = @ForeignKey )
+	private FileStoreEntity firma;
 
-    public PersonaNaturalEntity(TipoDocumentoEntity tipoDocumento, String numeroDocumento) {
-        super(tipoDocumento, numeroDocumento);
-    }
+	public PersonaNaturalEntity() {
+		super();
+	}
 
-    public String getId() {
-        return id;
-    }
+	public PersonaNaturalEntity(String id) {
+		super();
+		this.id = id;
+	}
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	public PersonaNaturalEntity(TipoDocumentoEntity tipoDocumento, String numeroDocumento) {
+		super(tipoDocumento, numeroDocumento);
+	}
 
-    public String getApellidoPaterno() {
-        return apellidoPaterno;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public void setApellidoPaterno(String apellidoPaterno) {
-        this.apellidoPaterno = apellidoPaterno;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public String getApellidoMaterno() {
-        return apellidoMaterno;
-    }
+	public String getApellidoPaterno() {
+		return apellidoPaterno;
+	}
 
-    public void setApellidoMaterno(String apellidoMaterno) {
-        this.apellidoMaterno = apellidoMaterno;
-    }
+	public void setApellidoPaterno(String apellidoPaterno) {
+		this.apellidoPaterno = apellidoPaterno;
+	}
 
-    public String getNombres() {
-        return nombres;
-    }
+	public String getApellidoMaterno() {
+		return apellidoMaterno;
+	}
 
-    public void setNombres(String nombres) {
-        this.nombres = nombres;
-    }
+	public void setApellidoMaterno(String apellidoMaterno) {
+		this.apellidoMaterno = apellidoMaterno;
+	}
 
-    public Date getFechaNacimiento() {
-        return fechaNacimiento;
-    }
+	public String getNombres() {
+		return nombres;
+	}
 
-    public void setFechaNacimiento(Date fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
-    }
+	public void setNombres(String nombres) {
+		this.nombres = nombres;
+	}
 
-    public Sexo getSexo() {
-        return sexo;
-    }
+	public Date getFechaNacimiento() {
+		return fechaNacimiento;
+	}
 
-    public void setSexo(Sexo sexo) {
-        this.sexo = sexo;
-    }
+	public void setFechaNacimiento(Date fechaNacimiento) {
+		this.fechaNacimiento = fechaNacimiento;
+	}
 
-    public EstadoCivil getEstadoCivil() {
-        return estadoCivil;
-    }
+	public Sexo getSexo() {
+		return sexo;
+	}
 
-    public void setEstadoCivil(EstadoCivil estadoCivil) {
-        this.estadoCivil = estadoCivil;
-    }
+	public void setSexo(Sexo sexo) {
+		this.sexo = sexo;
+	}
 
-    public String getOcupacion() {
-        return ocupacion;
-    }
+	public EstadoCivil getEstadoCivil() {
+		return estadoCivil;
+	}
 
-    public void setOcupacion(String ocupacion) {
-        this.ocupacion = ocupacion;
-    }
+	public void setEstadoCivil(EstadoCivil estadoCivil) {
+		this.estadoCivil = estadoCivil;
+	}
 
-    public String getUrlFoto() {
-        return urlFoto;
-    }
+	public String getOcupacion() {
+		return ocupacion;
+	}
 
-    public void setUrlFoto(String urlFoto) {
-        this.urlFoto = urlFoto;
-    }
+	public void setOcupacion(String ocupacion) {
+		this.ocupacion = ocupacion;
+	}
 
-    public String getUrlFirma() {
-        return urlFirma;
-    }
+	public String getUrlFoto() {
+		return urlFoto;
+	}
 
-    public void setUrlFirma(String urlFirma) {
-        this.urlFirma = urlFirma;
-    }
+	public void setUrlFoto(String urlFoto) {
+		this.urlFoto = urlFoto;
+	}
 
-    @Override
-    public String toString() {
-        return "(PersonaNaturalEntity id=" + this.id + " tipoDocumento="
-                + this.tipoDocumento.getAbreviatura() + " numeroDocumento" + this.numeroDocumento
-                + " apellidoPaterno=" + this.apellidoPaterno + " apellidoMaterno=" + this.apellidoMaterno
-                + " nombres=" + this.nombres + ")";
-    }
+	public String getUrlFirma() {
+		return urlFirma;
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((numeroDocumento == null) ? 0 : numeroDocumento.hashCode());
-        result = prime * result + ((tipoDocumento == null) ? 0 : tipoDocumento.hashCode());
-        return result;
-    }
+	public void setUrlFirma(String urlFirma) {
+		this.urlFirma = urlFirma;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof PersonaNaturalEntity))
-            return false;
-        PersonaNaturalEntity other = (PersonaNaturalEntity) obj;
-        if (numeroDocumento == null) {
-            if (other.numeroDocumento != null)
-                return false;
-        } else if (!numeroDocumento.equals(other.numeroDocumento))
-            return false;
-        if (tipoDocumento == null) {
-            if (other.tipoDocumento != null)
-                return false;
-        } else if (!tipoDocumento.equals(other.tipoDocumento))
-            return false;
-        return true;
-    }
+	public FileStoreEntity getFoto() {
+		return foto;
+	}
+
+	public void setFoto(FileStoreEntity foto) {
+		this.foto = foto;
+	}
+
+	public FileStoreEntity getFirma() {
+		return firma;
+	}
+
+	public void setFirma(FileStoreEntity firma) {
+		this.firma = firma;
+	}
+
+	@Override
+	public String toString() {
+		return "(PersonaNaturalEntity id=" + this.id + " tipoDocumento=" + this.tipoDocumento.getAbreviatura()
+				+ " numeroDocumento" + this.numeroDocumento + " apellidoPaterno=" + this.apellidoPaterno
+				+ " apellidoMaterno=" + this.apellidoMaterno + " nombres=" + this.nombres + ")";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((numeroDocumento == null) ? 0 : numeroDocumento.hashCode());
+		result = prime * result + ((tipoDocumento == null) ? 0 : tipoDocumento.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof PersonaNaturalEntity))
+			return false;
+		PersonaNaturalEntity other = (PersonaNaturalEntity) obj;
+		if (numeroDocumento == null) {
+			if (other.numeroDocumento != null)
+				return false;
+		} else if (!numeroDocumento.equals(other.numeroDocumento))
+			return false;
+		if (tipoDocumento == null) {
+			if (other.tipoDocumento != null)
+				return false;
+		} else if (!tipoDocumento.equals(other.tipoDocumento))
+			return false;
+		return true;
+	}
 
 }

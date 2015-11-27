@@ -7,74 +7,78 @@ import org.sistcoop.persona.models.enums.Sexo;
 
 public interface PersonaNaturalModel extends Model {
 
-    String getId();
+	String getId();
 
-    String getCodigoPais();
+	String getCodigoPais();
 
-    void setCodigoPais(String codigoPais);
+	void setCodigoPais(String codigoPais);
 
-    TipoDocumentoModel getTipoDocumento();
+	TipoDocumentoModel getTipoDocumento();
 
-    String getNumeroDocumento();
+	String getNumeroDocumento();
 
-    String getApellidoPaterno();
+	String getApellidoPaterno();
 
-    void setApellidoPaterno(String apellidoPaterno);
+	void setApellidoPaterno(String apellidoPaterno);
 
-    String getApellidoMaterno();
+	String getApellidoMaterno();
 
-    void setApellidoMaterno(String apellidoMaterno);
+	void setApellidoMaterno(String apellidoMaterno);
 
-    String getNombres();
+	String getNombres();
 
-    void setNombres(String nombres);
+	void setNombres(String nombres);
 
-    Date getFechaNacimiento();
+	Date getFechaNacimiento();
 
-    void setFechaNacimiento(Date fechaNacimiento);
+	void setFechaNacimiento(Date fechaNacimiento);
 
-    Sexo getSexo();
+	Sexo getSexo();
 
-    void setSexo(Sexo sexo);
+	void setSexo(Sexo sexo);
 
-    EstadoCivil getEstadoCivil();
+	EstadoCivil getEstadoCivil();
 
-    void setEstadoCivil(EstadoCivil estadoCivil);
+	void setEstadoCivil(EstadoCivil estadoCivil);
 
-    String getOcupacion();
+	String getOcupacion();
 
-    void setOcupacion(String ocupacion);
+	void setOcupacion(String ocupacion);
 
-    String getUrlFoto();
+	String getUrlFoto();
 
-    void setUrlFoto(String urlFoto);
+	void setUrlFoto(String urlFoto);
 
-    String getUrlFirma();
+	String getUrlFirma();
 
-    void setUrlFirma(String urlFirma);
+	void setUrlFirma(String urlFirma);
 
-    String getUbigeo();
+	String getUbigeo();
 
-    void setUbigeo(String ubigeo);
+	void setUbigeo(String ubigeo);
 
-    String getDireccion();
+	String getDireccion();
 
-    void setDireccion(String direccion);
+	void setDireccion(String direccion);
 
-    String getReferencia();
+	String getReferencia();
 
-    void setReferencia(String referencia);
+	void setReferencia(String referencia);
 
-    String getTelefono();
+	String getTelefono();
 
-    void setTelefono(String telefono);
+	void setTelefono(String telefono);
 
-    String getCelular();
+	String getCelular();
 
-    void setCelular(String celular);
+	void setCelular(String celular);
 
-    String getEmail();
+	String getEmail();
 
-    void setEmail(String email);
+	void setEmail(String email);
+
+	FileStoreModel getFoto();
+
+	FileStoreModel getFirma();
 
 }
