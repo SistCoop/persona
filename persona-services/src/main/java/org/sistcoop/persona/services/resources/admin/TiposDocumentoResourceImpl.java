@@ -32,115 +32,126 @@ import org.sistcoop.persona.services.ErrorResponse;
 @Stateless
 public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
 
-    @Inject
-    private TipoDocumentoProvider tipoDocumentoProvider;
+	@Inject
+	private TipoDocumentoProvider tipoDocumentoProvider;
 
-    @Inject
-    private RepresentationToModel representationToModel;
+	@Inject
+	private RepresentationToModel representationToModel;
 
-    @Context
-    private UriInfo uriInfo;
+	@Context
+	private UriInfo uriInfo;
 
-    @Inject
-    private TipoDocumentoResource tipoDocumentoResource;
+	@Inject
+	private TipoDocumentoResource tipoDocumentoResource;
 
-    @Override
-    public TipoDocumentoResource tipoDocumento(String documento) {
-        return tipoDocumentoResource;
-    }
+	@Override
+	public TipoDocumentoResource tipoDocumento(String documento) {
+		return tipoDocumentoResource;
+	}
 
-    @Override
-    public Response create(TipoDocumentoRepresentation rep) {
-        // Check duplicated abreviatura
-        if (tipoDocumentoProvider.findByAbreviatura(rep.getAbreviatura()) != null) {
-            return ErrorResponse.exists("TipoDocumento existe con la misma abreviatura");
-        }
-        try {
-            TipoDocumentoModel model = representationToModel.createTipoDocumento(rep, tipoDocumentoProvider);
-            return Response.created(uriInfo.getAbsolutePathBuilder().path(model.getAbreviatura()).build())
-                    .header("Access-Control-Expose-Headers", "Location")
-                    .entity(ModelToRepresentation.toRepresentation(model)).build();
-        } catch (ModelDuplicateException e) {
-            return ErrorResponse.exists("TipoDocumento existe con la misma abreviatura");
-        }
-    }
+	@Override
+	public Response create(TipoDocumentoRepresentation rep) {
+		// Check duplicated abreviatura
+		if (tipoDocumentoProvider.findByAbreviatura(rep.getAbreviatura()) != null) {
+			return ErrorResponse.exists("TipoDocumento existe con la misma abreviatura");
+		}
+		try {
+			TipoDocumentoModel model = representationToModel.createTipoDocumento(rep, tipoDocumentoProvider);
+			return Response.created(uriInfo.getAbsolutePathBuilder().path(model.getAbreviatura()).build())
+					.header("Access-Control-Expose-Headers", "Location")
+					.entity(ModelToRepresentation.toRepresentation(model)).build();
+		} catch (ModelDuplicateException e) {
+			return ErrorResponse.exists("TipoDocumento existe con la misma abreviatura");
+		}
+	}
 
-    @Override
-    public TipoDocumentoRepresentation findByAbreviatura(TipoDocumentoRepresentation rep) {
-        TipoDocumentoModel tipoDocumento = tipoDocumentoProvider.findByAbreviatura(rep.getAbreviatura());
-        TipoDocumentoRepresentation representation = ModelToRepresentation.toRepresentation(tipoDocumento);
-        if (representation != null) {
-            return representation;
-        } else {
-            throw new NotFoundException("TipoDocumento no encontrado");
-        }
-    }
+	@Override
+	public TipoDocumentoRepresentation findByAbreviatura(TipoDocumentoRepresentation rep) {
+		TipoDocumentoModel tipoDocumento = tipoDocumentoProvider.findByAbreviatura(rep.getAbreviatura());
+		TipoDocumentoRepresentation representation = ModelToRepresentation.toRepresentation(tipoDocumento);
+		if (representation != null) {
+			return representation;
+		} else {
+			throw new NotFoundException("TipoDocumento no encontrado");
+		}
+	}
 
-    @Override
-    public List<TipoDocumentoRepresentation> getAll(String tipoPersona, Boolean estado) {
-        List<TipoDocumentoModel> results = tipoDocumentoProvider.getAll();
-        for (Iterator<TipoDocumentoModel> iterator = results.iterator(); iterator.hasNext();) {
-            TipoDocumentoModel model = iterator.next();
-            if (tipoPersona != null && !tipoPersona.equalsIgnoreCase(model.getTipoPersona().toString())) {
-                iterator.remove();
-                break;
-            }
-            if (estado != null && estado != model.getEstado()) {
-                iterator.remove();
-                break;
-            }
-        }
+	@Override
+	public List<TipoDocumentoRepresentation> getAll(String tipoPersona, Boolean estado) {
+		List<TipoDocumentoModel> results = tipoDocumentoProvider.getAll();
+		for (Iterator<TipoDocumentoModel> iterator = results.iterator(); iterator.hasNext();) {
+			TipoDocumentoModel model = iterator.next();
+			if (tipoPersona != null && !tipoPersona.equalsIgnoreCase(model.getTipoPersona().toString())) {
+				iterator.remove();
+				break;
+			}
+			if (estado != null && estado != model.getEstado()) {
+				iterator.remove();
+				break;
+			}
+		}
 
-        List<TipoDocumentoRepresentation> representations = new ArrayList<>();
-        for (TipoDocumentoModel model : results) {
-            representations.add(ModelToRepresentation.toRepresentation(model));
-        }
-        return representations;
-    }
+		List<TipoDocumentoRepresentation> representations = new ArrayList<>();
+		for (TipoDocumentoModel model : results) {
+			representations.add(ModelToRepresentation.toRepresentation(model));
+		}
+		return representations;
+	}
 
-    @Override
-    public SearchResultsRepresentation<TipoDocumentoRepresentation> search(
-            SearchCriteriaRepresentation criteria) {
-        SearchCriteriaModel criteriaModel = new SearchCriteriaModel();
+	@Override
+	public List<TipoDocumentoRepresentation> getAll(String abreviatura, String tipoPersona, Boolean estado,
+			Integer firstResult, Integer maxResults) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-        // set filter and order
-        for (SearchCriteriaFilterRepresentation filter : criteria.getFilters()) {
-            criteriaModel.addFilter(filter.getName(), filter.getValue(),
-                    SearchCriteriaFilterOperator.valueOf(filter.getOperator().toString()));
-        }
-        for (OrderByRepresentation order : criteria.getOrders()) {
-            criteriaModel.addOrder(order.getName(), order.isAscending());
-        }
+	@Override
+	public List<TipoDocumentoRepresentation> search(String filterText, Integer firstResult, Integer maxResults) {
+		return null;
+	}
 
-        // set paging
-        PagingRepresentation paging = criteria.getPaging();
-        if (paging == null) {
-            paging = new PagingRepresentation();
-            paging.setPage(1);
-            paging.setPageSize(20);
-        }
-        criteriaModel.setPageSize(paging.getPageSize());
-        criteriaModel.setPage(paging.getPage());
+	@Override
+	public SearchResultsRepresentation<TipoDocumentoRepresentation> search(SearchCriteriaRepresentation criteria) {
+		SearchCriteriaModel criteriaModel = new SearchCriteriaModel();
 
-        // extract filterText
-        String filterText = criteria.getFilterText();
+		// set filter and order
+		for (SearchCriteriaFilterRepresentation filter : criteria.getFilters()) {
+			criteriaModel.addFilter(filter.getName(), filter.getValue(),
+					SearchCriteriaFilterOperator.valueOf(filter.getOperator().toString()));
+		}
+		for (OrderByRepresentation order : criteria.getOrders()) {
+			criteriaModel.addOrder(order.getName(), order.isAscending());
+		}
 
-        // search
-        SearchResultsModel<TipoDocumentoModel> results = null;
-        if (filterText == null) {
-            results = tipoDocumentoProvider.search(criteriaModel);
-        } else {
-            results = tipoDocumentoProvider.search(criteriaModel, filterText);
-        }
+		// set paging
+		PagingRepresentation paging = criteria.getPaging();
+		if (paging == null) {
+			paging = new PagingRepresentation();
+			paging.setPage(1);
+			paging.setPageSize(20);
+		}
+		criteriaModel.setPageSize(paging.getPageSize());
+		criteriaModel.setPage(paging.getPage());
 
-        SearchResultsRepresentation<TipoDocumentoRepresentation> rep = new SearchResultsRepresentation<>();
-        List<TipoDocumentoRepresentation> items = new ArrayList<>();
-        for (TipoDocumentoModel model : results.getModels()) {
-            items.add(ModelToRepresentation.toRepresentation(model));
-        }
-        rep.setItems(items);
-        rep.setTotalSize(results.getTotalSize());
-        return rep;
-    }
+		// extract filterText
+		String filterText = criteria.getFilterText();
+
+		// search
+		SearchResultsModel<TipoDocumentoModel> results = null;
+		if (filterText == null) {
+			results = tipoDocumentoProvider.search(criteriaModel);
+		} else {
+			results = tipoDocumentoProvider.search(criteriaModel, filterText);
+		}
+
+		SearchResultsRepresentation<TipoDocumentoRepresentation> rep = new SearchResultsRepresentation<>();
+		List<TipoDocumentoRepresentation> items = new ArrayList<>();
+		for (TipoDocumentoModel model : results.getModels()) {
+			items.add(ModelToRepresentation.toRepresentation(model));
+		}
+		rep.setItems(items);
+		rep.setTotalSize(results.getTotalSize());
+		return rep;
+	}
 
 }

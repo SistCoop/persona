@@ -1,10 +1,14 @@
 package org.sistcoop.persona.admin.client.resource;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -20,44 +24,39 @@ import org.sistcoop.persona.representations.idm.search.SearchResultsRepresentati
 @Consumes(MediaType.APPLICATION_JSON)
 public interface PersonasJuridicasResource {
 
-    @Path("{personaJuridica}")
-    public PersonaJuridicaResource personaJuridica(@PathParam("personaJuridica") String personaJuridica);
+	@Path("{idPersonaJuridica}")
+	public PersonaJuridicaResource personaJuridica(@PathParam("idPersonaJuridica") String idPersonaJuridica);
 
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response create(PersonaJuridicaRepresentation representation);
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response create(PersonaJuridicaRepresentation rep);
 
-    @POST
-    @Path("findByTipoNumeroDocumento")
-    @Produces(MediaType.APPLICATION_JSON)
-    public PersonaJuridicaRepresentation findByTipoNumeroDocumento(PersonaJuridicaRepresentation rep);
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<PersonaJuridicaRepresentation> search(@QueryParam("tipoDocumento") String tipoDocumento,
+			@QueryParam("numeroDocumento") String numeroDocumento, @QueryParam("razonSocial") String razonSocial,
+			@QueryParam("nombreComercial") String nombreComercial, @QueryParam("first") Integer firstResult,
+			@QueryParam("max") Integer maxResults);
 
-    
-    /*@GET
-    @Path("search")
-    @Produces(MediaType.APPLICATION_JSON)
-    public SearchResultsRepresentation<PersonaJuridicaRepresentation> search(
-            @QueryParam("tipoDocumento") String tipoDocumento,
-            @QueryParam("numeroDocumento") String numeroDocumento,
-            @QueryParam("filterText") @DefaultValue(value = "") String filterText,
-            @QueryParam("page") @DefaultValue(value = "1") int page,
-            @QueryParam("pageSize") @DefaultValue(value = "20") int pageSize);*/
-    
-    /**
-     * Este endpoint provee una forma de buscar direccionesRegionales. Los
-     * criterios de busqueda estan definidos por los parametros enviados.
-     * 
-     * @summary Search for DireccionesRegionales
-     * @param criteria
-     *            Criterio de busqueda.
-     * @statuscode 200 Si la busqueda fue realizada satisfactoriamente.
-     * @return Los resultados de la busqueda (una pagina de
-     *         direccionesRegionales).
-     */
-    @POST
-    @Path("search")
-    @Produces(MediaType.APPLICATION_JSON)
-    public SearchResultsRepresentation<PersonaJuridicaRepresentation> search(
-            SearchCriteriaRepresentation criteria);
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<PersonaJuridicaRepresentation> search(@QueryParam("filterText") String filterText,
+			@QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults);
+
+	/**
+	 * Este endpoint provee una forma de buscar direccionesRegionales. Los
+	 * criterios de busqueda estan definidos por los parametros enviados.
+	 * 
+	 * @summary Search for DireccionesRegionales
+	 * @param criteria
+	 *            Criterio de busqueda.
+	 * @statuscode 200 Si la busqueda fue realizada satisfactoriamente.
+	 * @return Los resultados de la busqueda (una pagina de
+	 *         direccionesRegionales).
+	 */
+	@POST
+	@Path("search")
+	@Produces(MediaType.APPLICATION_JSON)
+	public SearchResultsRepresentation<PersonaJuridicaRepresentation> search(SearchCriteriaRepresentation criteria);
 
 }

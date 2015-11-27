@@ -3,7 +3,6 @@ package org.sistcoop.persona.admin.client.resource;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -25,38 +24,38 @@ import org.sistcoop.persona.representations.idm.search.SearchResultsRepresentati
 @Consumes(MediaType.APPLICATION_JSON)
 public interface TiposDocumentoResource {
 
-    @Path("{tipoDocumento}")
-    public TipoDocumentoResource tipoDocumento(@PathParam("tipoDocumento") String tipoDocumento);
+	@Path("{idTipoDocumento}")
+	public TipoDocumentoResource tipoDocumento(@PathParam("idTipoDocumento") String idTipoDocumento);
 
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response create(TipoDocumentoRepresentation rep);
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response create(TipoDocumentoRepresentation rep);
 
-    @POST
-    @Path("findByAbreviatura")
-    @Produces(MediaType.APPLICATION_JSON)
-    public TipoDocumentoRepresentation findByAbreviatura(TipoDocumentoRepresentation rep);
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<TipoDocumentoRepresentation> getAll(@QueryParam("abreviatura") String abreviatura,
+			@QueryParam("tipoPersona") String tipoPersona, @QueryParam("estado") Boolean estado,
+			@QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults);
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<TipoDocumentoRepresentation> getAll(@QueryParam("tipoPersona") String tipoPersona,
-            @QueryParam("estado") @DefaultValue(value = "true") Boolean estado);
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<TipoDocumentoRepresentation> search(@QueryParam("filterText") String filterText,
+			@QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults);
 
-    /**
-     * Este endpoint provee una forma de buscar direccionesRegionales. Los
-     * criterios de busqueda estan definidos por los parametros enviados.
-     * 
-     * @summary Search for DireccionesRegionales
-     * @param criteria
-     *            Criterio de busqueda.
-     * @statuscode 200 Si la busqueda fue realizada satisfactoriamente.
-     * @return Los resultados de la busqueda (una pagina de
-     *         direccionesRegionales).
-     */
-    @POST
-    @Path("search")
-    @Produces(MediaType.APPLICATION_JSON)
-    public SearchResultsRepresentation<TipoDocumentoRepresentation> search(
-            SearchCriteriaRepresentation criteria);
+	/**
+	 * Este endpoint provee una forma de buscar direccionesRegionales. Los
+	 * criterios de busqueda estan definidos por los parametros enviados.
+	 * 
+	 * @summary Search for DireccionesRegionales
+	 * @param criteria
+	 *            Criterio de busqueda.
+	 * @statuscode 200 Si la busqueda fue realizada satisfactoriamente.
+	 * @return Los resultados de la busqueda (una pagina de
+	 *         direccionesRegionales).
+	 */
+	@POST
+	@Path("search")
+	@Produces(MediaType.APPLICATION_JSON)
+	public SearchResultsRepresentation<TipoDocumentoRepresentation> search(SearchCriteriaRepresentation criteria);
 
 }

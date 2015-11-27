@@ -27,24 +27,24 @@ import javax.ws.rs.core.MediaType;
  * @author carlosthe19916@gmail.com
  */
 
-@Produces(MediaType.APPLICATION_JSON)
 @Path("/")
+@Produces(MediaType.APPLICATION_JSON)
 public interface MaestroResource {
 
-    @GET
-    @Path("tiposPersona")
-    public List<String> getAllTipoPersonas();
+	@GET
+	@Path("tiposPersona")
+	public List<String> getAllTipoPersonas();
 
-    @GET
-    @Path("estadosCiviles")
-    public List<String> getAllEstadosCiviles();
+	@GET
+	@Path("estadosCiviles")
+	public List<String> getAllEstadosCiviles();
 
-    @GET
-    @Path("sexos")
-    public List<String> getAllSexos();
+	@GET
+	@Path("sexos")
+	public List<String> getAllSexos();
 
-    @GET
-    @Path("tiposEmpresa")
-    public List<String> getAllTiposEmpresa();
+	@GET
+	@Path("tiposEmpresa")
+	public List<String> getAllTiposEmpresa();
 
 }

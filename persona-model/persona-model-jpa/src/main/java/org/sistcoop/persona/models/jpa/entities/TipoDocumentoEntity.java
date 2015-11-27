@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -15,6 +16,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotBlank;
@@ -28,121 +31,135 @@ import org.hibernate.validator.constraints.NotBlank;
 @Entity
 @Table(name = "TIPO_DOCUMENTO")
 @NamedQueries(value = {
-        @NamedQuery(name = "TipoDocumentoEntity.findAll", query = "SELECT t FROM TipoDocumentoEntity t"),
-        @NamedQuery(name = "TipoDocumentoEntity.findByAbreviatura", query = "SELECT t FROM TipoDocumentoEntity t WHERE t.abreviatura = :abreviatura") })
+		@NamedQuery(name = "TipoDocumentoEntity.findAll", query = "SELECT t FROM TipoDocumentoEntity t"),
+		@NamedQuery(name = "TipoDocumentoEntity.findByAbreviatura", query = "SELECT t FROM TipoDocumentoEntity t WHERE t.abreviatura = :abreviatura") })
 public class TipoDocumentoEntity implements Serializable {
 
-    /**
+	/**
 	 * 
 	 */
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Size(min = 1, max = 20)
-    @Id
-    @Column(name = "ABREVIATURA")
-    private String abreviatura;
+	@Id
+	@GeneratedValue(generator = "uuid2")
+	@GenericGenerator(name = "uuid2", strategy = "uuid2")
+	@Column(name = "ID")
+	private String id;
 
-    @NotNull
-    @Size(min = 1, max = 60)
-    @NotBlank
-    @Column(name = "DENOMINACION")
-    private String denominacion;
+	@NaturalId(mutable = true)
+	@Size(min = 1, max = 20)
+	@Column(name = "ABREVIATURA")
+	private String abreviatura;
 
-    @NotNull
-    @Min(value = 1)
-    @Max(value = 20)
-    @Column(name = "CANTIDAD_CARACTERES")
-    private int cantidadCaracteres;
+	@NotNull
+	@Size(min = 1, max = 60)
+	@NotBlank
+	@Column(name = "DENOMINACION")
+	private String denominacion;
 
-    @NotNull
-    @Size(min = 1, max = 60)
-    @Column(name = "TIPO_PERSONA")
-    private String tipoPersona;
+	@NotNull
+	@Min(value = 1)
+	@Max(value = 20)
+	@Column(name = "CANTIDAD_CARACTERES")
+	private int cantidadCaracteres;
 
-    @NotNull
-    @Type(type = "org.hibernate.type.TrueFalseType")
-    @Column(name = "ESTADO")
-    private boolean estado;
+	@NotNull
+	@Size(min = 1, max = 60)
+	@Column(name = "TIPO_PERSONA")
+	private String tipoPersona;
 
-    @Version
-    private Integer optlk;
+	@NotNull
+	@Type(type = "org.hibernate.type.TrueFalseType")
+	@Column(name = "ESTADO")
+	private boolean estado;
 
-    public String getAbreviatura() {
-        return abreviatura;
-    }
+	@Version
+	private Integer optlk;
 
-    public void setAbreviatura(String abreviatura) {
-        this.abreviatura = abreviatura;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public String getDenominacion() {
-        return denominacion;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public void setDenominacion(String denominacion) {
-        this.denominacion = denominacion;
-    }
+	public String getAbreviatura() {
+		return abreviatura;
+	}
 
-    public int getCantidadCaracteres() {
-        return cantidadCaracteres;
-    }
+	public void setAbreviatura(String abreviatura) {
+		this.abreviatura = abreviatura;
+	}
 
-    public void setCantidadCaracteres(int cantidadCaracteres) {
-        this.cantidadCaracteres = cantidadCaracteres;
-    }
+	public String getDenominacion() {
+		return denominacion;
+	}
 
-    public String getTipoPersona() {
-        return tipoPersona;
-    }
+	public void setDenominacion(String denominacion) {
+		this.denominacion = denominacion;
+	}
 
-    public void setTipoPersona(String tipoPersona) {
-        this.tipoPersona = tipoPersona;
-    }
+	public int getCantidadCaracteres() {
+		return cantidadCaracteres;
+	}
 
-    public boolean isEstado() {
-        return estado;
-    }
+	public void setCantidadCaracteres(int cantidadCaracteres) {
+		this.cantidadCaracteres = cantidadCaracteres;
+	}
 
-    public void setEstado(boolean estado) {
-        this.estado = estado;
-    }
+	public String getTipoPersona() {
+		return tipoPersona;
+	}
 
-    public Integer getOptlk() {
-        return optlk;
-    }
+	public void setTipoPersona(String tipoPersona) {
+		this.tipoPersona = tipoPersona;
+	}
 
-    public void setOptlk(Integer optlk) {
-        this.optlk = optlk;
-    }
+	public boolean isEstado() {
+		return estado;
+	}
 
-    @Override
-    public String toString() {
-        return "(TipoDocumentoEntity abreviatura=" + this.abreviatura + ")";
-    }
+	public void setEstado(boolean estado) {
+		this.estado = estado;
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((abreviatura == null) ? 0 : abreviatura.hashCode());
-        return result;
-    }
+	public Integer getOptlk() {
+		return optlk;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof TipoDocumentoEntity))
-            return false;
-        TipoDocumentoEntity other = (TipoDocumentoEntity) obj;
-        if (abreviatura == null) {
-            if (other.abreviatura != null)
-                return false;
-        } else if (!abreviatura.equals(other.abreviatura))
-            return false;
-        return true;
-    }
+	public void setOptlk(Integer optlk) {
+		this.optlk = optlk;
+	}
+
+	@Override
+	public String toString() {
+		return "(TipoDocumentoEntity abreviatura=" + this.abreviatura + ")";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((abreviatura == null) ? 0 : abreviatura.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof TipoDocumentoEntity))
+			return false;
+		TipoDocumentoEntity other = (TipoDocumentoEntity) obj;
+		if (abreviatura == null) {
+			if (other.abreviatura != null)
+				return false;
+		} else if (!abreviatura.equals(other.abreviatura))
+			return false;
+		return true;
+	}
 
 }

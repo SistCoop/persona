@@ -32,122 +32,128 @@ import org.sistcoop.persona.models.search.SearchResultsModel;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class JpaTipoDocumentoProvider extends AbstractHibernateStorage implements TipoDocumentoProvider {
 
-    @PersistenceContext
-    private EntityManager em;
+	@PersistenceContext
+	private EntityManager em;
 
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.em;
-    }
+	@Override
+	protected EntityManager getEntityManager() {
+		return this.em;
+	}
 
-    @Override
-    public void close() {
-        // TODO Auto-generated method stub
-    }
+	@Override
+	public void close() {
+		// TODO Auto-generated method stub
+	}
 
-    @Override
-    public TipoDocumentoModel create(String abreviatura, String denominacion, int cantidadCaracteres,
-            TipoPersona tipoPersona) {
-        if (findByAbreviatura(abreviatura) != null) {
-            throw new ModelDuplicateException(
-                    "TipoDocumentoEntity abreviatura debe ser unico, se encontro otra entidad con abreviatura:"
-                            + abreviatura);
-        }
+	@Override
+	public TipoDocumentoModel create(String abreviatura, String denominacion, int cantidadCaracteres,
+			TipoPersona tipoPersona) {
+		if (findByAbreviatura(abreviatura) != null) {
+			throw new ModelDuplicateException(
+					"TipoDocumentoEntity abreviatura debe ser unico, se encontro otra entidad con abreviatura:"
+							+ abreviatura);
+		}
 
-        TipoDocumentoEntity tipoDocumentoEntity = new TipoDocumentoEntity();
-        tipoDocumentoEntity.setAbreviatura(abreviatura);
-        tipoDocumentoEntity.setDenominacion(denominacion);
-        tipoDocumentoEntity.setCantidadCaracteres(cantidadCaracteres);
-        tipoDocumentoEntity.setTipoPersona(tipoPersona.toString());
-        tipoDocumentoEntity.setEstado(true);
-        em.persist(tipoDocumentoEntity);
-        return new TipoDocumentoAdapter(em, tipoDocumentoEntity);
-    }
+		TipoDocumentoEntity tipoDocumentoEntity = new TipoDocumentoEntity();
+		tipoDocumentoEntity.setAbreviatura(abreviatura);
+		tipoDocumentoEntity.setDenominacion(denominacion);
+		tipoDocumentoEntity.setCantidadCaracteres(cantidadCaracteres);
+		tipoDocumentoEntity.setTipoPersona(tipoPersona.toString());
+		tipoDocumentoEntity.setEstado(true);
+		em.persist(tipoDocumentoEntity);
+		return new TipoDocumentoAdapter(em, tipoDocumentoEntity);
+	}
 
-    @Override
-    public TipoDocumentoModel findByAbreviatura(String abreviatura) {
-        TypedQuery<TipoDocumentoEntity> query = em.createNamedQuery("TipoDocumentoEntity.findByAbreviatura",
-                TipoDocumentoEntity.class);
-        query.setParameter("abreviatura", abreviatura);
-        List<TipoDocumentoEntity> results = query.getResultList();
-        if (results.isEmpty()) {
-            return null;
-        } else if (results.size() > 1) {
-            throw new IllegalStateException("Mas de un TipoDocumentoEntity con abreviatura=" + abreviatura
-                    + ", results=" + results);
-        } else {
-            return new TipoDocumentoAdapter(em, results.get(0));
-        }
-    }
+	@Override
+	public TipoDocumentoModel findByAbreviatura(String abreviatura) {
+		TypedQuery<TipoDocumentoEntity> query = em.createNamedQuery("TipoDocumentoEntity.findByAbreviatura",
+				TipoDocumentoEntity.class);
+		query.setParameter("abreviatura", abreviatura);
+		List<TipoDocumentoEntity> results = query.getResultList();
+		if (results.isEmpty()) {
+			return null;
+		} else if (results.size() > 1) {
+			throw new IllegalStateException(
+					"Mas de un TipoDocumentoEntity con abreviatura=" + abreviatura + ", results=" + results);
+		} else {
+			return new TipoDocumentoAdapter(em, results.get(0));
+		}
+	}
 
-    @Override
-    public boolean remove(TipoDocumentoModel tipoDocumentoModel) {
-        TypedQuery<PersonaNaturalEntity> query1 = em.createNamedQuery(
-                "PersonaNaturalEntity.findByTipoDocumento", PersonaNaturalEntity.class);
-        query1.setParameter("tipoDocumento", tipoDocumentoModel.getAbreviatura());
-        query1.setMaxResults(1);
-        if (!query1.getResultList().isEmpty()) {
-            return false;
-        }
+	@Override
+	public TipoDocumentoModel findById(String id) {
+		TipoDocumentoEntity tipoDocumentoEntity = em.find(TipoDocumentoEntity.class, id);
+		return tipoDocumentoEntity != null ? new TipoDocumentoAdapter(em, tipoDocumentoEntity) : null;
+	}
 
-        TypedQuery<PersonaJuridicaEntity> query2 = em.createNamedQuery(
-                "PersonaJuridicaEntity.findByTipoDocumento", PersonaJuridicaEntity.class);
-        query2.setParameter("tipoDocumento", tipoDocumentoModel.getAbreviatura());
-        query2.setMaxResults(1);
-        if (!query2.getResultList().isEmpty()) {
-            return false;
-        }
+	@Override
+	public boolean remove(TipoDocumentoModel tipoDocumentoModel) {
+		TypedQuery<PersonaNaturalEntity> query1 = em.createNamedQuery("PersonaNaturalEntity.findByTipoDocumento",
+				PersonaNaturalEntity.class);
+		query1.setParameter("tipoDocumento", tipoDocumentoModel.getAbreviatura());
+		query1.setMaxResults(1);
+		if (!query1.getResultList().isEmpty()) {
+			return false;
+		}
 
-        TipoDocumentoEntity tipoDocumentoEntity = em.find(TipoDocumentoEntity.class,
-                tipoDocumentoModel.getAbreviatura());
-        if (tipoDocumentoEntity == null) {
-            return false;
-        }
-        em.remove(tipoDocumentoEntity);
-        return true;
-    }
+		TypedQuery<PersonaJuridicaEntity> query2 = em.createNamedQuery("PersonaJuridicaEntity.findByTipoDocumento",
+				PersonaJuridicaEntity.class);
+		query2.setParameter("tipoDocumento", tipoDocumentoModel.getAbreviatura());
+		query2.setMaxResults(1);
+		if (!query2.getResultList().isEmpty()) {
+			return false;
+		}
 
-    @Override
-    public List<TipoDocumentoModel> getAll() {
-        TypedQuery<TipoDocumentoEntity> query = em.createNamedQuery("TipoDocumentoEntity.findAll",
-                TipoDocumentoEntity.class);
+		TipoDocumentoEntity tipoDocumentoEntity = em.find(TipoDocumentoEntity.class,
+				tipoDocumentoModel.getAbreviatura());
+		if (tipoDocumentoEntity == null) {
+			return false;
+		}
+		em.remove(tipoDocumentoEntity);
+		return true;
+	}
 
-        List<TipoDocumentoEntity> entities = query.getResultList();
-        List<TipoDocumentoModel> models = new ArrayList<TipoDocumentoModel>();
-        for (TipoDocumentoEntity tipoDocumentoEntity : entities) {
-            models.add(new TipoDocumentoAdapter(em, tipoDocumentoEntity));
-        }
+	@Override
+	public List<TipoDocumentoModel> getAll() {
+		TypedQuery<TipoDocumentoEntity> query = em.createNamedQuery("TipoDocumentoEntity.findAll",
+				TipoDocumentoEntity.class);
 
-        return models;
-    }
+		List<TipoDocumentoEntity> entities = query.getResultList();
+		List<TipoDocumentoModel> models = new ArrayList<TipoDocumentoModel>();
+		for (TipoDocumentoEntity tipoDocumentoEntity : entities) {
+			models.add(new TipoDocumentoAdapter(em, tipoDocumentoEntity));
+		}
 
-    @Override
-    public SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria) {
-        SearchResultsModel<TipoDocumentoEntity> entityResult = find(criteria, TipoDocumentoEntity.class);
+		return models;
+	}
 
-        SearchResultsModel<TipoDocumentoModel> modelResult = new SearchResultsModel<>();
-        List<TipoDocumentoModel> list = new ArrayList<>();
-        for (TipoDocumentoEntity entity : entityResult.getModels()) {
-            list.add(new TipoDocumentoAdapter(em, entity));
-        }
-        modelResult.setTotalSize(entityResult.getTotalSize());
-        modelResult.setModels(list);
-        return modelResult;
-    }
+	@Override
+	public SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria) {
+		SearchResultsModel<TipoDocumentoEntity> entityResult = find(criteria, TipoDocumentoEntity.class);
 
-    @Override
-    public SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria, String filterText) {
-        SearchResultsModel<TipoDocumentoEntity> entityResult = findFullText(criteria,
-                TipoDocumentoEntity.class, filterText, "abreviatura", "denominacion");
+		SearchResultsModel<TipoDocumentoModel> modelResult = new SearchResultsModel<>();
+		List<TipoDocumentoModel> list = new ArrayList<>();
+		for (TipoDocumentoEntity entity : entityResult.getModels()) {
+			list.add(new TipoDocumentoAdapter(em, entity));
+		}
+		modelResult.setTotalSize(entityResult.getTotalSize());
+		modelResult.setModels(list);
+		return modelResult;
+	}
 
-        SearchResultsModel<TipoDocumentoModel> modelResult = new SearchResultsModel<>();
-        List<TipoDocumentoModel> list = new ArrayList<>();
-        for (TipoDocumentoEntity entity : entityResult.getModels()) {
-            list.add(new TipoDocumentoAdapter(em, entity));
-        }
-        modelResult.setTotalSize(entityResult.getTotalSize());
-        modelResult.setModels(list);
-        return modelResult;
-    }
+	@Override
+	public SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria, String filterText) {
+		SearchResultsModel<TipoDocumentoEntity> entityResult = findFullText(criteria, TipoDocumentoEntity.class,
+				filterText, "abreviatura", "denominacion");
+
+		SearchResultsModel<TipoDocumentoModel> modelResult = new SearchResultsModel<>();
+		List<TipoDocumentoModel> list = new ArrayList<>();
+		for (TipoDocumentoEntity entity : entityResult.getModels()) {
+			list.add(new TipoDocumentoAdapter(em, entity));
+		}
+		modelResult.setTotalSize(entityResult.getTotalSize());
+		modelResult.setModels(list);
+		return modelResult;
+	}
 
 }

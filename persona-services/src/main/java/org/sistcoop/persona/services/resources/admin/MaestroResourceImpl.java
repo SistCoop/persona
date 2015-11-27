@@ -14,48 +14,48 @@ import org.sistcoop.persona.models.enums.TipoPersona;
 @Stateless
 public class MaestroResourceImpl implements MaestroResource {
 
-    @Override
-    public List<String> getAllTipoPersonas() {
-        TipoPersona[] enums = TipoPersona.values();
+	@Override
+	public List<String> getAllTipoPersonas() {
+		TipoPersona[] enums = TipoPersona.values();
 
-        List<String> representations = new ArrayList<>();
-        for (int i = 0; i < enums.length; i++) {
-            representations.add(enums[i].toString());
-        }
-        return representations;
-    }
+		List<String> representations = new ArrayList<>();
+		for (int i = 0; i < enums.length; i++) {
+			representations.add(enums[i].toString());
+		}
+		return representations;
+	}
 
-    @Override
-    public List<String> getAllEstadosCiviles() {
-        EstadoCivil[] enums = EstadoCivil.values();
+	@Override
+	public List<String> getAllEstadosCiviles() {
+		EstadoCivil[] enums = EstadoCivil.values();
 
-        List<String> representations = new ArrayList<>();
-        for (int i = 0; i < enums.length; i++) {
-            representations.add(enums[i].toString());
-        }
-        return representations;
-    }
+		List<String> representations = new ArrayList<>();
+		for (int i = 0; i < enums.length; i++) {
+			representations.add(enums[i].toString());
+		}
+		return representations;
+	}
 
-    @Override
-    public List<String> getAllSexos() {
-        Sexo[] enums = Sexo.values();
+	@Override
+	public List<String> getAllSexos() {
+		Sexo[] enums = Sexo.values();
 
-        List<String> representations = new ArrayList<>();
-        for (int i = 0; i < enums.length; i++) {
-            representations.add(enums[i].toString());
-        }
-        return representations;
-    }
+		List<String> representations = new ArrayList<>();
+		for (int i = 0; i < enums.length; i++) {
+			representations.add(enums[i].toString());
+		}
+		return representations;
+	}
 
-    @Override
-    public List<String> getAllTiposEmpresa() {
-        TipoEmpresa[] enums = TipoEmpresa.values();
+	@Override
+	public List<String> getAllTiposEmpresa() {
+		TipoEmpresa[] enums = TipoEmpresa.values();
 
-        List<String> representations = new ArrayList<>();
-        for (int i = 0; i < enums.length; i++) {
-            representations.add(enums[i].toString());
-        }
-        return representations;
-    }
+		List<String> representations = new ArrayList<>();
+		for (int i = 0; i < enums.length; i++) {
+			representations.add(enums[i].toString());
+		}
+		return representations;
+	}
 
 }

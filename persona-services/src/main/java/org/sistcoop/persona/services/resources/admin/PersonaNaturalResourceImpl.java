@@ -30,118 +30,125 @@ import org.sistcoop.persona.services.util.GoogleDriveManager;
 @Stateless
 public class PersonaNaturalResourceImpl implements PersonaNaturalResource {
 
-    @PathParam("personaNatural")
-    private String personaNatural;
+	@PathParam("idPersonaNatural")
+	private String idPersonaNatural;
 
-    @Inject
-    private GoogleDriveManager googleDriveManager;
+	@Inject
+	private GoogleDriveManager googleDriveManager;
 
-    @Inject
-    private PersonaNaturalProvider personaNaturalProvider;
+	@Inject
+	private PersonaNaturalProvider personaNaturalProvider;
 
-    @Inject
-    private PersonaNaturalManager personaNaturalManager;
+	@Inject
+	private PersonaNaturalManager personaNaturalManager;
 
-    private PersonaNaturalModel getPersonaNaturalModel() {
-        return personaNaturalProvider.findById(personaNatural);
-    }
+	private PersonaNaturalModel getPersonaNaturalModel() {
+		return personaNaturalProvider.findById(idPersonaNatural);
+	}
 
-    @Override
-    public PersonaNaturalRepresentation toRepresentation() {
-        PersonaNaturalRepresentation rep = ModelToRepresentation.toRepresentation(getPersonaNaturalModel());
-        if (rep != null) {
-            return rep;
-        } else {
-            throw new NotFoundException("PersonaNatural no encontrado");
-        }
-    }
+	@Override
+	public PersonaNaturalRepresentation toRepresentation() {
+		PersonaNaturalRepresentation rep = ModelToRepresentation.toRepresentation(getPersonaNaturalModel());
+		if (rep != null) {
+			return rep;
+		} else {
+			throw new NotFoundException("Persona Natural no encontrada");
+		}
+	}
 
-    @Override
-    public void update(PersonaNaturalRepresentation rep) {
-        personaNaturalManager.update(getPersonaNaturalModel(), rep);
-    }
+	@Override
+	public void update(PersonaNaturalRepresentation rep) {
+		personaNaturalManager.update(getPersonaNaturalModel(), rep);
+	}
 
-    @Override
-    public void setFoto(MultipartFormDataInput input) {
-        PersonaNaturalModel model = getPersonaNaturalModel();
+	@Override
+	public void getFoto() {
+		// TODO Auto-generated method stub
 
-        Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-        List<InputPart> inputParts = uploadForm.get("file");
-        for (InputPart inputPart : inputParts) {
-            try {
-                // convert the uploaded file to inputstream
-                InputStream inputStream = inputPart.getBody(InputStream.class, null);
-                byte[] bytes = IOUtils.toByteArray(inputStream);
+	}
 
-                // writeFile(bytes, fileName);
-                java.io.File UPLOAD_FILE = java.io.File.createTempFile("tpm-sg", ".tmp", null);
-                FileOutputStream fos = new FileOutputStream(UPLOAD_FILE);
-                fos.write(bytes);
-                fos.close();
+	@Override
+	public void getFirma() {
+		// TODO Auto-generated method stub
 
-                // google drive
-                String url = googleDriveManager.upload(UPLOAD_FILE, UUID.randomUUID().toString(), "image/*",
-                        "Photo siscoop", "sistcoop_app", "ventura", "foto");
-                model.setUrlFoto(url);
-                model.commit();
+	}
 
-            } catch (IOException e) {
-                throw new InternalServerErrorException();
-            } catch (GeneralSecurityException e) {
-                throw new InternalServerErrorException();
-            }
-        }
-    }
+	@Override
+	public void setFoto(MultipartFormDataInput input) {
+		PersonaNaturalModel model = getPersonaNaturalModel();
 
-    @Override
-    public void setFirma(MultipartFormDataInput input) {
-        PersonaNaturalModel model = getPersonaNaturalModel();
+		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+		List<InputPart> inputParts = uploadForm.get("file");
+		for (InputPart inputPart : inputParts) {
+			try {
+				// convert the uploaded file to inputstream
+				InputStream inputStream = inputPart.getBody(InputStream.class, null);
+				byte[] bytes = IOUtils.toByteArray(inputStream);
 
-        Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-        List<InputPart> inputParts = uploadForm.get("file");
-        for (InputPart inputPart : inputParts) {
-            try {
-                // convert the uploaded file to inputstream
-                InputStream inputStream = inputPart.getBody(InputStream.class, null);
-                byte[] bytes = IOUtils.toByteArray(inputStream);
+				// writeFile(bytes, fileName);
+				java.io.File UPLOAD_FILE = java.io.File.createTempFile("tpm-sg", ".tmp", null);
+				FileOutputStream fos = new FileOutputStream(UPLOAD_FILE);
+				fos.write(bytes);
+				fos.close();
 
-                // writeFile(bytes, fileName);
-                java.io.File UPLOAD_FILE = java.io.File.createTempFile("tpm-sg", ".tmp", null);
-                FileOutputStream fos = new FileOutputStream(UPLOAD_FILE);
-                fos.write(bytes);
-                fos.close();
+				// google drive
+				String url = googleDriveManager.upload(UPLOAD_FILE, UUID.randomUUID().toString(), "image/*",
+						"Photo siscoop", "sistcoop_app", "ventura", "foto");
+				model.setUrlFoto(url);
+				model.commit();
 
-                // google drive
-                String url = googleDriveManager.upload(UPLOAD_FILE, UUID.randomUUID().toString(), "image/*",
-                        "Photo siscoop", "sistcoop_app", "ventura", "firma");
-                model.setUrlFirma(url);
-                model.commit();
+			} catch (IOException e) {
+				throw new InternalServerErrorException();
+			} catch (GeneralSecurityException e) {
+				throw new InternalServerErrorException();
+			}
+		}
+	}
 
-            } catch (IOException e) {
-                throw new InternalServerErrorException();
-            } catch (GeneralSecurityException e) {
-                throw new InternalServerErrorException();
-            }
-        }
-    }
+	@Override
+	public void setFirma(MultipartFormDataInput input) {
+		PersonaNaturalModel model = getPersonaNaturalModel();
 
-    @Override
-    public void disable() {
-        throw new NotFoundException();
-    }
+		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+		List<InputPart> inputParts = uploadForm.get("file");
+		for (InputPart inputPart : inputParts) {
+			try {
+				// convert the uploaded file to inputstream
+				InputStream inputStream = inputPart.getBody(InputStream.class, null);
+				byte[] bytes = IOUtils.toByteArray(inputStream);
 
-    @Override
-    public Response remove() {
-        PersonaNaturalModel personaNatural = getPersonaNaturalModel();
-        if (personaNatural == null) {
-            throw new NotFoundException("PersonaNatural no encontrado");
-        }
-        boolean removed = personaNaturalProvider.remove(personaNatural);
-        if (removed) {
-            return Response.noContent().build();
-        } else {
-            return ErrorResponse.error("PersonaNatural no pudo ser eliminado", Response.Status.BAD_REQUEST);
-        }
-    }
+				// writeFile(bytes, fileName);
+				java.io.File UPLOAD_FILE = java.io.File.createTempFile("tpm-sg", ".tmp", null);
+				FileOutputStream fos = new FileOutputStream(UPLOAD_FILE);
+				fos.write(bytes);
+				fos.close();
+
+				// google drive
+				String url = googleDriveManager.upload(UPLOAD_FILE, UUID.randomUUID().toString(), "image/*",
+						"Photo siscoop", "sistcoop_app", "ventura", "firma");
+				model.setUrlFirma(url);
+				model.commit();
+
+			} catch (IOException e) {
+				throw new InternalServerErrorException();
+			} catch (GeneralSecurityException e) {
+				throw new InternalServerErrorException();
+			}
+		}
+	}
+
+	@Override
+	public Response remove() {
+		PersonaNaturalModel personaNatural = getPersonaNaturalModel();
+		if (personaNatural == null) {
+			throw new NotFoundException("Persona Natural no encontrada");
+		}
+		boolean removed = personaNaturalProvider.remove(personaNatural);
+		if (removed) {
+			return Response.noContent().build();
+		} else {
+			return ErrorResponse.error("Persona Natural no pudo ser eliminada", Response.Status.BAD_REQUEST);
+		}
+	}
 
 }

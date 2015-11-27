@@ -19,30 +19,36 @@ import org.sistcoop.persona.representations.idm.PersonaNaturalRepresentation;
 
 public interface PersonaNaturalResource {
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public PersonaNaturalRepresentation toRepresentation();
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public PersonaNaturalRepresentation toRepresentation();
 
-    @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
-    public void update(PersonaNaturalRepresentation rep);
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void update(PersonaNaturalRepresentation rep);
 
-    @POST
-    @Path("foto")
-    @Consumes("multipart/form-data")
-    public void setFoto(MultipartFormDataInput input);
+	@GET
+	@Path("foto")
+	@Produces("image/png")
+	public void getFoto();
 
-    @POST
-    @Path("firma")
-    @Consumes("multipart/form-data")
-    public void setFirma(MultipartFormDataInput input);
+	@POST
+	@Path("foto")
+	@Consumes("multipart/form-data")
+	public void setFoto(MultipartFormDataInput input);
 
-    @POST
-    @Path("disable")
-    public void disable();
+	@GET
+	@Path("firma")
+	@Produces("image/png")
+	public void getFirma();
 
-    @DELETE
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response remove();
+	@POST
+	@Path("firma")
+	@Consumes("multipart/form-data")
+	public void setFirma(MultipartFormDataInput input);
+
+	@DELETE
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response remove();
 
 }

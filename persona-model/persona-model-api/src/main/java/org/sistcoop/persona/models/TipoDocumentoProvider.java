@@ -12,17 +12,18 @@ import org.sistcoop.persona.provider.Provider;
 @Local
 public interface TipoDocumentoProvider extends Provider {
 
-    TipoDocumentoModel findByAbreviatura(String abreviatura);
+	TipoDocumentoModel findById(String id);
 
-    TipoDocumentoModel create(String abreviatura, String denominacion, int cantidadCaracteres,
-            TipoPersona tipoPersona);
+	TipoDocumentoModel findByAbreviatura(String abreviatura);
 
-    boolean remove(TipoDocumentoModel tipoDocumentoModel);
+	TipoDocumentoModel create(String abreviatura, String denominacion, int cantidadCaracteres, TipoPersona tipoPersona);
 
-    List<TipoDocumentoModel> getAll();
+	boolean remove(TipoDocumentoModel tipoDocumentoModel);
 
-    SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria);
+	List<TipoDocumentoModel> getAll();
 
-    SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria, String filterText);
+	SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria);
+
+	SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria, String filterText);
 
 }

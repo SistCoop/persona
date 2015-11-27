@@ -20,15 +20,15 @@ import org.sistcoop.persona.representations.idm.AccionistaRepresentation;
 @Consumes(MediaType.APPLICATION_JSON)
 public interface AccionistasResource {
 
-    @Path("{accionista}")
-    public AccionistaResource accionista(@PathParam("accionista") String accionista);
+	@Path("{idAccionista}")
+	public AccionistaResource accionista(@PathParam("idAccionista") String idAccionista);
 
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response create(AccionistaRepresentation rep);
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response create(AccionistaRepresentation rep);
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<AccionistaRepresentation> getAll();
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<AccionistaRepresentation> getAll();
 
 }

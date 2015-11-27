@@ -12,106 +12,111 @@ import org.sistcoop.persona.models.jpa.entities.TipoDocumentoEntity;
 
 public class TipoDocumentoAdapter implements TipoDocumentoModel {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private TipoDocumentoEntity tipoDocumentoEntity;
-    private EntityManager em;
+	private TipoDocumentoEntity tipoDocumentoEntity;
+	private EntityManager em;
 
-    public TipoDocumentoAdapter(EntityManager em, TipoDocumentoEntity tipoDocumentoEntity) {
-        this.em = em;
-        this.tipoDocumentoEntity = tipoDocumentoEntity;
-    }
+	public TipoDocumentoAdapter(EntityManager em, TipoDocumentoEntity tipoDocumentoEntity) {
+		this.em = em;
+		this.tipoDocumentoEntity = tipoDocumentoEntity;
+	}
 
-    public static TipoDocumentoEntity toTipoDocumentoEntity(TipoDocumentoModel model, EntityManager em) {
-        if (model instanceof TipoDocumentoAdapter) {
-            return ((TipoDocumentoAdapter) model).getTipoDocumentEntity();
-        }
-        return em.getReference(TipoDocumentoEntity.class, model.getAbreviatura());
-    }
+	public static TipoDocumentoEntity toTipoDocumentoEntity(TipoDocumentoModel model, EntityManager em) {
+		if (model instanceof TipoDocumentoAdapter) {
+			return ((TipoDocumentoAdapter) model).getTipoDocumentEntity();
+		}
+		return em.getReference(TipoDocumentoEntity.class, model.getAbreviatura());
+	}
 
-    public TipoDocumentoEntity getTipoDocumentEntity() {
-        return tipoDocumentoEntity;
-    }
+	public TipoDocumentoEntity getTipoDocumentEntity() {
+		return tipoDocumentoEntity;
+	}
 
-    @Override
-    public String getAbreviatura() {
-        return tipoDocumentoEntity.getAbreviatura();
-    }
+	@Override
+	public String getId() {
+		return tipoDocumentoEntity.getId();
+	}
 
-    @Override
-    public void setAbreviatura(String abreviatura) {
-        tipoDocumentoEntity.setAbreviatura(abreviatura);
-    }
+	@Override
+	public String getAbreviatura() {
+		return tipoDocumentoEntity.getAbreviatura();
+	}
 
-    @Override
-    public String getDenominacion() {
-        return tipoDocumentoEntity.getDenominacion();
-    }
+	@Override
+	public void setAbreviatura(String abreviatura) {
+		tipoDocumentoEntity.setAbreviatura(abreviatura);
+	}
 
-    @Override
-    public void setDenominacion(String denominacion) {
-        tipoDocumentoEntity.setDenominacion(denominacion);
-    }
+	@Override
+	public String getDenominacion() {
+		return tipoDocumentoEntity.getDenominacion();
+	}
 
-    @Override
-    public int getCantidadCaracteres() {
-        return tipoDocumentoEntity.getCantidadCaracteres();
-    }
+	@Override
+	public void setDenominacion(String denominacion) {
+		tipoDocumentoEntity.setDenominacion(denominacion);
+	}
 
-    @Override
-    public void setCantidadCaracteres(int cantidadCaracteres) {
-        tipoDocumentoEntity.setCantidadCaracteres(cantidadCaracteres);
-    }
+	@Override
+	public int getCantidadCaracteres() {
+		return tipoDocumentoEntity.getCantidadCaracteres();
+	}
 
-    @Override
-    public TipoPersona getTipoPersona() {
-        String tipoPersona = tipoDocumentoEntity.getTipoPersona();
-        return TipoPersona.valueOf(tipoPersona);
-    }
+	@Override
+	public void setCantidadCaracteres(int cantidadCaracteres) {
+		tipoDocumentoEntity.setCantidadCaracteres(cantidadCaracteres);
+	}
 
-    @Override
-    public void setTipoPersona(TipoPersona tipoPersona) {
-        tipoDocumentoEntity.setTipoPersona(tipoPersona.toString());
-    }
+	@Override
+	public TipoPersona getTipoPersona() {
+		String tipoPersona = tipoDocumentoEntity.getTipoPersona();
+		return TipoPersona.valueOf(tipoPersona);
+	}
 
-    @Override
-    public boolean getEstado() {
-        return tipoDocumentoEntity.isEstado();
-    }
+	@Override
+	public void setTipoPersona(TipoPersona tipoPersona) {
+		tipoDocumentoEntity.setTipoPersona(tipoPersona.toString());
+	}
 
-    @Override
-    public void setEstado(boolean estado) {
-        tipoDocumentoEntity.setEstado(estado);
-    }
+	@Override
+	public boolean getEstado() {
+		return tipoDocumentoEntity.isEstado();
+	}
 
-    @Override
-    public void commit() {
-        em.merge(tipoDocumentoEntity);
-    }
+	@Override
+	public void setEstado(boolean estado) {
+		tipoDocumentoEntity.setEstado(estado);
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getAbreviatura() == null) ? 0 : getAbreviatura().hashCode());
-        return result;
-    }
+	@Override
+	public void commit() {
+		em.merge(tipoDocumentoEntity);
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof TipoDocumentoModel))
-            return false;
-        TipoDocumentoModel other = (TipoDocumentoModel) obj;
-        if (getAbreviatura() == null) {
-            if (other.getAbreviatura() != null)
-                return false;
-        } else if (!getAbreviatura().equals(other.getAbreviatura()))
-            return false;
-        return true;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((getAbreviatura() == null) ? 0 : getAbreviatura().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof TipoDocumentoModel))
+			return false;
+		TipoDocumentoModel other = (TipoDocumentoModel) obj;
+		if (getAbreviatura() == null) {
+			if (other.getAbreviatura() != null)
+				return false;
+		} else if (!getAbreviatura().equals(other.getAbreviatura()))
+			return false;
+		return true;
+	}
 
 }
