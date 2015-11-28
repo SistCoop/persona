@@ -37,12 +37,8 @@ public interface PersonasNaturalesResource {
 			@QueryParam("numeroDocumento") String numeroDocumento,
 			@QueryParam("apellidoPaterno") String apellidoPaterno,
 			@QueryParam("apellidoMaterno") String apellidoMaterno, @QueryParam("nombres") String nombres,
-			@QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults);
-
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<PersonaNaturalRepresentation> search(@QueryParam("filterText") String filterText,
-			@QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults);
+			@QueryParam("filterText") String filterText, @QueryParam("first") Integer firstResult,
+			@QueryParam("max") Integer maxResults);
 
 	/**
 	 * Este endpoint provee una forma de buscar direccionesRegionales. Los

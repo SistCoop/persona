@@ -2,6 +2,7 @@ package org.sistcoop.persona.models;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Local;
 
@@ -13,20 +14,26 @@ import org.sistcoop.persona.provider.Provider;
 @Local
 public interface PersonaNaturalProvider extends Provider {
 
-    PersonaNaturalModel findById(String id);
+	PersonaNaturalModel findById(String id);
 
-    PersonaNaturalModel findByTipoNumeroDocumento(TipoDocumentoModel tipoDocumento, String numeroDocumento);
+	PersonaNaturalModel findByTipoNumeroDocumento(TipoDocumentoModel tipoDocumento, String numeroDocumento);
 
-    PersonaNaturalModel create(String codigoPais, TipoDocumentoModel tipoDocumentoModel,
-            String numeroDocumento, String apellidoPaterno, String apellidoMaterno, String nombres,
-            Date fechaNacimiento, Sexo sexo);
+	PersonaNaturalModel create(String codigoPais, TipoDocumentoModel tipoDocumentoModel, String numeroDocumento,
+			String apellidoPaterno, String apellidoMaterno, String nombres, Date fechaNacimiento, Sexo sexo);
 
-    boolean remove(PersonaNaturalModel personaNaturalModel);
+	boolean remove(PersonaNaturalModel personaNaturalModel);
 
-    List<PersonaNaturalModel> getAll();
+	List<PersonaNaturalModel> getAll();
 
-    SearchResultsModel<PersonaNaturalModel> search(SearchCriteriaModel criteria);
+	List<PersonaNaturalModel> searchByAttributes(Map<String, Object> attributes, Integer firstResult,
+			Integer maxResults);
 
-    SearchResultsModel<PersonaNaturalModel> search(SearchCriteriaModel criteria, String filterText);
+	List<PersonaNaturalModel> search(Integer firstResult, Integer maxResults);
+
+	List<PersonaNaturalModel> search(String trim, Integer firstResult, Integer maxResults);
+
+	SearchResultsModel<PersonaNaturalModel> search(SearchCriteriaModel criteria);
+
+	SearchResultsModel<PersonaNaturalModel> search(SearchCriteriaModel criteria, String filterText);
 
 }

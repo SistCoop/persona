@@ -7,6 +7,11 @@ import org.sistcoop.persona.models.enums.Sexo;
 
 public interface PersonaNaturalModel extends Model {
 
+	String APELLIDO_PATERNO = "apellidoPaterno";
+	String APELLIDO_MATERNO = "apellidoMaterno";
+	String NOMBRES = "nombres";
+	String NUMERO_DOCUMENTO = "numeroDocumento";
+
 	String getId();
 
 	String getCodigoPais();

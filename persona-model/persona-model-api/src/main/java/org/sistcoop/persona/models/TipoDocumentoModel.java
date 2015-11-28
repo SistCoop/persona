@@ -4,6 +4,11 @@ import org.sistcoop.persona.models.enums.TipoPersona;
 
 public interface TipoDocumentoModel extends Model {
 
+	String ABREVIATURA = "abreviatura";
+	String DENOMINACION = "denominacion";
+	String TIPO_PERSONA = "tipoPersona";
+	String ESTADO = "estado";
+
 	String getId();
 
 	String getAbreviatura();

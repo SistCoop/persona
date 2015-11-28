@@ -1,11 +1,12 @@
 package org.sistcoop.persona.services.resources.admin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -74,30 +75,47 @@ public class PersonasNaturalesResourceImpl implements PersonasNaturalesResource 
 	}
 
 	@Override
-	public PersonaNaturalRepresentation findByTipoNumeroDocumento(PersonaNaturalRepresentation rep) {
-		TipoDocumentoModel tipoDocumento = tipoDocumentoProvider.findByAbreviatura(rep.getTipoDocumento());
-		PersonaNaturalModel personaNatural = personaNaturalProvider.findByTipoNumeroDocumento(tipoDocumento,
-				rep.getNumeroDocumento());
-		PersonaNaturalRepresentation representation = ModelToRepresentation.toRepresentation(personaNatural);
-		if (representation != null) {
-			return representation;
-		} else {
-			throw new NotFoundException("Persona Natural no encontrada");
-		}
-	}
-
-	@Override
 	public List<PersonaNaturalRepresentation> search(String tipoDocumento, String numeroDocumento,
-			String apellidoPaterno, String apellidoMaterno, String nombres, Integer firstResult, Integer maxResults) {
-		// TODO Auto-generated method stub
-		return null;
+			String apellidoPaterno, String apellidoMaterno, String nombres, String filterText, Integer firstResult,
+			Integer maxResults) {
+		firstResult = firstResult != null ? firstResult : -1;
+		maxResults = maxResults != null ? maxResults : -1;
+
+		List<PersonaNaturalRepresentation> results = new ArrayList<PersonaNaturalRepresentation>();
+		List<PersonaNaturalModel> personaNaturalModels;
+		if (filterText != null) {
+			personaNaturalModels = personaNaturalProvider.search(filterText.trim(), firstResult, maxResults);
+		} else if (tipoDocumento != null || numeroDocumento != null) {
+			TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.findByAbreviatura(tipoDocumento);
+			PersonaNaturalModel personaNatural = personaNaturalProvider.findByTipoNumeroDocumento(tipoDocumentoModel,
+					numeroDocumento);
+			personaNaturalModels = new ArrayList<>();
+			personaNaturalModels.add(personaNatural);
+		} else if (apellidoPaterno != null || apellidoMaterno != null || nombres != null || numeroDocumento != null) {
+			Map<String, Object> attributes = new HashMap<String, Object>();
+			if (apellidoPaterno != null) {
+				attributes.put(PersonaNaturalModel.APELLIDO_PATERNO, apellidoPaterno);
+			}
+			if (apellidoMaterno != null) {
+				attributes.put(PersonaNaturalModel.APELLIDO_MATERNO, apellidoMaterno);
+			}
+			if (nombres != null) {
+				attributes.put(PersonaNaturalModel.NOMBRES, nombres);
+			}
+			if (numeroDocumento != null) {
+				attributes.put(PersonaNaturalModel.NUMERO_DOCUMENTO, numeroDocumento);
+			}
+			personaNaturalModels = personaNaturalProvider.searchByAttributes(attributes, firstResult, maxResults);
+		} else {
+			personaNaturalModels = personaNaturalProvider.search(firstResult, maxResults);
+		}
+
+		for (PersonaNaturalModel model : personaNaturalModels) {
+			results.add(ModelToRepresentation.toRepresentation(model));
+		}
+		return results;
 	}
 
-	@Override
-	public List<PersonaNaturalRepresentation> search(String filterText, Integer firstResult, Integer maxResults) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	/*
 	 * @Override public
 	 * SearchResultsRepresentation<PersonaNaturalRepresentation> search(String

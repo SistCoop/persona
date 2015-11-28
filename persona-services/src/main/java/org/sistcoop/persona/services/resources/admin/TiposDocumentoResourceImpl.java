@@ -1,12 +1,12 @@
 package org.sistcoop.persona.services.resources.admin;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -66,48 +66,38 @@ public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
 	}
 
 	@Override
-	public TipoDocumentoRepresentation findByAbreviatura(TipoDocumentoRepresentation rep) {
-		TipoDocumentoModel tipoDocumento = tipoDocumentoProvider.findByAbreviatura(rep.getAbreviatura());
-		TipoDocumentoRepresentation representation = ModelToRepresentation.toRepresentation(tipoDocumento);
-		if (representation != null) {
-			return representation;
+	public List<TipoDocumentoRepresentation> search(String denominacion, String abreviatura, String tipoPersona,
+			Boolean estado, String filterText, Integer firstResult, Integer maxResults) {
+		firstResult = firstResult != null ? firstResult : -1;
+		maxResults = maxResults != null ? maxResults : -1;
+
+		List<TipoDocumentoRepresentation> results = new ArrayList<TipoDocumentoRepresentation>();
+		List<TipoDocumentoModel> tipoDocumentoModels;
+		if (filterText != null) {
+			tipoDocumentoModels = tipoDocumentoProvider.search(filterText.trim(), firstResult, maxResults);
+		} else if (denominacion != null || abreviatura != null || tipoPersona != null || estado != null) {
+			Map<String, Object> attributes = new HashMap<String, Object>();
+			if (denominacion != null) {
+				attributes.put(TipoDocumentoModel.DENOMINACION, denominacion);
+			}
+			if (abreviatura != null) {
+				attributes.put(TipoDocumentoModel.ABREVIATURA, abreviatura);
+			}
+			if (tipoPersona != null) {
+				attributes.put(TipoDocumentoModel.TIPO_PERSONA, tipoPersona);
+			}
+			if (estado != null) {
+				attributes.put(TipoDocumentoModel.ESTADO, estado);
+			}
+			tipoDocumentoModels = tipoDocumentoProvider.searchByAttributes(attributes, firstResult, maxResults);
 		} else {
-			throw new NotFoundException("TipoDocumento no encontrado");
-		}
-	}
-
-	@Override
-	public List<TipoDocumentoRepresentation> getAll(String tipoPersona, Boolean estado) {
-		List<TipoDocumentoModel> results = tipoDocumentoProvider.getAll();
-		for (Iterator<TipoDocumentoModel> iterator = results.iterator(); iterator.hasNext();) {
-			TipoDocumentoModel model = iterator.next();
-			if (tipoPersona != null && !tipoPersona.equalsIgnoreCase(model.getTipoPersona().toString())) {
-				iterator.remove();
-				break;
-			}
-			if (estado != null && estado != model.getEstado()) {
-				iterator.remove();
-				break;
-			}
+			tipoDocumentoModels = tipoDocumentoProvider.search(firstResult, maxResults);
 		}
 
-		List<TipoDocumentoRepresentation> representations = new ArrayList<>();
-		for (TipoDocumentoModel model : results) {
-			representations.add(ModelToRepresentation.toRepresentation(model));
+		for (TipoDocumentoModel model : tipoDocumentoModels) {
+			results.add(ModelToRepresentation.toRepresentation(model));
 		}
-		return representations;
-	}
-
-	@Override
-	public List<TipoDocumentoRepresentation> getAll(String abreviatura, String tipoPersona, Boolean estado,
-			Integer firstResult, Integer maxResults) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<TipoDocumentoRepresentation> search(String filterText, Integer firstResult, Integer maxResults) {
-		return null;
+		return results;
 	}
 
 	@Override

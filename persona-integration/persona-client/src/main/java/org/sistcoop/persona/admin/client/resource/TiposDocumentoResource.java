@@ -33,13 +33,9 @@ public interface TiposDocumentoResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<TipoDocumentoRepresentation> getAll(@QueryParam("abreviatura") String abreviatura,
-			@QueryParam("tipoPersona") String tipoPersona, @QueryParam("estado") Boolean estado,
-			@QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults);
-
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<TipoDocumentoRepresentation> search(@QueryParam("filterText") String filterText,
+	public List<TipoDocumentoRepresentation> search(@QueryParam("denominacion") String denominacion,
+			@QueryParam("abreviatura") String abreviatura, @QueryParam("tipoPersona") String tipoPersona,
+			@QueryParam("estado") Boolean estado, @QueryParam("filterText") String filterText,
 			@QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults);
 
 	/**

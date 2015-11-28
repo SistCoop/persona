@@ -1,6 +1,7 @@
 package org.sistcoop.persona.models;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Local;
 
@@ -21,6 +22,13 @@ public interface TipoDocumentoProvider extends Provider {
 	boolean remove(TipoDocumentoModel tipoDocumentoModel);
 
 	List<TipoDocumentoModel> getAll();
+
+	List<TipoDocumentoModel> searchByAttributes(Map<String, Object> attributes, Integer firstResult,
+			Integer maxResults);
+
+	List<TipoDocumentoModel> search(Integer firstResult, Integer maxResults);
+
+	List<TipoDocumentoModel> search(String filterText, Integer firstResult, Integer maxResults);
 
 	SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria);
 
