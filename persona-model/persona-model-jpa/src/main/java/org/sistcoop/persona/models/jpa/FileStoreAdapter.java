@@ -15,7 +15,7 @@ public class FileStoreAdapter implements FileStoreModel {
 	private static final long serialVersionUID = 1L;
 
 	private FileStoreEntity fileStoreEntity;
-	private EntityManager em;
+	private transient EntityManager em;
 
 	public FileStoreAdapter(EntityManager em, FileStoreEntity fileStoreEntity) {
 		this.em = em;

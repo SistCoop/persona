@@ -13,25 +13,30 @@ import org.sistcoop.persona.provider.Provider;
 @Local
 public interface TipoDocumentoProvider extends Provider {
 
-	TipoDocumentoModel findById(String id);
+    TipoDocumentoModel findById(String id);
 
-	TipoDocumentoModel findByAbreviatura(String abreviatura);
+    TipoDocumentoModel findByAbreviatura(String abreviatura);
 
-	TipoDocumentoModel create(String abreviatura, String denominacion, int cantidadCaracteres, TipoPersona tipoPersona);
+    TipoDocumentoModel create(String abreviatura, String denominacion, int cantidadCaracteres,
+            TipoPersona tipoPersona);
 
-	boolean remove(TipoDocumentoModel tipoDocumentoModel);
+    boolean remove(TipoDocumentoModel tipoDocumentoModel);
 
-	List<TipoDocumentoModel> getAll();
+    List<TipoDocumentoModel> getAll();
 
-	List<TipoDocumentoModel> searchByAttributes(Map<String, Object> attributes, Integer firstResult,
-			Integer maxResults);
+    List<TipoDocumentoModel> getAll(int firstResult, int maxResults);
 
-	List<TipoDocumentoModel> search(Integer firstResult, Integer maxResults);
+    List<TipoDocumentoModel> search(String filterText);
 
-	List<TipoDocumentoModel> search(String filterText, Integer firstResult, Integer maxResults);
+    List<TipoDocumentoModel> search(String filterText, int firstResult, int maxResults);
 
-	SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria);
+    List<TipoDocumentoModel> searchByAttributes(Map<String, Object> attributes);
 
-	SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria, String filterText);
+    List<TipoDocumentoModel> searchByAttributes(Map<String, Object> attributes, int firstResult,
+            int maxResults);
+
+    SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria);
+
+    SearchResultsModel<TipoDocumentoModel> search(SearchCriteriaModel criteria, String filterText);
 
 }

@@ -30,8 +30,8 @@ public class Version {
             BUILD_TIME = props.getProperty("build-time");
             RESOURCES_VERSION = VERSION.toLowerCase();
             if (RESOURCES_VERSION.endsWith("-snapshot")) {
-                RESOURCES_VERSION = RESOURCES_VERSION.replace("-snapshot", "-"
-                        + Calendar.getInstance().getTime().toString());
+                RESOURCES_VERSION = RESOURCES_VERSION.replace("-snapshot",
+                        "-" + Calendar.getInstance().getTime().toString());
             }
         } catch (IOException e) {
             VERSION = UNKNOWN;

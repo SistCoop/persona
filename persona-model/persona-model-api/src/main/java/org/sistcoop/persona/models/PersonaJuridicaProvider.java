@@ -1,6 +1,8 @@
 package org.sistcoop.persona.models;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Local;
 
@@ -22,7 +24,18 @@ public interface PersonaJuridicaProvider extends Provider {
 
     boolean remove(PersonaJuridicaModel personaJuridicaModel);
 
-    SearchResultsModel<PersonaJuridicaModel> search();
+    List<PersonaJuridicaModel> getAll();
+
+    List<PersonaJuridicaModel> getAll(int firstResult, int maxResults);
+
+    List<PersonaJuridicaModel> search(String filterText);
+
+    List<PersonaJuridicaModel> search(String filterText, int firstResult, int maxResults);
+
+    List<PersonaJuridicaModel> searchByAttributes(Map<String, String> attributes);
+
+    List<PersonaJuridicaModel> searchByAttributes(Map<String, String> attributes, int firstResult,
+            int maxResults);
 
     SearchResultsModel<PersonaJuridicaModel> search(SearchCriteriaModel criteria);
 

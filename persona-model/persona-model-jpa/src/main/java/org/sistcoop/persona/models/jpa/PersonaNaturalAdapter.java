@@ -23,7 +23,7 @@ public class PersonaNaturalAdapter implements PersonaNaturalModel {
 	private static final long serialVersionUID = 1L;
 
 	private PersonaNaturalEntity personaNaturalEntity;
-	private EntityManager em;
+	private transient EntityManager em;
 
 	public PersonaNaturalAdapter(EntityManager em, PersonaNaturalEntity personaNaturalEntity) {
 		this.em = em;

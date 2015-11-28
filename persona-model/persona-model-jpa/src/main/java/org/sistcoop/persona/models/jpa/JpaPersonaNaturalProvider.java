@@ -3,6 +3,7 @@ package org.sistcoop.persona.models.jpa;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
@@ -35,6 +36,11 @@ import org.sistcoop.persona.models.search.SearchResultsModel;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class JpaPersonaNaturalProvider extends AbstractHibernateStorage implements PersonaNaturalProvider {
 
+    private static final String APELLIDO_PATERNO = "apellidoPaterno";
+    private static final String APELLIDO_MATERNO = "apellidoMaterno";
+    private static final String NOMBRES = "nombres";
+    private static final String NUMERO_DOCUMENTO = "numeroDocumento";
+
     @PersistenceContext
     private EntityManager em;
 
@@ -59,7 +65,7 @@ public class JpaPersonaNaturalProvider extends AbstractHibernateStorage implemen
         }
 
         TipoDocumentoEntity tipoDocumentoEntity = em.find(TipoDocumentoEntity.class,
-                tipoDocumentoModel.getAbreviatura());
+                tipoDocumentoModel.getId());
 
         PersonaNaturalEntity personaNaturalEntity = new PersonaNaturalEntity();
         personaNaturalEntity.setCodigoPais(codigoPais);
@@ -84,9 +90,9 @@ public class JpaPersonaNaturalProvider extends AbstractHibernateStorage implemen
             return false;
         }
 
-        TypedQuery<PersonaJuridicaEntity> query2 = em
-                .createNamedQuery("PersonaJuridicaEntity.FindByIdPersonaNaturalRepresentanteLegal",
-                        PersonaJuridicaEntity.class);
+        TypedQuery<PersonaJuridicaEntity> query2 = em.createNamedQuery(
+                "PersonaJuridicaEntity.findByIdPersonaNaturalRepresentanteLegal",
+                PersonaJuridicaEntity.class);
         query2.setParameter("idPersonaNaturalRepresentanteLegal", personaNaturalModel.getId());
         query2.setMaxResults(1);
         if (!query2.getResultList().isEmpty()) {
@@ -128,15 +134,113 @@ public class JpaPersonaNaturalProvider extends AbstractHibernateStorage implemen
 
     @Override
     public List<PersonaNaturalModel> getAll() {
+        return getAll(-1, -1);
+    }
+
+    @Override
+    public List<PersonaNaturalModel> getAll(int firstResult, int maxResults) {
         TypedQuery<PersonaNaturalEntity> query = em.createNamedQuery("PersonaNaturalEntity.findAll",
                 PersonaNaturalEntity.class);
-
+        if (firstResult != -1) {
+            query.setFirstResult(firstResult);
+        }
+        if (maxResults != -1) {
+            query.setMaxResults(maxResults);
+        }
         List<PersonaNaturalEntity> entities = query.getResultList();
         List<PersonaNaturalModel> result = new ArrayList<PersonaNaturalModel>();
         for (PersonaNaturalEntity personaNaturalEntity : entities) {
             result.add(new PersonaNaturalAdapter(em, personaNaturalEntity));
         }
         return result;
+    }
+
+    @Override
+    public List<PersonaNaturalModel> search(String filterText) {
+        return search(filterText, -1, -1);
+    }
+
+    @Override
+    public List<PersonaNaturalModel> search(String filterText, int firstResult, int maxResults) {
+        TypedQuery<PersonaNaturalEntity> query = em.createNamedQuery("PersonaNaturalEntity.findByFilterText",
+                PersonaNaturalEntity.class);
+        query.setParameter("filterText", "%" + filterText.toLowerCase() + "%");
+        if (firstResult != -1) {
+            query.setFirstResult(firstResult);
+        }
+        if (maxResults != -1) {
+            query.setMaxResults(maxResults);
+        }
+        List<PersonaNaturalEntity> entities = query.getResultList();
+        List<PersonaNaturalModel> models = new ArrayList<PersonaNaturalModel>();
+        for (PersonaNaturalEntity personaNaturalEntity : entities) {
+            models.add(new PersonaNaturalAdapter(em, personaNaturalEntity));
+        }
+        return models;
+    }
+
+    @Override
+    public List<PersonaNaturalModel> searchByAttributes(Map<String, String> attributes) {
+        return searchByAttributes(attributes, -1, -1);
+    }
+
+    @Override
+    public List<PersonaNaturalModel> searchByAttributes(Map<String, String> attributes, int firstResult,
+            int maxResults) {
+        StringBuilder builder = new StringBuilder("SELECT p FROM PersonaNaturalEntity");
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            String attribute = null;
+            String parameterName = null;
+            if (entry.getKey().equals(PersonaNaturalModel.APELLIDO_PATERNO)) {
+                attribute = "lower(p.apellidoPaterno)";
+                parameterName = JpaPersonaNaturalProvider.APELLIDO_PATERNO;
+            } else if (entry.getKey().equalsIgnoreCase(PersonaNaturalModel.APELLIDO_MATERNO)) {
+                attribute = "lower(p.apellidoMaterno)";
+                parameterName = JpaPersonaNaturalProvider.APELLIDO_MATERNO;
+            } else if (entry.getKey().equalsIgnoreCase(PersonaNaturalModel.NOMBRES)) {
+                attribute = "lower(p.nombres)";
+                parameterName = JpaPersonaNaturalProvider.NOMBRES;
+            } else if (entry.getKey().equalsIgnoreCase(PersonaNaturalModel.NUMERO_DOCUMENTO)) {
+                attribute = "lower(p.numeroDocumento)";
+                parameterName = JpaPersonaNaturalProvider.NUMERO_DOCUMENTO;
+            }
+
+            if (attribute == null) {
+                continue;
+            }
+            builder.append(attribute).append(" like :").append(parameterName);
+        }
+        builder.append(" order by p.apellidoPaterno, p.apellidoMaterno, p.nombres");
+        String q = builder.toString();
+        TypedQuery<PersonaNaturalEntity> query = em.createQuery(q, PersonaNaturalEntity.class);
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            String parameterName = null;
+            if (entry.getKey().equals(PersonaNaturalModel.APELLIDO_PATERNO)) {
+                parameterName = JpaPersonaNaturalProvider.APELLIDO_PATERNO;
+            } else if (entry.getKey().equals(PersonaNaturalModel.APELLIDO_MATERNO)) {
+                parameterName = JpaPersonaNaturalProvider.APELLIDO_MATERNO;
+            } else if (entry.getKey().equals(PersonaNaturalModel.NOMBRES)) {
+                parameterName = JpaPersonaNaturalProvider.NOMBRES;
+            } else if (entry.getKey().equals(PersonaNaturalModel.NUMERO_DOCUMENTO)) {
+                parameterName = JpaPersonaNaturalProvider.NUMERO_DOCUMENTO;
+            }
+
+            if (parameterName == null) {
+                continue;
+            }
+            query.setParameter(parameterName, "%" + entry.getValue().toLowerCase() + "%");
+        }
+        if (firstResult != -1) {
+            query.setFirstResult(firstResult);
+        }
+        if (maxResults != -1) {
+            query.setMaxResults(maxResults);
+        }
+        List<PersonaNaturalEntity> results = query.getResultList();
+        List<PersonaNaturalModel> personaNaturales = new ArrayList<PersonaNaturalModel>();
+        for (PersonaNaturalEntity entity : results)
+            personaNaturales.add(new PersonaNaturalAdapter(em, entity));
+        return personaNaturales;
     }
 
     @Override

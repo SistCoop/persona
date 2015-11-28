@@ -91,7 +91,7 @@ public class TiposDocumentoResourceImpl implements TiposDocumentoResource {
 			}
 			tipoDocumentoModels = tipoDocumentoProvider.searchByAttributes(attributes, firstResult, maxResults);
 		} else {
-			tipoDocumentoModels = tipoDocumentoProvider.search(firstResult, maxResults);
+			tipoDocumentoModels = tipoDocumentoProvider.getAll(firstResult, maxResults);
 		}
 
 		for (TipoDocumentoModel model : tipoDocumentoModels) {

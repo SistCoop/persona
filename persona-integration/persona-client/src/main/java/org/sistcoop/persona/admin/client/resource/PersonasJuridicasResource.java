@@ -24,39 +24,37 @@ import org.sistcoop.persona.representations.idm.search.SearchResultsRepresentati
 @Consumes(MediaType.APPLICATION_JSON)
 public interface PersonasJuridicasResource {
 
-	@Path("{idPersonaJuridica}")
-	public PersonaJuridicaResource personaJuridica(@PathParam("idPersonaJuridica") String idPersonaJuridica);
+    @Path("{idPersonaJuridica}")
+    public PersonaJuridicaResource personaJuridica(@PathParam("idPersonaJuridica") String idPersonaJuridica);
 
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response create(PersonaJuridicaRepresentation rep);
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response create(PersonaJuridicaRepresentation rep);
 
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<PersonaJuridicaRepresentation> search(@QueryParam("tipoDocumento") String tipoDocumento,
-			@QueryParam("numeroDocumento") String numeroDocumento, @QueryParam("razonSocial") String razonSocial,
-			@QueryParam("nombreComercial") String nombreComercial, @QueryParam("first") Integer firstResult,
-			@QueryParam("max") Integer maxResults);
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PersonaJuridicaRepresentation> search(@QueryParam("tipoDocumento") String tipoDocumento,
+            @QueryParam("numeroDocumento") String numeroDocumento,
+            @QueryParam("razonSocial") String razonSocial,
+            @QueryParam("nombreComercial") String nombreComercial,
+            @QueryParam("filterText") String filterText, @QueryParam("first") Integer firstResult,
+            @QueryParam("max") Integer maxResults);
 
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<PersonaJuridicaRepresentation> search(@QueryParam("filterText") String filterText,
-			@QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults);
-
-	/**
-	 * Este endpoint provee una forma de buscar direccionesRegionales. Los
-	 * criterios de busqueda estan definidos por los parametros enviados.
-	 * 
-	 * @summary Search for DireccionesRegionales
-	 * @param criteria
-	 *            Criterio de busqueda.
-	 * @statuscode 200 Si la busqueda fue realizada satisfactoriamente.
-	 * @return Los resultados de la busqueda (una pagina de
-	 *         direccionesRegionales).
-	 */
-	@POST
-	@Path("search")
-	@Produces(MediaType.APPLICATION_JSON)
-	public SearchResultsRepresentation<PersonaJuridicaRepresentation> search(SearchCriteriaRepresentation criteria);
+    /**
+     * Este endpoint provee una forma de buscar direccionesRegionales. Los
+     * criterios de busqueda estan definidos por los parametros enviados.
+     * 
+     * @summary Search for DireccionesRegionales
+     * @param criteria
+     *            Criterio de busqueda.
+     * @statuscode 200 Si la busqueda fue realizada satisfactoriamente.
+     * @return Los resultados de la busqueda (una pagina de
+     *         direccionesRegionales).
+     */
+    @POST
+    @Path("search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public SearchResultsRepresentation<PersonaJuridicaRepresentation> search(
+            SearchCriteriaRepresentation criteria);
 
 }

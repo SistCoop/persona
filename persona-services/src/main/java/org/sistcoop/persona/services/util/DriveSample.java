@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
 import java.util.Collections;
 
 /**
@@ -80,7 +81,8 @@ public class DriveSample {
       System.out.println(
           "Enter Client ID and Secret from https://code.google.com/apis/console/?api=drive "
           + "into drive-cmdline-sample/src/main/resources/client_secrets.json");
-      System.exit(1);
+      //System.exit(1);
+      throw  new Exception();
     }
     // set up authorization code flow
     GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
@@ -126,8 +128,12 @@ public class DriveSample {
       return;
     } catch (IOException e) {
       System.err.println(e.getMessage());
-    } catch (Throwable t) {
+    } /*catch (Throwable t) {
       t.printStackTrace();
+    }*/ catch (GeneralSecurityException e) {
+        System.err.println(e.getMessage());
+    } catch (Exception e) {
+        System.err.println(e.getMessage());
     }
     System.exit(1);
   }

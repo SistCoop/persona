@@ -7,6 +7,10 @@ import org.sistcoop.persona.models.enums.TipoEmpresa;
 
 public interface PersonaJuridicaModel extends Model {
 
+    String RAZON_SOCIAL = "razonSocial";
+    String NOMBRE_COMERCIAL = "nombreComercial";
+    String NUMERO_DOCUMENTO = "numeroDocumento";
+
     String getId();
 
     PersonaNaturalModel getRepresentanteLegal();

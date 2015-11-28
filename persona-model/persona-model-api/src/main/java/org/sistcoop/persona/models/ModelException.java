@@ -7,7 +7,7 @@ public class ModelException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    private Object[] parameters;
+    private transient Object[] parameters;
 
     public ModelException() {
     }

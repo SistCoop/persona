@@ -3,6 +3,7 @@ package org.sistcoop.persona.models.jpa;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
@@ -35,6 +36,10 @@ import org.sistcoop.persona.models.search.SearchResultsModel;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class JpaPersonaJuridicaProvider extends AbstractHibernateStorage implements PersonaJuridicaProvider {
 
+    private final static String RAZON_SOCIAL = "razonSocial";
+    private final static String NOMBRE_COMERCIAL = "nombreComercial";
+    private final static String NUMERO_DOCUMENTO = "numeroDocumento";
+
     @PersistenceContext
     private EntityManager em;
 
@@ -59,7 +64,7 @@ public class JpaPersonaJuridicaProvider extends AbstractHibernateStorage impleme
         }
 
         TipoDocumentoEntity tipoDocumentoEntity = em.find(TipoDocumentoEntity.class,
-                tipoDocumentoModel.getAbreviatura());
+                tipoDocumentoModel.getId());
         PersonaNaturalEntity personaNaturalEntity = em.find(PersonaNaturalEntity.class,
                 representanteLegal.getId());
 
@@ -113,20 +118,109 @@ public class JpaPersonaJuridicaProvider extends AbstractHibernateStorage impleme
     }
 
     @Override
-    public SearchResultsModel<PersonaJuridicaModel> search() {
+    public List<PersonaJuridicaModel> getAll() {
+        return getAll(-1, -1);
+    }
+
+    @Override
+    public List<PersonaJuridicaModel> getAll(int firstResult, int maxResults) {
         TypedQuery<PersonaJuridicaEntity> query = em.createNamedQuery("PersonaJuridicaEntity.findAll",
                 PersonaJuridicaEntity.class);
-
+        if (firstResult != -1) {
+            query.setFirstResult(firstResult);
+        }
+        if (maxResults != -1) {
+            query.setMaxResults(maxResults);
+        }
         List<PersonaJuridicaEntity> entities = query.getResultList();
         List<PersonaJuridicaModel> models = new ArrayList<PersonaJuridicaModel>();
         for (PersonaJuridicaEntity personaJuridicaEntity : entities) {
             models.add(new PersonaJuridicaAdapter(em, personaJuridicaEntity));
         }
+        return models;
+    }
 
-        SearchResultsModel<PersonaJuridicaModel> result = new SearchResultsModel<>();
-        result.setModels(models);
-        result.setTotalSize(models.size());
-        return result;
+    @Override
+    public List<PersonaJuridicaModel> search(String filterText) {
+        return search(filterText, -1, -1);
+    }
+
+    @Override
+    public List<PersonaJuridicaModel> search(String filterText, int firstResult, int maxResults) {
+        TypedQuery<PersonaJuridicaEntity> query = em
+                .createNamedQuery("PersonaJuridicaEntity.findByFilterText", PersonaJuridicaEntity.class);
+        query.setParameter("filterText", "%" + filterText.toLowerCase() + "%");
+        if (firstResult != -1) {
+            query.setFirstResult(firstResult);
+        }
+        if (maxResults != -1) {
+            query.setMaxResults(maxResults);
+        }
+        List<PersonaJuridicaEntity> entities = query.getResultList();
+        List<PersonaJuridicaModel> models = new ArrayList<PersonaJuridicaModel>();
+        for (PersonaJuridicaEntity personaJuridicaEntity : entities) {
+            models.add(new PersonaJuridicaAdapter(em, personaJuridicaEntity));
+        }
+        return models;
+    }
+
+    @Override
+    public List<PersonaJuridicaModel> searchByAttributes(Map<String, String> attributes) {
+        return searchByAttributes(attributes, -1, -1);
+    }
+
+    @Override
+    public List<PersonaJuridicaModel> searchByAttributes(Map<String, String> attributes, int firstResult,
+            int maxResults) {
+        StringBuilder builder = new StringBuilder("SELECT p FROM PersonaJuridicaEntity");
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            String attribute = null;
+            String parameterName = null;
+            if (entry.getKey().equals(PersonaJuridicaModel.RAZON_SOCIAL)) {
+                attribute = "lower(p.razonSocial)";
+                parameterName = JpaPersonaJuridicaProvider.RAZON_SOCIAL;
+            } else if (entry.getKey().equalsIgnoreCase(PersonaJuridicaModel.NOMBRE_COMERCIAL)) {
+                attribute = "lower(p.nombreComercial)";
+                parameterName = JpaPersonaJuridicaProvider.NOMBRE_COMERCIAL;
+            } else if (entry.getKey().equalsIgnoreCase(PersonaJuridicaModel.NUMERO_DOCUMENTO)) {
+                attribute = "lower(p.numeroDocumento)";
+                parameterName = JpaPersonaJuridicaProvider.NUMERO_DOCUMENTO;
+            }
+
+            if (attribute == null) {
+                continue;
+            }
+            builder.append(attribute).append(" like :").append(parameterName);
+        }
+        builder.append(" order by p.razonSocial");
+        String q = builder.toString();
+        TypedQuery<PersonaJuridicaEntity> query = em.createQuery(q, PersonaJuridicaEntity.class);
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            String parameterName = null;
+            if (entry.getKey().equals(PersonaJuridicaModel.RAZON_SOCIAL)) {
+                parameterName = JpaPersonaJuridicaProvider.RAZON_SOCIAL;
+            } else if (entry.getKey().equals(PersonaJuridicaModel.NOMBRE_COMERCIAL)) {
+                parameterName = JpaPersonaJuridicaProvider.NOMBRE_COMERCIAL;
+            } else if (entry.getKey().equals(PersonaJuridicaModel.NUMERO_DOCUMENTO)) {
+                parameterName = JpaPersonaJuridicaProvider.NUMERO_DOCUMENTO;
+            }
+
+            if (parameterName == null) {
+                continue;
+            }
+            query.setParameter(parameterName, "%" + entry.getValue().toLowerCase() + "%");
+        }
+        if (firstResult != -1) {
+            query.setFirstResult(firstResult);
+        }
+        if (maxResults != -1) {
+            query.setMaxResults(maxResults);
+        }
+        List<PersonaJuridicaEntity> results = query.getResultList();
+        List<PersonaJuridicaModel> personaNaturales = new ArrayList<PersonaJuridicaModel>();
+        for (PersonaJuridicaEntity entity : results)
+            personaNaturales.add(new PersonaJuridicaAdapter(em, entity));
+        return personaNaturales;
     }
 
     @Override

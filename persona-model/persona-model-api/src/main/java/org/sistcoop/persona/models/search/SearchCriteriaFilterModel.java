@@ -28,7 +28,7 @@ public class SearchCriteriaFilterModel implements Serializable {
     private static final long serialVersionUID = -1199180207971619165L;
 
     private String name;
-    private Object value;
+    private transient Object value;
     private SearchCriteriaFilterOperator operator;
 
     /**

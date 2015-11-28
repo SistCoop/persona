@@ -34,165 +34,135 @@ import org.sistcoop.persona.services.ErrorResponse;
 @Stateless
 public class PersonasNaturalesResourceImpl implements PersonasNaturalesResource {
 
-	@Inject
-	private PersonaNaturalProvider personaNaturalProvider;
+    @Inject
+    private PersonaNaturalProvider personaNaturalProvider;
 
-	@Inject
-	private TipoDocumentoProvider tipoDocumentoProvider;
+    @Inject
+    private TipoDocumentoProvider tipoDocumentoProvider;
 
-	@Inject
-	private RepresentationToModel representationToModel;
+    @Inject
+    private RepresentationToModel representationToModel;
 
-	@Inject
-	private PersonaNaturalResource personaNaturalResource;
+    @Inject
+    private PersonaNaturalResource personaNaturalResource;
 
-	@Context
-	private UriInfo uriInfo;
+    @Context
+    private UriInfo uriInfo;
 
-	@Override
-	public PersonaNaturalResource personaNatural(String personaNatural) {
-		return personaNaturalResource;
-	}
+    @Override
+    public PersonaNaturalResource personaNatural(String personaNatural) {
+        return personaNaturalResource;
+    }
 
-	@Override
-	public Response create(PersonaNaturalRepresentation rep) {
-		TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.findByAbreviatura(rep.getTipoDocumento());
+    @Override
+    public Response create(PersonaNaturalRepresentation rep) {
+        TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider
+                .findByAbreviatura(rep.getTipoDocumento());
 
-		// Check duplicated tipo y numero de documento
-		if (personaNaturalProvider.findByTipoNumeroDocumento(tipoDocumentoModel, rep.getNumeroDocumento()) != null) {
-			return ErrorResponse.exists("Persona Natural existe con el mismo tipo y numero de documento");
-		}
+        // Check duplicated tipo y numero de documento
+        if (personaNaturalProvider.findByTipoNumeroDocumento(tipoDocumentoModel,
+                rep.getNumeroDocumento()) != null) {
+            return ErrorResponse.exists("Persona Natural existe con el mismo tipo y numero de documento");
+        }
 
-		try {
-			PersonaNaturalModel model = representationToModel.createPersonaNatural(rep, tipoDocumentoModel,
-					personaNaturalProvider);
-			return Response.created(uriInfo.getAbsolutePathBuilder().path(model.getId()).build())
-					.header("Access-Control-Expose-Headers", "Location")
-					.entity(ModelToRepresentation.toRepresentation(model)).build();
-		} catch (ModelDuplicateException e) {
-			return ErrorResponse.exists("Persona Natural existe con el mismo tipo y numero de documento");
-		}
-	}
+        try {
+            PersonaNaturalModel model = representationToModel.createPersonaNatural(rep, tipoDocumentoModel,
+                    personaNaturalProvider);
+            return Response.created(uriInfo.getAbsolutePathBuilder().path(model.getId()).build())
+                    .header("Access-Control-Expose-Headers", "Location")
+                    .entity(ModelToRepresentation.toRepresentation(model)).build();
+        } catch (ModelDuplicateException e) {
+            return ErrorResponse.exists("Persona Natural existe con el mismo tipo y numero de documento");
+        }
+    }
 
-	@Override
-	public List<PersonaNaturalRepresentation> search(String tipoDocumento, String numeroDocumento,
-			String apellidoPaterno, String apellidoMaterno, String nombres, String filterText, Integer firstResult,
-			Integer maxResults) {
-		firstResult = firstResult != null ? firstResult : -1;
-		maxResults = maxResults != null ? maxResults : -1;
+    @Override
+    public List<PersonaNaturalRepresentation> search(String tipoDocumento, String numeroDocumento,
+            String apellidoPaterno, String apellidoMaterno, String nombres, String filterText,
+            Integer firstResult, Integer maxResults) {
+        int firstResultParam = firstResult != null ? firstResult : -1;
+        int maxResultsParam = maxResults != null ? maxResults : -1;
 
-		List<PersonaNaturalRepresentation> results = new ArrayList<PersonaNaturalRepresentation>();
-		List<PersonaNaturalModel> personaNaturalModels;
-		if (filterText != null) {
-			personaNaturalModels = personaNaturalProvider.search(filterText.trim(), firstResult, maxResults);
-		} else if (tipoDocumento != null || numeroDocumento != null) {
-			TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.findByAbreviatura(tipoDocumento);
-			PersonaNaturalModel personaNatural = personaNaturalProvider.findByTipoNumeroDocumento(tipoDocumentoModel,
-					numeroDocumento);
-			personaNaturalModels = new ArrayList<>();
-			personaNaturalModels.add(personaNatural);
-		} else if (apellidoPaterno != null || apellidoMaterno != null || nombres != null || numeroDocumento != null) {
-			Map<String, Object> attributes = new HashMap<String, Object>();
-			if (apellidoPaterno != null) {
-				attributes.put(PersonaNaturalModel.APELLIDO_PATERNO, apellidoPaterno);
-			}
-			if (apellidoMaterno != null) {
-				attributes.put(PersonaNaturalModel.APELLIDO_MATERNO, apellidoMaterno);
-			}
-			if (nombres != null) {
-				attributes.put(PersonaNaturalModel.NOMBRES, nombres);
-			}
-			if (numeroDocumento != null) {
-				attributes.put(PersonaNaturalModel.NUMERO_DOCUMENTO, numeroDocumento);
-			}
-			personaNaturalModels = personaNaturalProvider.searchByAttributes(attributes, firstResult, maxResults);
-		} else {
-			personaNaturalModels = personaNaturalProvider.search(firstResult, maxResults);
-		}
+        List<PersonaNaturalRepresentation> results = new ArrayList<PersonaNaturalRepresentation>();
+        List<PersonaNaturalModel> personaNaturalModels;
+        if (filterText != null) {
+            personaNaturalModels = personaNaturalProvider.search(filterText.trim(), firstResult, maxResults);
+        } else if (tipoDocumento != null || numeroDocumento != null) {
+            TipoDocumentoModel tipoDocumentoModel = tipoDocumentoProvider.findByAbreviatura(tipoDocumento);
+            PersonaNaturalModel personaNatural = personaNaturalProvider
+                    .findByTipoNumeroDocumento(tipoDocumentoModel, numeroDocumento);
+            personaNaturalModels = new ArrayList<>();
+            personaNaturalModels.add(personaNatural);
+        } else if (apellidoPaterno != null || apellidoMaterno != null || nombres != null
+                || numeroDocumento != null) {
+            Map<String, String> attributes = new HashMap<String, String>();
+            if (apellidoPaterno != null) {
+                attributes.put(PersonaNaturalModel.APELLIDO_PATERNO, apellidoPaterno);
+            }
+            if (apellidoMaterno != null) {
+                attributes.put(PersonaNaturalModel.APELLIDO_MATERNO, apellidoMaterno);
+            }
+            if (nombres != null) {
+                attributes.put(PersonaNaturalModel.NOMBRES, nombres);
+            }
+            if (numeroDocumento != null) {
+                attributes.put(PersonaNaturalModel.NUMERO_DOCUMENTO, numeroDocumento);
+            }
+            personaNaturalModels = personaNaturalProvider.searchByAttributes(attributes, firstResult,
+                    maxResults);
+        } else {
+            personaNaturalModels = personaNaturalProvider.getAll(firstResultParam, maxResultsParam);
+        }
 
-		for (PersonaNaturalModel model : personaNaturalModels) {
-			results.add(ModelToRepresentation.toRepresentation(model));
-		}
-		return results;
-	}
+        for (PersonaNaturalModel model : personaNaturalModels) {
+            results.add(ModelToRepresentation.toRepresentation(model));
+        }
+        return results;
+    }
 
-	/*
-	 * @Override public
-	 * SearchResultsRepresentation<PersonaNaturalRepresentation> search(String
-	 * tipoDocumento, String numeroDocumento, String filterText, int page, int
-	 * pageSize) {
-	 * 
-	 * SearchResultsModel<PersonaNaturalModel> results = null; if (tipoDocumento
-	 * != null && numeroDocumento != null) { TipoDocumentoModel
-	 * tipoDocumentoModel =
-	 * tipoDocumentoProvider.findByAbreviatura(tipoDocumento);
-	 * PersonaNaturalModel personaNaturalModel = personaNaturalProvider
-	 * .findByTipoNumeroDocumento(tipoDocumentoModel, numeroDocumento);
-	 * 
-	 * List<PersonaNaturalModel> items = new ArrayList<>(); if
-	 * (personaNaturalModel != null) { items.add(personaNaturalModel); }
-	 * 
-	 * results = new SearchResultsModel<>(); results.setModels(items);
-	 * results.setTotalSize(items.size()); } else { PagingModel paging = new
-	 * PagingModel(); paging.setPage(page); paging.setPageSize(pageSize);
-	 * 
-	 * SearchCriteriaModel searchCriteriaBean = new SearchCriteriaModel();
-	 * searchCriteriaBean.setPaging(paging);
-	 * 
-	 * results = personaNaturalProvider.search(searchCriteriaBean, filterText);
-	 * }
-	 * 
-	 * SearchResultsRepresentation<PersonaNaturalRepresentation> rep = new
-	 * SearchResultsRepresentation<>(); List<PersonaNaturalRepresentation>
-	 * representations = new ArrayList<>(); for (PersonaNaturalModel model :
-	 * results.getModels()) {
-	 * representations.add(ModelToRepresentation.toRepresentation(model)); }
-	 * rep.setTotalSize(results.getTotalSize()); rep.setItems(representations);
-	 * return rep; }
-	 */
+    @Override
+    public SearchResultsRepresentation<PersonaNaturalRepresentation> search(
+            SearchCriteriaRepresentation criteria) {
+        SearchCriteriaModel criteriaModel = new SearchCriteriaModel();
 
-	@Override
-	public SearchResultsRepresentation<PersonaNaturalRepresentation> search(SearchCriteriaRepresentation criteria) {
-		SearchCriteriaModel criteriaModel = new SearchCriteriaModel();
+        // set filter and order
+        for (SearchCriteriaFilterRepresentation filter : criteria.getFilters()) {
+            criteriaModel.addFilter(filter.getName(), filter.getValue(),
+                    SearchCriteriaFilterOperator.valueOf(filter.getOperator().toString()));
+        }
+        for (OrderByRepresentation order : criteria.getOrders()) {
+            criteriaModel.addOrder(order.getName(), order.isAscending());
+        }
 
-		// set filter and order
-		for (SearchCriteriaFilterRepresentation filter : criteria.getFilters()) {
-			criteriaModel.addFilter(filter.getName(), filter.getValue(),
-					SearchCriteriaFilterOperator.valueOf(filter.getOperator().toString()));
-		}
-		for (OrderByRepresentation order : criteria.getOrders()) {
-			criteriaModel.addOrder(order.getName(), order.isAscending());
-		}
+        // set paging
+        PagingRepresentation paging = criteria.getPaging();
+        if (paging == null) {
+            paging = new PagingRepresentation();
+            paging.setPage(1);
+            paging.setPageSize(20);
+        }
+        criteriaModel.setPageSize(paging.getPageSize());
+        criteriaModel.setPage(paging.getPage());
 
-		// set paging
-		PagingRepresentation paging = criteria.getPaging();
-		if (paging == null) {
-			paging = new PagingRepresentation();
-			paging.setPage(1);
-			paging.setPageSize(20);
-		}
-		criteriaModel.setPageSize(paging.getPageSize());
-		criteriaModel.setPage(paging.getPage());
+        // extract filterText
+        String filterText = criteria.getFilterText();
 
-		// extract filterText
-		String filterText = criteria.getFilterText();
+        // search
+        SearchResultsModel<PersonaNaturalModel> results = null;
+        if (filterText == null) {
+            results = personaNaturalProvider.search(criteriaModel);
+        } else {
+            results = personaNaturalProvider.search(criteriaModel, filterText);
+        }
 
-		// search
-		SearchResultsModel<PersonaNaturalModel> results = null;
-		if (filterText == null) {
-			results = personaNaturalProvider.search(criteriaModel);
-		} else {
-			results = personaNaturalProvider.search(criteriaModel, filterText);
-		}
-
-		SearchResultsRepresentation<PersonaNaturalRepresentation> rep = new SearchResultsRepresentation<>();
-		List<PersonaNaturalRepresentation> items = new ArrayList<>();
-		for (PersonaNaturalModel model : results.getModels()) {
-			items.add(ModelToRepresentation.toRepresentation(model));
-		}
-		rep.setItems(items);
-		rep.setTotalSize(results.getTotalSize());
-		return rep;
-	}
+        SearchResultsRepresentation<PersonaNaturalRepresentation> rep = new SearchResultsRepresentation<>();
+        List<PersonaNaturalRepresentation> items = new ArrayList<>();
+        for (PersonaNaturalModel model : results.getModels()) {
+            items.add(ModelToRepresentation.toRepresentation(model));
+        }
+        rep.setItems(items);
+        rep.setTotalSize(results.getTotalSize());
+        return rep;
+    }
 
 }

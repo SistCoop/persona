@@ -28,7 +28,7 @@ public class PersonaJuridicaAdapter implements PersonaJuridicaModel {
     private static final long serialVersionUID = 1L;
 
     protected PersonaJuridicaEntity personaJuridicaEntity;
-    protected EntityManager em;
+    protected transient EntityManager em;
 
     public PersonaJuridicaAdapter(EntityManager em, PersonaJuridicaEntity personaJuridicaEntity) {
         this.em = em;

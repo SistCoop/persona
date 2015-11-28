@@ -43,14 +43,15 @@ import org.sistcoop.persona.models.enums.TipoEmpresa;
 @Table(name = "PERSONA_JURIDICA")
 @NamedQueries(value = {
         @NamedQuery(name = "PersonaJuridicaEntity.findAll", query = "SELECT p FROM PersonaJuridicaEntity p"),
-        @NamedQuery(name = "PersonaJuridicaEntity.findByTipoDocumento", query = "SELECT p FROM PersonaJuridicaEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento"),
-        @NamedQuery(name = "PersonaJuridicaEntity.findByTipoNumeroDocumento", query = "SELECT p FROM PersonaJuridicaEntity p WHERE p.tipoDocumento.abreviatura = :tipoDocumento AND p.numeroDocumento = :numeroDocumento"),
-        @NamedQuery(name = "PersonaJuridicaEntity.FindByIdPersonaNaturalRepresentanteLegal", query = "SELECT p FROM PersonaJuridicaEntity p INNER JOIN p.representanteLegal rl WHERE rl.id = :idPersonaNaturalRepresentanteLegal") })
+        @NamedQuery(name = "PersonaJuridicaEntity.findByTipoDocumento", query = "SELECT p FROM PersonaJuridicaEntity p INNER JOIN p.tipoDocumento t WHERE t.abreviatura = :tipoDocumento"),
+        @NamedQuery(name = "PersonaJuridicaEntity.findByTipoNumeroDocumento", query = "SELECT p FROM PersonaJuridicaEntity p INNER JOIN p.tipoDocumento t WHERE t.abreviatura = :tipoDocumento AND p.numeroDocumento = :numeroDocumento"),
+        @NamedQuery(name = "PersonaJuridicaEntity.findByIdPersonaNaturalRepresentanteLegal", query = "SELECT p FROM PersonaJuridicaEntity p INNER JOIN p.representanteLegal rl WHERE rl.id = :idPersonaNaturalRepresentanteLegal"),
+        @NamedQuery(name = "PersonaJuridicaEntity.findByFilterText", query = "SELECT p FROM PersonaJuridicaEntity p WHERE LOWER(p.numeroDocumento) LIKE :filterText OR LOWER(p.razonSocial) LIKE :filterText OR LOWER(p.nombreComercial) LIKE :filterText") })
 public class PersonaJuridicaEntity extends PersonaEntity implements Serializable {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -91,10 +92,11 @@ public class PersonaJuridicaEntity extends PersonaEntity implements Serializable
 
     @NotNull
     @OneToOne
-    @JoinColumn(name = "REPRESENTANTE_LEGAL", foreignKey = @ForeignKey)
+    @JoinColumn(name = "REPRESENTANTE_LEGAL", foreignKey = @ForeignKey )
     private PersonaNaturalEntity representanteLegal;
 
-    @OneToMany(mappedBy = "personaJuridica", fetch = FetchType.LAZY, orphanRemoval = true, cascade = { CascadeType.REMOVE })
+    @OneToMany(mappedBy = "personaJuridica", fetch = FetchType.LAZY, orphanRemoval = true, cascade = {
+            CascadeType.REMOVE })
     private Set<AccionistaEntity> accionistas = new HashSet<AccionistaEntity>(0);
 
     public PersonaJuridicaEntity() {

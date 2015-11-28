@@ -11,11 +11,13 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.envers.Audited;
 
 /**
  * @author <a href="mailto:carlosthe19916@sistcoop.com">Carlos Feria</a>
  */
 
+@Audited
 @Entity
 @Table(name = "FILE_STORE")
 public class FileStoreEntity implements Serializable {

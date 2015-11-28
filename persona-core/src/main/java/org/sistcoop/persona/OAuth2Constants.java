@@ -27,8 +27,7 @@ public interface OAuth2Constants {
 
     String AUTHORIZATION_CODE = "authorization_code";
 
-    String PASSWORD = "password";
-
+ 
     String CLIENT_CREDENTIALS = "client_credentials";
 
     // https://tools.ietf.org/html/draft-ietf-oauth-assertions-01#page-5

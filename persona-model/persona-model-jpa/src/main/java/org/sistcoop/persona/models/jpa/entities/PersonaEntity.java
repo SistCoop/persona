@@ -29,7 +29,7 @@ public abstract class PersonaEntity implements Serializable {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TIPO_DOCUMENTO", foreignKey = @ForeignKey)
+    @JoinColumn(name = "TIPO_DOCUMENTO_ID", foreignKey = @ForeignKey)
     protected TipoDocumentoEntity tipoDocumento;
 
     @NotNull

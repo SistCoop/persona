@@ -21,7 +21,7 @@ public class AccionistaAdapter implements AccionistaModel {
     private static final long serialVersionUID = 1L;
 
     private AccionistaEntity accionistaEntity;
-    private EntityManager em;
+    private transient EntityManager em;
 
     public AccionistaAdapter(EntityManager em, AccionistaEntity accionistaEntity) {
         this.em = em;

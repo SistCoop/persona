@@ -17,7 +17,7 @@ import org.sistcoop.persona.models.ModelException;
  */
 public class PersistenceExceptionConverter implements InvocationHandler {
 
-    private EntityManager em;
+    private transient EntityManager em;
 
     public static EntityManager create(EntityManager em) {
         return (EntityManager) Proxy.newProxyInstance(EntityManager.class.getClassLoader(),
